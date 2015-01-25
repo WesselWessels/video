@@ -38,6 +38,8 @@
         	</div>
         	<div id="disconnect_div">
         		<a href="#" class="btn btn-danger" id="disconnect">disconnect</a>
+        		<a href="#" class="btn btn-success" id="voice_call">voice</a>
+        		<a href="#" class="btn btn-warning" id="end_voice_call">end voice</a>
         	</div>
          </div>
         <div id="video_div">
@@ -57,6 +59,7 @@
 		var call;
 		$("#voice").hide();
 		$("#disconnect_div").hide();
+		$("#end_voice_call").hide();
 		navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 		navigator.getUserMedia({audio: true, video: false}, function(stream){
 	        // Set your video displays
@@ -74,16 +77,25 @@
 	    	$("#my_id").text("Your ID is: "+ peer.id);
 	    });
 	    peer.on('connection',function(conn){	
+	    	console.log(conn.peer);
+	    	$("#connect_id").val(conn.peer);
 	    	my_connect(conn);
 	    	
 	    });
-	    peer.on('call', function(call){
+	    peer.on('call', function(call_in){
+	    	call = call_in;
 	      // Answer the call automatically (instead of prompting user) for demo purposes
 	      console.log("Received call");
 	      call.answer(window.localStream);
 	      call.on('stream', function(stream){
 	        $('audio').prop('src', URL.createObjectURL(stream));
-	    });
+	        $("#end_voice_call").show();
+		    $("#voice_call").hide();
+	  	  });
+	  	  call.on('close', function(){
+	  	  	$("#end_voice_call").hide();
+		        $("#voice_call").show();
+	  	  });
 	      //step3(call);
 	    });
 	    
@@ -93,7 +105,7 @@
 	    		console.log("Connected");
 	    		$("#connect_div").hide();
 	    		$("#disconnect_div").show();
-	    		call = peer.call($('#connect_id').val(), window.localStream);
+	    		
 		    	conn.on('data', function(data){
 		    		var message_json = jQuery.parseJSON(data);
 		    		if(message_json.action_change == "paused" && !videoNode.paused){
@@ -113,9 +125,7 @@
 		    		}
 		    		console.log('Received ' + data);
 	    		});
-	    		call.on('stream', function(stream){
-			        $('audio').prop('src', URL.createObjectURL(stream));
-			    });
+	    		
 	   		});
 	   		conn.on('close', function(){
 	   			console.log("Disconnected");
@@ -133,6 +143,21 @@
 	    	conn.close();
 
 	    	//my_connect(conn);
+	    });
+	    $("#voice_call").click(function(){
+	    	call = peer.call($('#connect_id').val(), window.localStream);
+	    	call.on('stream', function(stream){
+		        $('audio').prop('src', URL.createObjectURL(stream));
+		        $("#end_voice_call").show();
+		        $("#voice_call").hide();
+		    });
+		    call.on('close', function(){
+	  	  	$("#end_voice_call").hide();
+		        $("#voice_call").show();
+	  	 	 });
+	    });
+	    $("#end_voice_call").click(function(){
+	    	call.close();
 	    });
 		(function localFileVideoPlayerInit(win) {
 	    var URL = win.URL || win.webkitURL,
