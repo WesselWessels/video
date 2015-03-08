@@ -29,10 +29,13 @@
 
 	<body>
 		<h1>Watch mp4, webm or ogg videos together with the use of WebRTC</h1>
-		<div id="message"></div> 
-		<div id="my_id"></div>
-		<div>
-			<div id="connect_div">
+		<div class="container-fluid">
+			<div id="message"></div> 
+			<div id="my_id"></div>
+		</div>
+		<div class="container-fluid">
+			<div class="row">
+			<div id="connect_div" class="col-md-3">
 	            <input type="text" placeholder="Connect user id..." id="connect_id">
 	            <a href="#" class="btn btn-success" id="connect">connect</a>
         	</div>
@@ -42,20 +45,26 @@
         		<a href="#" class="btn btn-warning" id="end_voice_call">end voice</a>
         	</div>
          </div>
-        <div id="video_div">
-			<input type="file" accept="video/mp4,video/webm,video/ogg,audio/*" id="video_file"/>
-			<video controls ></video>
+
+        <div class="container">
+        	<div class="col-md-2"></div>
+	        <div id="video_div" class="col-md-8">
+				<input type="file" accept="video/mp4,video/webm,video/ogg,audio/*" id="video_file"/>
+				<video id="my_video" width="720" height="480" controls ></video>
+			</div>	
+        	<div class="col-md-2"></div>
+
 		</div>
 		<div id="voice">
 			<audio controls autoplay></audio>
 		</div>
 		<div id="irc_chat" class="container">
 			<div class="row">
-				<div class="col-md-3"></div>
-				<div class="col-md-6">
+				<div class="col-md-2"></div>
+				<div class="col-md-8">
 					<iframe src="https://kiwiirc.com/client/irc.kiwiirc.com/?&theme=basic#simulchat" style="border:0; width:100%; height:450px;"></iframe>
 				</div>
-				<div class="col-md-3"></div>
+				<div class="col-md-2"></div>
 			</div>
 		</div>
 	</body>
@@ -69,6 +78,11 @@
 		$("#voice").hide();
 		$("#disconnect_div").hide();
 		$("#end_voice_call").hide();
+		var video_width = $("#video_div").width();
+		var video_height = Math.round(video_width * 9 / 16);
+		$("#my_video").width(video_width);
+		$("#my_video").height(video_height);
+		var file;
 		navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 		navigator.getUserMedia({audio: true, video: false}, function(stream){
 	        // Set your video displays
@@ -194,7 +208,7 @@
 	            };
 	        }()),
 	        playSelectedFile = function playSelectedFileInit(event) {
-	            var file = this.files[0];
+	            file = this.files[0];
 
 	            var type = file.type;
 
@@ -218,6 +232,8 @@
 
 	            videoNode.src = fileURL;
 	            console.log(videoNode.readyState);
+	            console.log(file.name);
+	            console.log(file.size);
 				videoNode.onpause = function() {
 					
 				   	console.log("Paused " + videoNode.currentTime);
