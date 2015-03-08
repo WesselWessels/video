@@ -55,11 +55,11 @@
         	<div class="col-md-3">
         		<table class="table table-bordered">
         			<thead>
-        				<tr>My Status</tr>
+        				<th colspan="100%" style="text-align:center;">My Status</th>
         			</thead>
         			<tbody style="text-align:center;">
         				<tr>
-        					<td>My ID</td>
+        					<td>ID</td>
         					<td id="stat_my_id"></td>
         				</tr>
         				<tr>
@@ -67,11 +67,11 @@
         					<td id="stat_my_mic">Inactive</td>
         				</tr>
         				<tr>
-        					<td>My Title</td>
+        					<td>Title</td>
         					<td id="stat_my_video"></td>
         				</tr>
         				<tr>
-        					<td>My Size</td>
+        					<td>Size</td>
         					<td id="stat_my_size"></td>
         				</tr>
         			</tbody>
@@ -81,7 +81,31 @@
 				<input type="file" accept="video/mp4,video/webm,video/ogg,audio/*" id="video_file"/>
 				<video id="my_video" width="720" height="480" controls ></video>
 			</div>	
-        	<div class="col-md-3"></div>
+        	<div class="col-md-3">
+        		<table class="table table-bordered" >
+        			<thead>
+        				<th colspan="100%" style="text-align:center;">Partner Status</th>
+        			</thead>
+        			<tbody style="text-align:center;">
+        				<tr>
+        					<td>ID</td>
+        					<td id="stat_partner_id"></td>
+        				</tr>
+        				<tr>
+        					<td>Microphone</td>
+        					<td id="stat_partner_mic"></td>
+        				</tr>
+        				<tr>
+        					<td>Title</td>
+        					<td id="stat_partner_video"></td>
+        				</tr>
+        				<tr>
+        					<td>Size</td>
+        					<td id="stat_partner_size"></td>
+        				</tr>
+        			</tbody>
+        		</table>
+        	</div>
 
 		</div>
 		<div id="voice">
@@ -109,7 +133,12 @@
 		var stat_my_mic = "-";
 		var stat_my_video = "-";
 		var stat_my_size = "-";
+		var stat_partner_id = "-";
+		var stat_partner_mic = "-";
+		var stat_partner_video = "-";
+		var stat_partner_size = "-";
 		updateMyStatus();
+		updatePartnerStatus();
 		$("#voice").hide();
 		$("#disconnect_div").hide();
 		$("#end_voice_call").hide();
@@ -125,6 +154,7 @@
 	        window.localStream = stream;
 	        //$("#stat_my_mic").text("Active");
 	        stat_my_mic = "active";
+	        sendStatus();
 	        updateMyStatus();
 	      },function(){});
 		 var words = ["the","name","very","through","and","just","form","much","great","think","you","say","that","help","low","was","line","for","before","turn","are","cause","with","same","mean","differ","his","move","they","right","boy","old","one","too","have","does","this","tell","from","sentence","set","had","three","want","hot","air","but","well","some","also","what","play","there","small","end","can","put","out","home","other","read","were","hand","all","port","your","large","when","spell","add","use","even","word","land","how","here","said","must","big","each","high","she","such","which","follow","act","their","why","time","ask","men","will","change","way","went","about","light","many","kind","then","off","them","need","would","house","write","picture","like","try","these","again","her","animal","long","point","make","mother","thing","world","see","near","him","build","two","self","has","earth","look","father","more","head","day","stand","could","own","page","come","should","did","country","found","sound","answer","school","most","grow","number","study","who","still","over","learn","know","plant","water","cover","than","food","call","sun","first","four","people","thought","may","let","down","keep","side","eye","been","never","now","last","find","door","any","between","new","city","work","tree","part","cross","take","since","get","hard","place","start","made","might","live","story","where","saw","after","far","back","sea","little","draw","only","left","round","late","man","run","year","came","while","show","press","every","close","good","night","real","give","life","our","few","under","stop","open","ten","seem","simple","together","several","next","vowel","white","toward","children","war","begin","lay","got","against","walk","pattern","example","slow","ease","center","paper","love","often","person","always","money","music","serve","those","appear","both","road","mark","map","book","science","letter","rule","until","govern","mile","pull","river","cold","car","notice","feet","voice","care","fall","second","power","group","town","carry","fine","took","certain","rain","fly","eat","unit","room","lead","friend","cry","began","dark","idea","machine","fish","note","mountain","wait","north","plan","once","figure","base","star","hear","box","horse","noun","cut","field","sure","rest","watch","correct","color","able","face","pound","wood","done","main","beauty","enough","drive","plain","stood","girl","contain","usual","front","young","teach","ready","week","above","final","ever","gave","red","green","list","though","quick","feel","develop","talk","sleep","bird","warm","soon","free","body","minute","dog","strong","family","special","direct","mind","pose","behind","leave","clear","song","tail","measure","produce","state","fact","product","street","black","inch","short","lot","numeral","nothing","class","course","wind","stay","question","wheel","happen","full","complete","force","ship","blue","area","object","half","decide","rock","surface","order","deep","fire","moon","south","island","problem","foot","piece","yet","told","busy","knew","test","pass","record","farm","boat","top","common","whole","gold","king","possible","size","plane","heard","age","best","dry","hour","wonder","better","laugh","true.","thousand","during","ago","hundred","ran","check","remember","game","step","shape","early","yes","hold","hot","west","miss","ground","brought","interest","heat","reach","snow","fast","bed","five","bring","sing","sit","listen","perhaps","six","fill","table","east","travel","weight","less","language","morning","among"];
@@ -184,6 +214,8 @@
 	    function my_connect(connection){
 	    	conn = connection;
 	    	$("#connected_id").text(conn.peer);
+	    	stat_partner_id = conn.peer;
+	    	updatePartnerStatus();
 	    	conn.on('open',function(){
 	    		console.log("Connected");
 	    		$("#connect_div").hide();
@@ -206,6 +238,19 @@
 		    			}
 		    			//videoNode.play();
 		    		}
+		    		if(message_json.stat_mic != null)
+		    		{
+		    			stat_partner_mic = message_json.stat_mic;
+		    		}
+		    		if(message_json.stat_video != null)
+		    		{
+		    			stat_partner_video = message_json.stat_video;
+		    		}
+		    		if(message_json.stat_size != null)
+		    		{
+		    			stat_partner_size = message_json.stat_size;
+		    		}
+		    		updatePartnerStatus();
 		    		console.log('Received ' + data);
 	    		});
 	    		
@@ -248,7 +293,17 @@
 	    	$("#stat_my_mic").text(stat_my_mic);
 	    	$("#stat_my_video").text(stat_my_video);
 	    	$("#stat_my_size").text(stat_my_size);
+	    }
 
+	    function updatePartnerStatus(){
+	    	$("#stat_partner_id").text(stat_partner_id);
+	    	$("#stat_partner_mic").text(stat_partner_mic);
+	    	$("#stat_partner_video").text(stat_partner_video);
+	    	$("#stat_partner_size").text(stat_partner_size);
+	    }
+
+	    function sendStatus(){
+	    	conn.send('{"stat_mic":"'+stat_my_mic+'","stat_video":"'+stat_my_video+'","stat_size":"'+stat_my_size+'"}');
 	    }
 		(function localFileVideoPlayerInit(win) {
 	    var URL = win.URL || win.webkitURL,
@@ -287,10 +342,12 @@
 	            console.log(videoNode.readyState);
 	            console.log(file.name);
 	            console.log(file.size);
+
 	            //$("#stat_my_video").text(file.name);
 	            //$("#stat_my_size").text(file.size);
 	            stat_my_video = file.name;
 	            stat_my_size = file.size;
+	            sendStatus();
 	            updateMyStatus();
 				videoNode.onpause = function() {
 					
