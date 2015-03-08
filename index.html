@@ -3,6 +3,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<title>Watch videos together</title>
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 		<link rel="stylesheet" href="bootstrap.css">
 		<script src="bootstrap.js"></script>
@@ -34,25 +35,53 @@
 			<div id="my_id"></div>
 		</div>
 		<div class="container-fluid">
-			<div class="row">
-			<div id="connect_div" class="col-md-3">
-	            <input type="text" placeholder="Connect user id..." id="connect_id">
-	            <a href="#" class="btn btn-success" id="connect">connect</a>
-        	</div>
-        	<div id="disconnect_div">
-        		<a href="#" class="btn btn-danger" id="disconnect">disconnect</a>
-        		<a href="#" class="btn btn-success" id="voice_call">voice</a>
-        		<a href="#" class="btn btn-warning" id="end_voice_call">end voice</a>
-        	</div>
-         </div>
+			
+				<div id="connect_div" class="col-md-3">
+		            <input type="text" placeholder="Connect user id..." id="connect_id">
+		            <a href="#" class="btn btn-success" id="connect">connect</a>
+	        	</div>
+	        	<div id="disconnect_div">
+	        		<div>
+	        			You are connected to: <span id="connected_id"></span>
+	        		</div>
+	        		<a href="#" class="btn btn-danger" id="disconnect">disconnect</a>
+	        		<a href="#" class="btn btn-success" id="voice_call">voice</a>
+	        		<a href="#" class="btn btn-warning" id="end_voice_call">end voice</a>
+	        	</div>
 
+         </div>
+         <br><br><br>
         <div class="container">
-        	<div class="col-md-2"></div>
-	        <div id="video_div" class="col-md-8">
+        	<div class="col-md-3">
+        		<table class="table-bordered">
+        			<thead>
+        				<tr>My Status</tr>
+        			</thead>
+        			<tbody>
+        				<tr>
+        					<td>My ID</td>
+        					<td id="stat_my_id"></td>
+        				</tr>
+        				<tr>
+        					<td>Microphone</td>
+        					<td id="stat_my_mic"></td>
+        				</tr>
+        				<tr>
+        					<td>My Title</td>
+        					<td id="stat_my_video"></td>
+        				</tr>
+        				<tr>
+        					<td>My Size</td>
+        					<td id="stat_my_size"></td>
+        				</tr>
+        			</tbody>
+        		</table>
+        	</div>
+	        <div id="video_div" class="col-md-6">
 				<input type="file" accept="video/mp4,video/webm,video/ogg,audio/*" id="video_file"/>
 				<video id="my_video" width="720" height="480" controls ></video>
 			</div>	
-        	<div class="col-md-2"></div>
+        	<div class="col-md-3"></div>
 
 		</div>
 		<div id="voice">
@@ -113,10 +142,14 @@
 	    peer.on('open', function(){
 	    	console.log(peer.id);
 	    	$("#my_id").text("Your ID is: "+ peer.id);
+	    	$("#stat_my_id").text(peer.id);
 	    });
 	    peer.on('connection',function(conn){	
 	    	console.log(conn.peer);
+	    	//var the_peer = conn.peer;
 	    	$("#connect_id").val(conn.peer);
+	    	//$("#connected_id").text("hello");
+	    	//alert(conn.peer);
 	    	my_connect(conn);
 	    	
 	    });
@@ -139,6 +172,7 @@
 	    
 	    function my_connect(connection){
 	    	conn = connection;
+	    	$("#connected_id").text(conn.peer);
 	    	conn.on('open',function(){
 	    		console.log("Connected");
 	    		$("#connect_div").hide();
