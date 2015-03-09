@@ -6,6 +6,8 @@
 		<title>Watch videos together</title>
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 		<link rel="stylesheet" href="bootstrap.css">
+		<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+		<link rel="stylesheet" href="css/jquery-impromptu.css">
 		<script src="bootstrap.js"></script>
  		<script type="text/javascript" src="http://cdn.peerjs.com/0.3/peer.js"></script>
 		<style type="text/css">
@@ -198,16 +200,28 @@
 	    	call = call_in;
 	      // Answer the call automatically (instead of prompting user) for demo purposes
 	      console.log("Received call");
-	      call.answer(window.localStream);
-	      call.on('stream', function(stream){
-	        $('audio').prop('src', URL.createObjectURL(stream));
-	        $("#end_voice_call").show();
-		    $("#voice_call").hide();
-	  	  });
-	  	  call.on('close', function(){
-	  	  	$("#end_voice_call").hide();
-		        $("#voice_call").show();
-	  	  });
+	      $.prompt("There is an incoming voice call from your partner call.", {
+			title: "Incoming call",
+			buttons: { "Answer": true, "Not now": false },
+			submit: function(e,v,m,f){
+				// use e.preventDefault() to prevent closing when needed or return false. 
+				// e.preventDefault(); 
+				if(v == true){
+					call.answer(window.localStream);
+			      call.on('stream', function(stream){
+			        $('audio').prop('src', URL.createObjectURL(stream));
+			        $("#end_voice_call").show();
+				    $("#voice_call").hide();
+			  	  });
+			  	  call.on('close', function(){
+			  	  	$("#end_voice_call").hide();
+				        $("#voice_call").show();
+			  	  });
+				}
+				console.log("Value clicked was: "+ v);
+			}
+		});
+	      
 	      //step3(call);
 	    });
 	    
