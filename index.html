@@ -263,7 +263,7 @@
 	    }
 	    $("#connect").click(function(){
 	    	console.log($("#connect_id").val());
-	    	conn = peer.connect($("#connect_id").val());
+	    	conn = peer.connect($("#connect_id").val().trim());
 	    	my_connect(conn);
 	    });
 	    $("#disconnect").click(function(){
