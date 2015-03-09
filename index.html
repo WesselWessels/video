@@ -31,7 +31,13 @@
 	</head>
 
 	<body>
-		<h1>Watch mp4, webm or ogg videos together with the use of WebRTC</h1>
+		<div style="text-align:center;">
+			<h1>Watch mp4, webm or ogg videos together with the use of WebRTC</h1>
+		</div>
+
+		<div style="text-align:center;">
+			<button class="btn btn-success btn-lg" id="take_tour">Take Tour</button>
+		</div>
 		<div class="container-fluid">
 			<div id="message"></div> 
 			<div id="my_id"></div>
@@ -55,7 +61,7 @@
          <br><br><br>
         <div class="container">
         	<div class="col-md-3">
-        		<table class="table table-bordered">
+        		<table class="table table-bordered" id="my_status_table">
         			<thead>
         				<th colspan="100%" style="text-align:center;">My Status</th>
         			</thead>
@@ -84,7 +90,7 @@
 				<video id="my_video" width="720" height="480" controls ></video>
 			</div>	
         	<div class="col-md-3">
-        		<table class="table table-bordered" >
+        		<table class="table table-bordered" id="partner_status_table">
         			<thead>
         				<th colspan="100%" style="text-align:center;">Partner Status</th>
         			</thead>
@@ -117,7 +123,7 @@
 			<div class="row">
 				<div class="col-md-2"></div>
 				<div class="col-md-8">
-					<iframe src="https://kiwiirc.com/client/irc.kiwiirc.com/?&theme=basic##simulchat" style="border:0; width:100%; height:450px;"></iframe>
+					<iframe src="https://kiwiirc.com/client/irc.kiwiirc.com/?&theme=basic##simulchat" style="border:0; width:100%; height:450px;" id="kiwi_irc_frame"></iframe>
 				</div>
 				<div class="col-md-2"></div>
 			</div>
@@ -301,6 +307,9 @@
 	    $("#end_voice_call").click(function(){
 	    	call.close();
 	    });
+	    $("#take_tour").click(function(){
+	    	takeTour();
+	    });
 
 	    function updateMyStatus(){
 	    	$("#stat_my_id").text(stat_my_id);
@@ -318,6 +327,94 @@
 
 	    function sendStatus(){
 	    	conn.send('{"stat_mic":"'+stat_my_mic+'","stat_video":"'+stat_my_video+'","stat_size":"'+stat_my_size+'"}');
+	    }
+
+	    function takeTour(){
+	    	var tourSubmitFunc = function(e,v,m,f){
+			if(v === -1){
+				$.prompt.prevState();
+				return false;
+			}
+			else if(v === 1){
+				$.prompt.nextState();
+				return false;
+			}
+			},
+			tourStates = [
+				{
+					title: 'Welcome to Simulchat!',
+					html: 'This is your ID for this session. Give it to your partner and they can connect to you!',
+					buttons: { Next: 1 },
+					focus: 0,
+					position: { container: '#my_id', x: 200, y: -10, width: 400, arrow: 'lt' },
+					submit: tourSubmitFunc
+				},
+				{
+					title: 'Their ID',
+					html: 'If you have your partner\'s ID, enter it here and click Connect',
+					buttons: { Prev: -1, Next: 1 },
+					focus: 1,
+					position: { container: '#connect_id', x: 200, y: -10, width: 400, arrow: 'lt' },
+					submit: tourSubmitFunc
+				},
+				{
+					title: "Open a video",
+					html: 'Click here to open a video file from your computer. Your partner must also open a video on their side. The video is NOT streamed.',
+					buttons: { Prev: -1, Next: 1 },
+					focus: 1,
+					position: { container: '#video_file', x: 30, y: 25, width: 400, arrow: 'tl' },
+					submit: tourSubmitFunc
+				},
+				{
+					title: 'My Status',
+					html: 'This table gives you some information about your status',
+					buttons: { Prev: -1, Next: 1 },
+					focus: 1,
+					position: { container: '#my_status_table', x: 200, y: 0, width: 200, arrow: 'lt' },
+					submit: tourSubmitFunc
+				},
+				{
+					title: 'Partner Status',
+					html: 'This table gives you some information about your partner\'s status',
+					buttons: { Prev: -1, Next: 1 },
+					focus: 1,
+					position: { container: '#partner_status_table', x: -200, y: 0, width: 200, arrow: 'rt' },
+					submit: tourSubmitFunc
+				},
+				{
+					title: 'IRC Chat',
+					html: 'This is a web IRC client that connects to a channel called ##simulchat. Here you can find your partner if they are online and send them your ID. It is advised to send a private message, since anyone can see what you time in the defualt channel. Just pick a Nickname and click start. Note that you do not need to use this chat box. It is just there to help you exchange your ID\'s. You can also send your ID to your partner in any way you please, like email',
+					buttons: { Prev: -1, Next: 1 },
+					focus: 1,
+					position: { container: '#kiwi_irc_frame', x: 200, y: 120, width: 400, arrow: 'tm' },
+					submit: tourSubmitFunc
+				},
+				{
+					title: 'Watch Together',
+					html: 'If you are connected to your partner and you both have a movie file selected, you can watch the movie here together. If you pause, they pause. If you skip, they skip and vice versa. Only instructions are sent over the internet, not the movie itself, so it barely uses any bandwidth.',
+					buttons: { Prev: -1, Next: 1 },
+					focus: 1,
+					position: { container: '#my_video', x: 100, y: 120, width: 600, arrow: 'tl' },
+					submit: tourSubmitFunc
+				},
+				{
+					title: 'Voice Call',
+					html: 'When you are connected to your partner, you can enable a voice call so that you can speak while watching the movie together. It works best if you use earphones so that the sound of the movie does not interfere.',
+					buttons: { Prev: -1, Next: 1 },
+					focus: 1,
+					position: { container: '#my_id', x: 100, y: 80, width: 300, arrow: 'tl' },
+					submit: tourSubmitFunc
+				},
+				{
+				title: 'Done',
+				html: 'Thank you for finishing the tour. This site was made so that people can connect to each other in an easy way. It is still under construction, so watch this space',
+				buttons: { Done: 2 },
+				focus: 0,
+				position: { container: '#my_video', x: 100, y: 20, width: 275, arrow: '' },
+				submit: tourSubmitFunc
+			}
+			];
+			$.prompt(tourStates);	
 	    }
 		(function localFileVideoPlayerInit(win) {
 	    var URL = win.URL || win.webkitURL,
