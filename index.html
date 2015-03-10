@@ -32,7 +32,7 @@
 
 	<body>
 		<div style="text-align:center;">
-			<h1>Watch mp4, webm or ogg videos together with the use of WebRTC</h1>
+			<h1 id="page_title">Watch mp4, webm or ogg videos together with the use of WebRTC</h1>
 		</div>
 
 		<div style="text-align:center;">
@@ -87,7 +87,8 @@
         	</div>
 	        <div id="video_div" class="col-md-6">
 				<input type="file" accept="video/mp4,video/webm,video/ogg,audio/*" id="video_file"/>
-				<video id="my_video" width="720" height="480" controls ></video>
+				<video id="my_video" width="720" height="480" controls >
+</video>
 			</div>	
         	<div class="col-md-3">
         		<table class="table table-bordered" id="partner_status_table">
@@ -277,6 +278,7 @@
 	   		});
 	   		conn.on('close', function(){
 	   			console.log("Disconnected");
+	   			call.close();
 	   			$("#connect_div").show();
 	    		$("#disconnect_div").hide();
 	   		});
@@ -343,6 +345,14 @@
 			tourStates = [
 				{
 					title: 'Welcome to Simulchat!',
+					html: 'Simulchat allows you to watch movies with someone over the internet. Both people must have their own copy video to play, preferably the same video. The video is NOT streamed.',
+					buttons: { Next: 1 },
+					focus: 0,
+					position: { container: '#page_title', x: 300, y: 30, width: 400, arrow: '' },
+					submit: tourSubmitFunc
+				},
+				{
+					title: 'Your ID',
 					html: 'This is your ID for this session. Give it to your partner and they can connect to you!',
 					buttons: { Next: 1 },
 					focus: 0,
@@ -382,7 +392,7 @@
 					submit: tourSubmitFunc
 				},
 				{
-					title: 'IRC Chat',
+					title: 'IRC Chat [optional]',
 					html: 'This is a web IRC client that connects to a channel called ##simulchat. Here you can find your partner if they are online and send them your ID. It is advised to send a private message, since anyone can see what you time in the defualt channel. Just pick a Nickname and click start. Note that you do not need to use this chat box. It is just there to help you exchange your ID\'s. You can also send your ID to your partner in any way you please, like email',
 					buttons: { Prev: -1, Next: 1 },
 					focus: 1,
