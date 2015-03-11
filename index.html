@@ -209,8 +209,9 @@
 		$("#my_video").width(video_width);
 		$("#my_video").height(video_height);
 		var file;
+		navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 		function get_mic(){
-			navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+			
 			navigator.getUserMedia({audio: true, video: false}, function(stream){
 	        // Set your video displays
 	        //$('#my-video').prop('src', URL.createObjectURL(stream));
