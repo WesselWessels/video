@@ -32,7 +32,7 @@
 
 	<body background="img/background.png">
 		<div style="text-align:center;">
-			<h1 id="page_title">Watch mp4, webm or ogg videos together with the use of WebRTC</h1>
+			<h1 id="page_title">Watch mp4, webm or ogg videos together with WebRTC</h1>
 		</div>
 
 		<div style="text-align:center;">
@@ -324,7 +324,7 @@
 		    			videoNode.play();
 		    		}
 		    		if(message_json.action_change == "seek"){
-		    			if(last_received_time != message_json.time_of_movie){
+		    			if(Math.abs(last_received_time - message_json.time_of_movie) > 2){
 		    				last_received_time = message_json.time_of_movie;
 		    				videoNode.currentTime = message_json.time_of_movie;
 		    			}
