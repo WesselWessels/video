@@ -179,7 +179,7 @@
 		}
 		var videoNode;
 		var conn;
-		var last_received_time;
+		var last_received_time = 0;
 		var call;
 		
 		//youtube variables
@@ -206,6 +206,7 @@
 		$("#end_voice_call").hide();
 		var video_width = $("#video_div").width();
 		var video_height = Math.round(video_width * 9 / 16);
+		//var previous_partner_seektime = 0;
 		$("#my_video").width(video_width);
 		$("#my_video").height(video_height);
 		var file;
@@ -321,6 +322,9 @@
 		    		}
 		    		if(message_json.action_change == "play" && videoNode.paused){
 		    			//videoNode.currentTime = message_json.time_of_movie;
+		    			if(Math.abs(videoNode.currentTime - message_json.time_of_movie) > 1){
+		    					videoNode.currentTime = message_json.time_of_movie;
+		    			}
 		    			videoNode.play();
 		    		}
 		    		if(message_json.action_change == "seek"){
@@ -608,7 +612,9 @@
 				};
 				videoNode.onseeked = function() {
 				    console.log("Seeked " + videoNode.currentTime);
-				    conn.send('{"action_change":"seek", "time_of_movie":"'+videoNode.currentTime+'", "status":"'+videoNode.readyState+'"}');
+				    if(Math.abs(videoNode.currentTime - last_received_time) > 1){ //do this so that a infinite loop does not happen (hopefully)
+				   		conn.send('{"action_change":"seek", "time_of_movie":"'+videoNode.currentTime+'", "status":"'+videoNode.readyState+'"}');
+					}
 				};
 				videoNode.onplaying = function() {
 				    console.log("Playing " + videoNode.currentTime);
