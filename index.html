@@ -4,11 +4,14 @@
 <html>
 	<head>
 		<title>Watch videos together</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 		<link rel="stylesheet" href="bootstrap.css">
+		<link href="css/styles.css" rel="stylesheet">
 		<script type="text/javascript" src="js/jquery-impromptu.js"></script>
 		<link rel="stylesheet" href="css/jquery-impromptu.css">
 		<script src="bootstrap.js"></script>
+		<script src="js/scripts.js"></script>
  		<script type="text/javascript" src="http://cdn.peerjs.com/0.3/peer.js"></script>
 		<style type="text/css">
 			video, input {
@@ -27,19 +30,61 @@
 			    background-color: red;
 			    color: white;
 			}
+			
 		</style>
 	</head>
 
 	<body background="img/background.png">
-		<div style="text-align:center;">
-			<h1 id="page_title">Watch mp4, webm or ogg videos together with WebRTC</h1>
+		<nav class="navbar navbar-trans navbar-fixed-top" role="navigation">
+		  <div class="container">
+		    <!-- Brand and toggle get grouped for better mobile display -->
+		    <div class="navbar-header">
+		      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+		        <span class="sr-only">Toggle navigation</span>
+		        <span class="icon-bar"></span>
+		        <span class="icon-bar"></span>
+		        <span class="icon-bar"></span>
+		      </button>
+		      <a class="navbar-brand" href="#section1">simulchat.com</a>
+		    </div>
+
+		    <!-- Collect the nav links, forms, and other content for toggling -->
+		    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+		      <ul class="nav navbar-nav">
+		        <li ><a href="#section2">Connection <span class="sr-only">(current)</span></a></li>
+		        <li ><a href="#section3">Watch Movie <span class="sr-only">(current)</span></a></li>
+		        <li ><a href="#section4">Watch YouTube <span class="sr-only">(current)</span></a></li>
+		        <li ><a href="#section5">IRC Chat <span class="sr-only">(current)</span></a></li>
+
+		       
+
+		      </ul>
+		    </div><!-- /.navbar-collapse -->
+		  </div><!-- /.container-fluid -->
+		</nav>
+		<section class="container-fluid" id="section1">
+		<div class="container">
+			<div style="text-align:center;">			
+				<h1 id="page_title">Welcome to SimulChat</h1>
+			</div>	
+			<div class="row" style="text-align:center;">
+				<div class="col-md-3"></div>
+				<div class="col-md-6">
+					<h4>Watch movies together</h4>
+					<h4>Watch YouTube together</h4>
+					<h4>Talk to each other</h4>
+				</div>
+				<div class="col-md-3"></div>
+
+			</div>
 		</div>
 
 		<div style="text-align:center;">
 			<button class="btn btn-success btn-lg" id="take_tour">Take Tour</button>
 		</div>
-		<br>
-		<div class="container-fluid">
+		</section>
+		<section class="container-fluid" id="section2">
+		<div class="container-fluid" id="connection_div">
 			<div class="form-horizontal">
 				<!-- <div id="message">Your ID is: <input type="text" id="my_id" size="15"></div>  -->
 				<div class="form-group">
@@ -53,6 +98,15 @@
 				    <div class="col-md-4">
 					    <input type="text" class="form-control" id="connect_id">
 					    <a href="#" class="btn btn-success" id="connect">connect</a>
+					    <span id="disconnect_div">
+		        		<!-- <div>
+		        			You are connected to: <span id="connected_id"></span>
+		        		</div> -->
+		        		<a href="#" class="btn btn-danger" id="disconnect">disconnect</a>
+		        		<a href="#" class="btn btn-success" id="voice_call">voice call</a>
+		        		<a href="#" class="btn btn-info" id="hang_up">cancel call</a>
+		        		<a href="#" class="btn btn-warning" id="end_voice_call">end voice</a>
+		        		</span>
 				    </div>
 			 	</div>
 					
@@ -68,19 +122,12 @@
 	        	</div> -->
 	        	<div class="row" style="text-align:center;">
 
-		        	<div id="disconnect_div">
-		        		<!-- <div>
-		        			You are connected to: <span id="connected_id"></span>
-		        		</div> -->
-		        		<a href="#" class="btn btn-danger" id="disconnect">disconnect</a>
-		        		<a href="#" class="btn btn-success" id="voice_call">voice call</a>
-		        		<a href="#" class="btn btn-info" id="hang_up">cancel call</a>
-		        		<a href="#" class="btn btn-warning" id="end_voice_call">end voice</a>
-		        	</div>
+		        	
 	        	</div>
 
          </div>
-         <br><br><br>
+         </section>
+         <section class="container-fluid" id="section3">
         <div class="container">
         	<div class="col-md-3">
         		<table class="table table-bordered" id="my_status_table">
@@ -139,6 +186,9 @@
         	</div>
 
 		</div>
+		</section>
+		<section class="container-fluid" id="section4">
+
 		<div class="container" style="text-align:center;">
 	      <div class="row">
 	        <div class="col-md-2"></div>
@@ -180,6 +230,9 @@
 		<div id="voice">
 			<audio controls autoplay></audio>
 		</div>
+		</section>
+
+		<section class="container-fluid" id="section5">
 		<div id="irc_chat" class="container">
 			<div class="row">
 				<div class="col-md-2"></div>
@@ -189,6 +242,7 @@
 				<div class="col-md-2"></div>
 			</div>
 		</div>
+		</section>
 	</body>
 </html>
 
@@ -461,18 +515,21 @@
 	    		$("#disconnect_div").hide();
 	   		});
 	    }
-	    $("#connect").click(function(){
+	    $("#connect").click(function(e){
+	    	e.preventDefault();
 	    	console.log($("#connect_id").val());
 	    	conn = peer.connect($("#connect_id").val().trim());
 	    	my_connect(conn);
 	    });
-	    $("#disconnect").click(function(){
+	    $("#disconnect").click(function(e){
+	    	e.preventDefault();
 	    	//console.log($("#connect_id").val());
 	    	conn.close();
 
 	    	//my_connect(conn);
 	    });
-	    $("#voice_call").click(function(){
+	    $("#voice_call").click(function(e){
+	    	e.preventDefault();
 	    	if(window.localStream != null)
 	    	{
 
@@ -501,14 +558,17 @@
 
 			}
 	    });
-	    $("#hang_up").click(function(){
+	    $("#hang_up").click(function(e){
+	    	e.preventDefault();
 	    	$("#hang_up").hide();
 	    	$("#voice_call").show();
 	    });
-	    $("#end_voice_call").click(function(){
+	    $("#end_voice_call").click(function(e){
+	    	e.preventDefault();
 	    	call.close();
 	    });
-	    $("#take_tour").click(function(){
+	    $("#take_tour").click(function(e){
+	    	e.preventDefault();
 	    	takeTour();
 	    });
 
