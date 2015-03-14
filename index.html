@@ -38,24 +38,45 @@
 		<div style="text-align:center;">
 			<button class="btn btn-success btn-lg" id="take_tour">Take Tour</button>
 		</div>
+		<br>
 		<div class="container-fluid">
-			<div id="message"></div> 
-			<div id="my_id"></div>
-		</div>
+			<div class="form-horizontal">
+				<!-- <div id="message">Your ID is: <input type="text" id="my_id" size="15"></div>  -->
+				<div class="form-group">
+				    <label for="my_id" class="col-md-2 control-label">Your ID is: </label>
+				    <div class="col-md-4">
+				   		<input type="text" class="form-control" id="my_id">
+				   	</div>
+			 	</div>
+			 	<div class="form-group">
+				    <label for="my_id" class="col-md-2 control-label">Partner ID: </label>
+				    <div class="col-md-4">
+					    <input type="text" class="form-control" id="connect_id">
+					    <a href="#" class="btn btn-success" id="connect">connect</a>
+				    </div>
+			 	</div>
+					
+				
+			</div>
+			
+		</div>	
 		<div class="container-fluid">
 			
-				<div id="connect_div" class="col-md-3">
+				<!-- <div id="connect_div" class="col-md-3">
 		            <input type="text" placeholder="Connect user id..." id="connect_id">
 		            <a href="#" class="btn btn-success" id="connect">connect</a>
-	        	</div>
-	        	<div id="disconnect_div">
-	        		<div>
-	        			You are connected to: <span id="connected_id"></span>
-	        		</div>
-	        		<a href="#" class="btn btn-danger" id="disconnect">disconnect</a>
-	        		<a href="#" class="btn btn-success" id="voice_call">voice call</a>
-	        		<a href="#" class="btn btn-info" id="hang_up">cancel call</a>
-	        		<a href="#" class="btn btn-warning" id="end_voice_call">end voice</a>
+	        	</div> -->
+	        	<div class="row" style="text-align:center;">
+
+		        	<div id="disconnect_div">
+		        		<!-- <div>
+		        			You are connected to: <span id="connected_id"></span>
+		        		</div> -->
+		        		<a href="#" class="btn btn-danger" id="disconnect">disconnect</a>
+		        		<a href="#" class="btn btn-success" id="voice_call">voice call</a>
+		        		<a href="#" class="btn btn-info" id="hang_up">cancel call</a>
+		        		<a href="#" class="btn btn-warning" id="end_voice_call">end voice</a>
+		        	</div>
 	        	</div>
 
          </div>
@@ -251,7 +272,7 @@
 	    ]}});
 	    peer.on('open', function(){
 	    	console.log(peer.id);
-	    	$("#my_id").text("Your ID is: "+ peer.id);
+	    	$("#my_id").val(peer.id);
 	    	stat_my_id = peer.id;
 	    	updateMyStatus();
 	    	//$("#stat_my_id").text(peer.id);
@@ -330,7 +351,7 @@
 	    	updatePartnerStatus();
 	    	conn.on('open',function(){
 	    		console.log("Connected");
-	    		$("#connect_div").hide();
+	    		$("#connect").hide();
 	    		$("#disconnect_div").show();
 	    		
 		    	conn.on('data', function(data){
@@ -433,8 +454,10 @@
 	   		});
 	   		conn.on('close', function(){
 	   			console.log("Disconnected");
-	   			call.close();
-	   			$("#connect_div").show();
+	   			if(call){
+	   				call.close();
+	   			}
+	   			$("#connect").show();
 	    		$("#disconnect_div").hide();
 	   		});
 	    }
