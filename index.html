@@ -54,6 +54,7 @@
 	        		</div>
 	        		<a href="#" class="btn btn-danger" id="disconnect">disconnect</a>
 	        		<a href="#" class="btn btn-success" id="voice_call">voice call</a>
+	        		<a href="#" class="btn btn-info" id="hang_up">cancel call</a>
 	        		<a href="#" class="btn btn-warning" id="end_voice_call">end voice</a>
 	        	</div>
 
@@ -204,6 +205,7 @@
 		$("#voice").hide();
 		$("#disconnect_div").hide();
 		$("#end_voice_call").hide();
+		$("#hang_up").hide();
 		var video_width = $("#video_div").width();
 		var video_height = Math.round(video_width * 9 / 16);
 		//var previous_partner_seektime = 0;
@@ -264,17 +266,30 @@
 	    	
 	    });
 	    peer.on('call', function(call_in){
-	    	call = call_in;
-	      // Answer the call automatically (instead of prompting user) for demo purposes
+	      call = call_in;
 	      console.log("Received call");
+	      if(window.localStream == null){
+	      	get_mic();
+	      	conn.send('{"call_status": "mic_inactive"}');
+	      	$.prompt("There is an incoming voice call from your partner, but your microphone is not activated. Please activate your microphone.", {
+			title: "Activate your microphone",
+			buttons: { "OK": true}
+			//timeout: 20000,
+			});
+
+	      }
+	      else{
+	      // Answer the call automatically (instead of prompting user) for demo purposes
+	      
 	      $.prompt("There is an incoming voice call from your partner.", {
 			title: "Incoming call",
 			buttons: { "Answer": true, "Not now": false },
+			//timeout: 20000,
 			submit: function(e,v,m,f){
 				// use e.preventDefault() to prevent closing when needed or return false. 
 				// e.preventDefault(); 
 				if(v == true){
-					call.answer(window.localStream);
+				  call.answer(window.localStream);
 			      call.on('stream', function(stream){
 			        $('audio').prop('src', URL.createObjectURL(stream));
 			        $("#end_voice_call").show();
@@ -285,9 +300,13 @@
 				    $("#voice_call").show();
 			  	  });
 				}
+				else{
+					conn.send('{"call_status": "hang_up"}');
+				}
 				console.log("Value clicked was: "+ v);
 			}
-		});
+			});
+	 	 }
 	      
 	      //step3(call);
 	    });
@@ -316,6 +335,20 @@
 	    		
 		    	conn.on('data', function(data){
 		    		var message_json = jQuery.parseJSON(data);
+		    		if(message_json.call_status == "hang_up"){
+		    			call.close();
+		    			$("#hang_up").hide();
+		    			$("#voice_call").show();
+		    		}
+		    		if(message_json.call_status == "mic_inactive"){
+		    			call.close();
+		    			$("#hang_up").hide();
+		    			$("#voice_call").show();
+		    			$.prompt("Your partner's microphone is not activated. Please try again.", {
+							title: "Partner microphone inactive",
+							buttons: { "OK": true}
+						});
+		    		}
 		    		if(message_json.action_change == "paused" && !videoNode.paused){
 		    			videoNode.currentTime = message_json.time_of_movie;
 		    			videoNode.pause();
@@ -419,15 +452,20 @@
 	    $("#voice_call").click(function(){
 	    	if(window.localStream != null)
 	    	{
+
+	    		$("#voice_call").hide();
+	    		$("#hang_up").show();
 		    	call = peer.call($('#connect_id').val(), window.localStream);
 		    	call.on('stream', function(stream){
+		    		$("#hang_up").hide();
 			        $('audio').prop('src', URL.createObjectURL(stream));
 			        $("#end_voice_call").show();
 			        $("#voice_call").hide();
 			    });
 			    call.on('close', function(){
-		  	  	$("#end_voice_call").hide();
-			    $("#voice_call").show();
+			  	  	$("#end_voice_call").hide();
+				    $("#voice_call").show();
+				    $("#hang_up").hide();
 		  	 	});
 			}
 			else{
@@ -439,6 +477,10 @@
 				});
 
 			}
+	    });
+	    $("#hang_up").click(function(){
+	    	$("#hang_up").hide();
+	    	$("#voice_call").show();
 	    });
 	    $("#end_voice_call").click(function(){
 	    	call.close();
