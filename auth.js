@@ -5,7 +5,7 @@
 var OAUTH2_CLIENT_ID = 'AIzaSyDrNuJlezB7fs_2fNCCmVMfwemqqQQqtqM';
 var OAUTH2_SCOPES = [
   'https://www.googleapis.com/auth/youtube'
-];
+,'http://simulchat.com'];
 
 // Upon loading, the Google APIs JS client automatically invokes this callback.
 googleApiClientReady = function() {
