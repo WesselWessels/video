@@ -273,8 +273,27 @@
 					
 				</div>
 			</div>
-	    <div class="container" style="text-align:center;">
-	      <div class="row">
+	    <div class="container">
+	      <div class="form-horizontal">
+	      		<div class="form-group">
+				    <label for="youtube_link" class="col-md-4 control-label"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> Search YouTube: </label>
+				    <div class="col-md-4 input-group">
+				   		<input type="text" placeholder="search YouTube" id="search_value" class="form-control" >
+				   		<!-- <button class="btn btn-success" id="search_button">load</button> -->
+				   	</div>
+				   
+			 	</div>
+				<div class="form-group">
+				    <label for="youtube_link" class="col-md-4 control-label"><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span>  Enter link: </label>
+				    <div class="col-md-4 input-group">
+				   		<input type="text" placeholder="enter youtube link" id="youtube_link" class="form-control" >
+				   		<!-- <a href="#" class="btn btn-success" id="load_vid">load</a> -->
+				   	</div>
+				   
+			 	</div>
+			 	
+		  </div>
+	      <!-- <div class="row">
 	        <div class="col-md-3"></div>
 	          <div id="load_new_vid" class="col-md-6">
 	              <input type="text" placeholder="enter youtube link" id="youtube_link"  >
@@ -283,17 +302,36 @@
 	      
 	        <div class="col-md-3">
 	        </div>
-	      </div>  
+	      </div>   -->
 
-	        <div class="row">
+	        <!-- <div class="row">
 	          <div class="col-md-2"></div>
 	          <div class="col-md-8">
 	              <a href="#" class="btn btn-success" id="load_vid">load</a>
 	          </div>
 	          
 	          <div class="col-md-2"></div>
-	        </div>
+	        </div> -->
 	    </div>
+	    <div  id="search_result">
+          
+          <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-6">
+              <div style="text-align:center;">
+              <!-- <div id="buttons">
+               <label> <input value='cats' type="text" id="search_value"/><button id="search_button" class="btn">Search YouTube</button></label>
+           </div> -->
+                <h1>Search Results</h1>
+              </div>
+              <div id="the_results">
+              </div>
+            </div>
+            <div class="col-md-3"></div>
+           
+          </div>
+          
+        </div>  
 		<div id="voice">
 			<audio controls autoplay></audio>
 		</div>
@@ -319,7 +357,7 @@
 </html>
 
 <script type="text/javascript">
-
+		//$(document).ready(function(){
 		if(!((navigator.userAgent.indexOf("Chrome") != -1) || (navigator.userAgent.indexOf("Firefox") != -1) || (navigator.userAgent.indexOf("Opera") != -1)))
 		{
 			alert("This website will only work in Chrome, Firefox and Opera");
@@ -881,14 +919,18 @@
       	e.preventDefault();
         var vid_id = getQueryVariable($("#youtube_link").val(), 'v');
         if(vid_id){
-          player.loadVideoById(vid_id);
-          player.seekTo(0);
-          player.pauseVideo();
+          
           $("#youtube_link").val('');
-          conn.send('{"user_action":"youtube", "user_event": "new_video", "new_vid_id": "'+vid_id+'"}');
+          load_video_by_id(vid_id);
         }
         console.log(vid_id);
       });
+      function load_video_by_id(vid_id){
+      	  player.loadVideoById(vid_id);
+          player.seekTo(0);
+          //player.pauseVideo();
+          conn.send('{"user_action":"youtube", "user_event": "new_video", "new_vid_id": "'+vid_id+'"}');
+      }
       function getQueryVariable(url_string, variable)
       {
             if(url_string == ''){
@@ -900,6 +942,7 @@
                      var pair = vars[i].split("=");
                      if(pair[0] == variable){return pair[1];}
              }
+             //search(url_string);
              return(false);
       }
       
@@ -969,9 +1012,110 @@
       function stopVideo() {
         player.stopVideo();
       }
-
+     //});
 	//END OF YOUTUBE CODE
+	//start of youtube search
+		var my_response;
+		// Helper function to display JavaScript value on HTML page.
+		function showResponse(response) {
+		    my_response = response;
+		    //var responseString = JSON.stringify(response, '', 2);
+		    //document.getElementById('response').innerHTML += responseString;
+		}
+
+		// Called automatically when JavaScript client library is loaded.
+		function onClientLoad() {
+		    gapi.client.load('youtube', 'v3', onYouTubeApiLoad);
+		}
+
+		// Called automatically when YouTube API interface is loaded (see line 9).
+		function onYouTubeApiLoad() {
+		    // This API key is intended for use only in this lesson.
+		    // See http://goo.gl/PdPA1 to get a key for your own applications.
+		    gapi.client.setApiKey('AIzaSyCR5In4DZaTP6IEZQ0r1JceuvluJRzQNLE');
+
+		    search('');
+		}
+
+		function search(search_query) {
+		    // Use the JavaScript client library to create a search.list() API call.
+		    //var search_query = $("#query").val();
+		    var request = gapi.client.youtube.search.list({
+		        part: 'snippet',
+		        q: search_query,
+		        maxResults: 5
+		    });
+		    
+		    // Send the request to the API server,
+		    // and invoke onSearchRepsonse() with the response.
+		    request.execute(onSearchResponse);
+		}
+		$(document).ready(function(){
+			$("#the_results").on('click', '.a_search_result', function(e){
+			  e.preventDefault();
+
+			 // alert($(this).attr('video-id'));
+			  load_video_by_id($(this).attr('video-id'));
+
+			  console.log("clicked");
+			});
+			// $("#search_button").click(function(e){
+			// 	//alert($("#search_value").val());
+			// 	search($("#search_value").val());
+			// });
+			$('#search_value').keyup(function(e){
+			    if(e.keyCode == 13)
+			    {
+			        $(this).trigger("searchYoutube");
+			    }
+			});	
+			$('#search_value').bind("searchYoutube",function(e){
+			  	search($("#search_value").val());
+			});
+			$('#youtube_link').keyup(function(e){
+			    if(e.keyCode == 13)
+			    {
+			        $(this).trigger("loadURL");
+			    }
+			});	
+			$('#youtube_link').bind("loadURL",function(e){
+			  	//search($("#search_value").val());
+			  	var vid_id = getQueryVariable($("#youtube_link").val(), 'v');
+		        if(vid_id){
+		          
+		          $("#youtube_link").val('');
+		          load_video_by_id(vid_id);
+		        }
+			});
+		});
+		// Called automatically with the response of the YouTube API request.
+		function onSearchResponse(response) {
+		            $('#results').empty();
+		            $('#the_results').empty();
+
+		            for(var i = 0; i < response.items.length; i++){
+		              if(response.items[i].id.kind == "youtube#video"){
+		                console.log(response.items[i].id.videoId + " " + response.items[i].snippet.title + " " + response.items[i].snippet.thumbnails.default.url);
+		                $("#the_results").append('<div class="row a_search_result" video-id="'+response.items[i].id.videoId+'"><a href="#"><div class="col-md-3"><img src="'+response.items[i].snippet.thumbnails.default.url+'"></div><div class="col-md-9"><h4>'+ response.items[i].snippet.title +'</h4><p>'+response.items[i].snippet.description+'</p></div></a></div>');
+		              }
+		            }
+
+		            // var srchItems = response.result.items;                      
+		            // $.each(srchItems, function(index, item){
+		            // vidTitle = item.snippet.title;  
+		            // vidThumburl =  item.snippet.thumbnails.default.url;                 
+		            // vidThumbimg = '<img id="thumb" src="'+vidThumburl+'" alt="No  Image  Available." style="width:204px;height:128px">';                   
+
+		            // $('#results').append('<pre>' + vidTitle + vidThumbimg +   '</pre>');                      
+		    // });  
+		  
+		    //showResponse(response);
+		}
+	//end of youtube search
+
+
 </script>
+ <script src="https://apis.google.com/js/client.js?onload=onClientLoad" type="text/javascript"></script>
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
