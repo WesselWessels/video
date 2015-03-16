@@ -73,6 +73,7 @@
 					<a href="#section2"><button type="button" id="server_button" class="btn btn-danger navbar-btn" title="Connection with server"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span></button></a>
 		      		<a href="#section2"><button type="button" id="user_button" class="btn btn-danger navbar-btn" title="Connection with partner"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></button></a>
 		      		<a href="#call_section"><button type="button" id="call_button" class="btn btn-danger navbar-btn" title="Voice call"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span></button></a>
+		      		<a href="#call_section"><button type="button" id="video_call_button" class="btn btn-danger navbar-btn" title="Video call"><span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span></button></a>
 
 		    		<!-- <button type="button" id="video_call_button" class="btn btn-default navbar-btn"><span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span></button>
 		     		 <button type="button" id="play_status_button" class="btn btn-default navbar-btn"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></button> -->
@@ -175,26 +176,29 @@
 				<div class="row">
 					<div class="col-md-4"></div>
 					<div class="col-md-4">
-						<a href="#" class="btn btn-success" id="voice_call">voice call</a>
+						<a href="#" class="btn btn-success" id="voice_call"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span> voice call</a>
 				        <a href="#" class="btn btn-info" id="hang_up">cancel call</a>
 				        <a href="#" class="btn btn-warning" id="end_voice_call">end voice</a>
+				        <a href="#" class="btn btn-success" id="video_call"><span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span> video call</a>
+				        <a href="#" class="btn btn-info" id="hang_up_video">cancel video call</a>
+				        <a href="#" class="btn btn-warning" id="end_video_call">end video call</a>
 					</div>
 					<div class="col-md-4"></div>
 					
 				</div>
 			</div>
-			<!-- <div class="container">
+			<div class="container">
 				<div class="row">
 					<div class="col-md-8">
-						<video id="their-video" width="720" height="480" controls autoplay></video>
+						<video id="their-video" width="720" height="480" autoplay></video>
 					</div>
 					<div class="col-md-4" id="my-video-div">
-						<video id="my-video" muted="true" autoplay controls></video>
+						<video id="my-video" muted="true" width="180" height="120" autoplay></video>
+						
 					</div>
-					
 				</div>
 			</div>
-			 -->
+			
        		
 		</div>	
          </section>
@@ -429,6 +433,8 @@
 		$("#disconnect_div").hide();
 		$("#end_voice_call").hide();
 		$("#hang_up").hide();
+		$("#end_video_call").hide();
+		$("#hang_up_video").hide();
 		var video_width = $("#video_div").width();
 		var video_height = Math.round(video_width * 9 / 16);
 		//var previous_partner_seektime = 0;
@@ -446,6 +452,19 @@
 	        	updateMyStatus();
 	      	},function(){
 	      		console.log("Microphone not granted");
+	      	});
+		}
+		function get_cam(){
+			
+			navigator.getUserMedia({audio: true, video: true}, function(stream){
+	        	window.localStream = stream;
+	        	$('#my-video').prop('src', URL.createObjectURL(stream));
+	        	//$("#stat_my_mic").text("Active");
+	        	//stat_my_mic = "active";
+	        	//sendStatus();
+	        	//updateMyStatus();
+	      	},function(){
+	      		console.log("Video not granted");
 	      	});
 		}
 		function change_status_button(button, set){
@@ -548,49 +567,50 @@
 					});
 		 	 	}
 	 		}
-	 		// if(call.metadata == "video"){
-		  //     	if(window.localStream == null || window.localStream.getVideoTracks().length == 0){
-		  //     		get_mic();
-		  //     		conn.send('{"call_status": "camera_inactive"}');
-		  //     		$.prompt("There is an incoming video call from your partner, but your camera is not activated. Please activate your camera.", {
-				// 		title: "Activate your microphone",
-				// 		buttons: { "OK": true}
-				// 		//timeout: 20000,
-				// 	});
+	 		if(call.metadata == "video"){
+		      	if(window.localStream == null || window.localStream.getVideoTracks().length == 0){
+		      		get_cam();
+		      		conn.send('{"call_status": "cam_inactive"}');
+		      		$.prompt("There is an incoming video call from your partner, but your camera is not activated. Please activate your camera.", {
+						title: "Activate your Camera",
+						buttons: { "OK": true}
+						//timeout: 20000,
+					});
 
-		  //     	}
-		  //     	else{
-		  //     		$.prompt("There is an incoming voice call from your partner.", {
-				// 		title: "Incoming call",
-				// 		buttons: { "Answer": true, "Not now": false },
-				// 		//timeout: 20000,
-				// 		submit: function(e,v,m,f){
-				// 			// use e.preventDefault() to prevent closing when needed or return false. 
-				// 			// e.preventDefault(); 
-				// 			if(v == true){
-				// 		  		call.answer(window.localStream);
-				// 	      		call.on('stream', function(stream){
-				//     				window.remoteStream = stream;
+		      	}
+		      	else{
+		      		$.prompt("There is an incoming video call from your partner.", {
+						title: "Incoming video call",
+						buttons: { "Answer": true, "Not now": false },
+						//timeout: 20000,
+						submit: function(e,v,m,f){
+							// use e.preventDefault() to prevent closing when needed or return false. 
+							// e.preventDefault(); 
+							if(v == true){
+						  		call.answer(window.localStream);
+					      		call.on('stream', function(stream){
+				    				window.remoteStream = stream;
 
-				// 		      		change_status_button("call_button","green");
-				// 		        	$('audio').prop('src', URL.createObjectURL(stream));
-				// 		        	$("#end_voice_call").show();
-				// 			    	$("#voice_call").hide();
-				// 	  	 		});
-				//   	  			call.on('close', function(){
-				// 			      	change_status_button("call_button","red");
-				// 			  	  	$("#end_voice_call").hide();
-				// 				    $("#voice_call").show();
-				//   	  			});
-				// 			}
-				// 			else{
-				// 				conn.send('{"call_status": "hang_up"}');
-				// 			}
-				// 			console.log("Value clicked was: "+ v);
-				// 		}
-				// 	});
-		 	//  	}
-	 		// }
+						      		change_status_button("video_call_button","green");
+						        	$('#their-video').prop('src', URL.createObjectURL(stream));
+						        	$("#end_video_call").show();
+							    	$("#video_call").hide();
+							    	$("#hang_up_video").hide();
+					  	 		});
+				  	  			call.on('close', function(){
+							      	change_status_button("video_call_button","red");
+							  	  	$("#end_video_call").hide();
+								    $("#video_call").show();
+				  	  			});
+							}
+							else{
+								conn.send('{"call_status": "hang_up_video"}');
+							}
+							console.log("Value clicked was: "+ v);
+						}
+					});
+		 	 	}
+	 		}
 	    });
 		peer.on('disconnected', function(){
 			console.log("Disconnected from server");
@@ -623,16 +643,38 @@
 		    	conn.on('data', function(data){
 		    		var message_json = jQuery.parseJSON(data);
 		    		if(message_json.call_status == "hang_up"){
-		    			call.close();
+		    			if(call){
+	   						call.close();
+	   					}
 		    			$("#hang_up").hide();
 		    			$("#voice_call").show();
 		    		}
+		    		if(message_json.call_status == "hang_up_video"){
+		    			if(call){
+	   						call.close();
+	   					}
+		    			$("#hang_up_video").hide();
+		    			$("#video_call").show();
+		    		}
 		    		if(message_json.call_status == "mic_inactive"){
-		    			call.close();
+		    			if(call){
+	   						call.close();
+	   					}
 		    			$("#hang_up").hide();
 		    			$("#voice_call").show();
 		    			$.prompt("Your partner's microphone is not activated. Please try again.", {
 							title: "Partner microphone inactive",
+							buttons: { "OK": true}
+						});
+		    		}
+		    		if(message_json.call_status == "cam_inactive"){
+		    			if(call){
+	   						call.close();
+	   					}
+		    			$("#hang_up_video").hide();
+		    			$("#video_call").show();
+		    			$.prompt("Your partner's camera is not activated. Please try again.", {
+							title: "Partner camera inactive",
 							buttons: { "OK": true}
 						});
 		    		}
@@ -737,6 +779,9 @@
 	    });
 	    $("#voice_call").click(function(e){
 	    	e.preventDefault();
+	    	if(call != null){
+	    		call.close();
+	    	}
 	    	if(window.localStream != null)
 	    	{
 	    		$("#voice_call").hide();
@@ -765,14 +810,65 @@
 				});
 			}
 	    });
+		$("#video_call").click(function(e){
+	    	e.preventDefault();
+	    	if(call != null){
+	    		call.close();
+	    	}
+	    	
+	    	if(window.localStream != null && window.localStream.getVideoTracks().length >= 1)
+	    	{
+	    		$("#video_call").hide();
+	    		$("#hang_up_video").show();
+		    	call = peer.call($('#connect_id').val(), window.localStream, {metadata:'video'});
+		    	call.on('stream', function(stream){
+		    		window.remoteStream = stream;
+			      	change_status_button("video_call_button","green");
+		    		$("#hang_up_video").hide();
+			        $('#their-video').prop('src', URL.createObjectURL(stream));
+			        $("#end_video_call").show();
+			        //$("#voice_call").hide();
+			    });
+			    call.on('close', function(){
+			      	change_status_button("video_call_button","red");
+			  	  	$("#end_video_call").hide();
+				    $("#video_call").show();
+				    $("#hang_up_video").hide();
+		  	 	});
+			}
+			else{
+				get_cam();
+				$.prompt("Your browser is asking you to activate your camera. The popup should be somewhere on the top or bottom of your screen", {
+					title: "Activate Your Camera and try again.",
+					buttons: { "OK": true}
+				});
+			}
+	    });
 	    $("#hang_up").click(function(e){
 	    	e.preventDefault();
 	    	$("#hang_up").hide();
 	    	$("#voice_call").show();
+	    	conn.send('{"call_status": "hang_up"}');
+	    });
+	    $("#hang_up_video").click(function(e){
+	    	e.preventDefault();
+	    	$("#hang_up_video").hide();
+	    	$("#video_call").show();
+	    	conn.send('{"call_status": "hang_up_video"}');
 	    });
 	    $("#end_voice_call").click(function(e){
 	    	e.preventDefault();
-	    	call.close();
+	    	if(call){
+	    		call.close();
+	    	}
+	    	conn.send('{"call_status": "hang_up"}');
+	    });
+	    $("#end_video_call").click(function(e){
+	    	e.preventDefault();
+	    	if(call){
+	    		call.close();
+	    	}
+	    	conn.send('{"call_status": "hang_up_video"}');
 	    });
 	    $("#take_tour").click(function(e){
 	    	e.preventDefault();
