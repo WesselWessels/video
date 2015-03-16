@@ -36,6 +36,9 @@
           .link_button{
           	color:black;
           }
+          #my-video-div{
+          	vertical-align: bottom;
+          }
 			
 		</style>
 	</head>
@@ -180,6 +183,19 @@
 					
 				</div>
 			</div>
+			<!-- <div class="container">
+				<div class="row">
+					<div class="col-md-8">
+						<video id="their-video" width="720" height="480" controls autoplay></video>
+					</div>
+					<div class="col-md-4" id="my-video-div">
+						<video id="my-video" muted="true" autoplay controls></video>
+					</div>
+					
+				</div>
+			</div>
+			 -->
+       		
 		</div>	
          </section>
          <section class="container-fluid" id="section3">
@@ -423,16 +439,14 @@
 		function get_mic(){
 			
 			navigator.getUserMedia({audio: true, video: false}, function(stream){
-	        // Set your video displays
-	        //$('#my-video').prop('src', URL.createObjectURL(stream));
-	        window.localStream = stream;
-	        //$("#stat_my_mic").text("Active");
-	        stat_my_mic = "active";
-	        sendStatus();
-	        updateMyStatus();
-	      },function(){
-	      	console.log("Microphone not granted");
-	      });
+	        	window.localStream = stream;
+	        	//$("#stat_my_mic").text("Active");
+	        	stat_my_mic = "active";
+	        	sendStatus();
+	        	updateMyStatus();
+	      	},function(){
+	      		console.log("Microphone not granted");
+	      	});
 		}
 		function change_status_button(button, set){
 			$("#"+button).removeClass("btn-default btn-success btn-danger btn-warning");
@@ -450,7 +464,7 @@
 			}
 		}
 		get_mic();
-		 var words = ["the","name","very","through","and","just","form","much","great","think","you","say","that","help","low","was","line","for","before","turn","are","cause","with","same","mean","differ","his","move","they","right","boy","old","one","too","have","does","this","tell","from","sentence","set","had","three","want","hot","air","but","well","some","also","what","play","there","small","end","can","put","out","home","other","read","were","hand","all","port","your","large","when","spell","add","use","even","word","land","how","here","said","must","big","each","high","she","such","which","follow","act","their","why","time","ask","men","will","change","way","went","about","light","many","kind","then","off","them","need","would","house","write","picture","like","try","these","again","her","animal","long","point","make","mother","thing","world","see","near","him","build","two","self","has","earth","look","father","more","head","day","stand","could","own","page","come","should","did","country","found","sound","answer","school","most","grow","number","study","who","still","over","learn","know","plant","water","cover","than","food","call","sun","first","four","people","thought","may","let","down","keep","side","eye","been","never","now","last","find","door","any","between","new","city","work","tree","part","cross","take","since","get","hard","place","start","made","might","live","story","where","saw","after","far","back","sea","little","draw","only","left","round","late","man","run","year","came","while","show","press","every","close","good","night","real","give","life","our","few","under","stop","open","ten","seem","simple","together","several","next","vowel","white","toward","children","war","begin","lay","got","against","walk","pattern","example","slow","ease","center","paper","love","often","person","always","money","music","serve","those","appear","both","road","mark","map","book","science","letter","rule","until","govern","mile","pull","river","cold","car","notice","feet","voice","care","fall","second","power","group","town","carry","fine","took","certain","rain","fly","eat","unit","room","lead","friend","cry","began","dark","idea","machine","fish","note","mountain","wait","north","plan","once","figure","base","star","hear","box","horse","noun","cut","field","sure","rest","watch","correct","color","able","face","pound","wood","done","main","beauty","enough","drive","plain","stood","girl","contain","usual","front","young","teach","ready","week","above","final","ever","gave","red","green","list","though","quick","feel","develop","talk","sleep","bird","warm","soon","free","body","minute","dog","strong","family","special","direct","mind","pose","behind","leave","clear","song","tail","measure","produce","state","fact","product","street","black","inch","short","lot","numeral","nothing","class","course","wind","stay","question","wheel","happen","full","complete","force","ship","blue","area","object","half","decide","rock","surface","order","deep","fire","moon","south","island","problem","foot","piece","yet","told","busy","knew","test","pass","record","farm","boat","top","common","whole","gold","king","possible","size","plane","heard","age","best","dry","hour","wonder","better","laugh","true.","thousand","during","ago","hundred","ran","check","remember","game","step","shape","early","yes","hold","hot","west","miss","ground","brought","interest","heat","reach","snow","fast","bed","five","bring","sing","sit","listen","perhaps","six","fill","table","east","travel","weight","less","language","morning","among"];
+		var words = ["the","name","very","through","and","just","form","much","great","think","you","say","that","help","low","was","line","for","before","turn","are","cause","with","same","mean","differ","his","move","they","right","boy","old","one","too","have","does","this","tell","from","sentence","set","had","three","want","hot","air","but","well","some","also","what","play","there","small","end","can","put","out","home","other","read","were","hand","all","port","your","large","when","spell","add","use","even","word","land","how","here","said","must","big","each","high","she","such","which","follow","act","their","why","time","ask","men","will","change","way","went","about","light","many","kind","then","off","them","need","would","house","write","picture","like","try","these","again","her","animal","long","point","make","mother","thing","world","see","near","him","build","two","self","has","earth","look","father","more","head","day","stand","could","own","page","come","should","did","country","found","sound","answer","school","most","grow","number","study","who","still","over","learn","know","plant","water","cover","than","food","call","sun","first","four","people","thought","may","let","down","keep","side","eye","been","never","now","last","find","door","any","between","new","city","work","tree","part","cross","take","since","get","hard","place","start","made","might","live","story","where","saw","after","far","back","sea","little","draw","only","left","round","late","man","run","year","came","while","show","press","every","close","good","night","real","give","life","our","few","under","stop","open","ten","seem","simple","together","several","next","vowel","white","toward","children","war","begin","lay","got","against","walk","pattern","example","slow","ease","center","paper","love","often","person","always","money","music","serve","those","appear","both","road","mark","map","book","science","letter","rule","until","govern","mile","pull","river","cold","car","notice","feet","voice","care","fall","second","power","group","town","carry","fine","took","certain","rain","fly","eat","unit","room","lead","friend","cry","began","dark","idea","machine","fish","note","mountain","wait","north","plan","once","figure","base","star","hear","box","horse","noun","cut","field","sure","rest","watch","correct","color","able","face","pound","wood","done","main","beauty","enough","drive","plain","stood","girl","contain","usual","front","young","teach","ready","week","above","final","ever","gave","red","green","list","though","quick","feel","develop","talk","sleep","bird","warm","soon","free","body","minute","dog","strong","family","special","direct","mind","pose","behind","leave","clear","song","tail","measure","produce","state","fact","product","street","black","inch","short","lot","numeral","nothing","class","course","wind","stay","question","wheel","happen","full","complete","force","ship","blue","area","object","half","decide","rock","surface","order","deep","fire","moon","south","island","problem","foot","piece","yet","told","busy","knew","test","pass","record","farm","boat","top","common","whole","gold","king","possible","size","plane","heard","age","best","dry","hour","wonder","better","laugh","true.","thousand","during","ago","hundred","ran","check","remember","game","step","shape","early","yes","hold","hot","west","miss","ground","brought","interest","heat","reach","snow","fast","bed","five","bring","sing","sit","listen","perhaps","six","fill","table","east","travel","weight","less","language","morning","among"];
 	    //alert(words[Math.floor(Math.random()*words.length)]);
 	    var random_id = words[Math.floor(Math.random()*words.length)]+"-"+words[Math.floor(Math.random()*words.length)]+"-"+Math.floor(Math.random()*980+10);
     	var peer = new Peer(random_id,{ key: 'yqyt65uodybbuik9', debug: 3, config: {'iceServers': [
@@ -485,57 +499,98 @@
 	    	$("#connect_id").val(conn.peer);
 	    	//$("#connected_id").text("hello");
 	    	//alert(conn.peer);
-	    	my_connect(conn);
-	    	
+	    	my_connect(conn);	
 	    });
 	    peer.on('call', function(call_in){
-	      call = call_in;
-	      console.log("Received call");
-	      if(window.localStream == null){
-	      	get_mic();
-	      	conn.send('{"call_status": "mic_inactive"}');
-	      	$.prompt("There is an incoming voice call from your partner, but your microphone is not activated. Please activate your microphone.", {
-			title: "Activate your microphone",
-			buttons: { "OK": true}
-			//timeout: 20000,
-			});
+	      	call = call_in;
+	      	console.log("Received call");
+	      	console.log(call.metadata);
+	      	if(call.metadata == "voice"){
+		      	if(window.localStream == null || window.localStream.getAudioTracks().length == 0){
+		      		get_mic();
+		      		conn.send('{"call_status": "mic_inactive"}');
+		      		$.prompt("There is an incoming voice call from your partner, but your microphone is not activated. Please activate your microphone.", {
+						title: "Activate your microphone",
+						buttons: { "OK": true}
+						//timeout: 20000,
+					});
 
-	      }
-	      else{
-	      // Answer the call automatically (instead of prompting user) for demo purposes
-	      
-	      $.prompt("There is an incoming voice call from your partner.", {
-			title: "Incoming call",
-			buttons: { "Answer": true, "Not now": false },
-			//timeout: 20000,
-			submit: function(e,v,m,f){
-				// use e.preventDefault() to prevent closing when needed or return false. 
-				// e.preventDefault(); 
-				if(v == true){
-				  call.answer(window.localStream);
-			      call.on('stream', function(stream){
-		    		window.remoteStream = stream;
+		      	}
+		      	else{
+		      		$.prompt("There is an incoming voice call from your partner.", {
+						title: "Incoming call",
+						buttons: { "Answer": true, "Not now": false },
+						//timeout: 20000,
+						submit: function(e,v,m,f){
+							// use e.preventDefault() to prevent closing when needed or return false. 
+							// e.preventDefault(); 
+							if(v == true){
+						  		call.answer(window.localStream);
+					      		call.on('stream', function(stream){
+				    				window.remoteStream = stream;
 
-			      	change_status_button("call_button","green");
-			        $('audio').prop('src', URL.createObjectURL(stream));
-			        $("#end_voice_call").show();
-				    $("#voice_call").hide();
-			  	  });
-			  	  call.on('close', function(){
-			      	change_status_button("call_button","red");
-			  	  	$("#end_voice_call").hide();
-				    $("#voice_call").show();
-			  	  });
-				}
-				else{
-					conn.send('{"call_status": "hang_up"}');
-				}
-				console.log("Value clicked was: "+ v);
-			}
-			});
-	 	 }
-	      
-	      //step3(call);
+						      		change_status_button("call_button","green");
+						        	$('audio').prop('src', URL.createObjectURL(stream));
+						        	$("#end_voice_call").show();
+							    	$("#voice_call").hide();
+					  	 		});
+				  	  			call.on('close', function(){
+							      	change_status_button("call_button","red");
+							  	  	$("#end_voice_call").hide();
+								    $("#voice_call").show();
+				  	  			});
+							}
+							else{
+								conn.send('{"call_status": "hang_up"}');
+							}
+							console.log("Value clicked was: "+ v);
+						}
+					});
+		 	 	}
+	 		}
+	 		// if(call.metadata == "video"){
+		  //     	if(window.localStream == null || window.localStream.getVideoTracks().length == 0){
+		  //     		get_mic();
+		  //     		conn.send('{"call_status": "camera_inactive"}');
+		  //     		$.prompt("There is an incoming video call from your partner, but your camera is not activated. Please activate your camera.", {
+				// 		title: "Activate your microphone",
+				// 		buttons: { "OK": true}
+				// 		//timeout: 20000,
+				// 	});
+
+		  //     	}
+		  //     	else{
+		  //     		$.prompt("There is an incoming voice call from your partner.", {
+				// 		title: "Incoming call",
+				// 		buttons: { "Answer": true, "Not now": false },
+				// 		//timeout: 20000,
+				// 		submit: function(e,v,m,f){
+				// 			// use e.preventDefault() to prevent closing when needed or return false. 
+				// 			// e.preventDefault(); 
+				// 			if(v == true){
+				// 		  		call.answer(window.localStream);
+				// 	      		call.on('stream', function(stream){
+				//     				window.remoteStream = stream;
+
+				// 		      		change_status_button("call_button","green");
+				// 		        	$('audio').prop('src', URL.createObjectURL(stream));
+				// 		        	$("#end_voice_call").show();
+				// 			    	$("#voice_call").hide();
+				// 	  	 		});
+				//   	  			call.on('close', function(){
+				// 			      	change_status_button("call_button","red");
+				// 			  	  	$("#end_voice_call").hide();
+				// 				    $("#voice_call").show();
+				//   	  			});
+				// 			}
+				// 			else{
+				// 				conn.send('{"call_status": "hang_up"}');
+				// 			}
+				// 			console.log("Value clicked was: "+ v);
+				// 		}
+				// 	});
+		 	//  	}
+	 		// }
 	    });
 		peer.on('disconnected', function(){
 			console.log("Disconnected from server");
@@ -556,7 +611,6 @@
 	    }
 	    function my_connect(connection){
 	    	conn = connection;
-	    	
 	    	conn.on('open',function(){
 	    		$("#connected_id").text(conn.peer);
 	    		stat_partner_id = conn.peer;
@@ -600,7 +654,6 @@
 		    					videoNode.currentTime = message_json.time_of_movie;
 		    				}
 		    			}
-		    			//videoNode.play();
 		    		}
 		    		if(message_json.stat_mic != null)
 		    		{
@@ -609,7 +662,6 @@
 		    		if(message_json.stat_video != null)
 		    		{
 		    			stat_partner_video = message_json.stat_video;
-
 		    		}
 		    		if(message_json.stat_size != null)
 		    		{
@@ -642,22 +694,18 @@
 		    				}
 		    			}	
 		    			if(user_event == 'seeked'){
-		    				
 		    				if(Math.abs(player.getCurrentTime() - message_json.youtube_time) > 1)
 		    				{
 		    					player.seekTo(message_json.youtube_time);
 		    					time = message_json.youtube_time;
-
 		    				}
 		    			}
 		    			if(user_event == 'new_video'){
-		    				
 		    				player.loadVideoById(message_json.new_vid_id);
 				          	player.seekTo(0);
 				          	player.pauseVideo();
 		    			}	
 		    			partner_previous_state = user_event;
-
 		    		}
 		    		updatePartnerStatus();
 		    		console.log('Received ' + data);
@@ -691,7 +739,6 @@
 	    	e.preventDefault();
 	    	if(window.localStream != null)
 	    	{
-
 	    		$("#voice_call").hide();
 	    		$("#hang_up").show();
 		    	call = peer.call($('#connect_id').val(), window.localStream, {metadata:'voice'});
@@ -715,9 +762,7 @@
 				$.prompt("Your browser is asking you to activate your microphone. The popup should be somewhere on the top or bottom of your screen", {
 					title: "Activate Your Microphone and try again.",
 					buttons: { "OK": true}
-
 				});
-
 			}
 	    });
 	    $("#hang_up").click(function(e){
@@ -918,43 +963,40 @@
 	//YOUTUBE CODE
 		var my_timer;
       
-      $("#the_player").hover(function(){
-       // $("#the_player").css("background-color", "yellow");
-        console.log("inside");
-        time = player.getCurrentTime();
-         my_timer = setInterval(function () {
-            var cur_time = player.getCurrentTime();
-            
-            if (Math.abs(time-cur_time) > 1) {
-                console.log("seeked from "+ time + " to " + cur_time);
-                conn.send('{"user_action":"youtube", "user_event": "seeked", "youtube_time": "'+player.getCurrentTime()+'"}');
-            }
-            time = cur_time;
-        }, 100);
+     	$("#the_player").hover(function(){
+       		// $("#the_player").css("background-color", "yellow");
+       		console.log("inside");
+        	time = player.getCurrentTime();
+         	my_timer = setInterval(function () {
+            	var cur_time = player.getCurrentTime();
+				if (Math.abs(time-cur_time) > 1) {
+	                console.log("seeked from "+ time + " to " + cur_time);
+	                conn.send('{"user_action":"youtube", "user_event": "seeked", "youtube_time": "'+player.getCurrentTime()+'"}');
+            	}
+           		time = cur_time;
+        	}, 100);
         },function(){
         // $("#the_player").css("background-color", "pink");
-        console.log("outside");
-        clearInterval(my_timer);
-
-    });
-      $("#load_vid").click(function(e){
-      	e.preventDefault();
-        var vid_id = getQueryVariable($("#youtube_link").val(), 'v');
-        if(vid_id){
-          
-          $("#youtube_link").val('');
-          load_video_by_id(vid_id);
-        }
-        console.log(vid_id);
-      });
-      function load_video_by_id(vid_id){
-      	  player.loadVideoById(vid_id);
-          player.seekTo(0);
-          //player.pauseVideo();
-          conn.send('{"user_action":"youtube", "user_event": "new_video", "new_vid_id": "'+vid_id+'"}');
-      }
-      function getQueryVariable(url_string, variable)
-      {
+	        console.log("outside");
+	        clearInterval(my_timer);
+   		 });
+      	$("#load_vid").click(function(e){
+	      	e.preventDefault();
+	        var vid_id = getQueryVariable($("#youtube_link").val(), 'v');
+	        if(vid_id){
+	          	$("#youtube_link").val('');
+	          	load_video_by_id(vid_id);
+	        }
+	        console.log(vid_id);
+      	});
+      	function load_video_by_id(vid_id){
+      	  	player.loadVideoById(vid_id);
+          	player.seekTo(0);
+          	//player.pauseVideo();
+          	conn.send('{"user_action":"youtube", "user_event": "new_video", "new_vid_id": "'+vid_id+'"}');
+      	}
+      	function getQueryVariable(url_string, variable)
+      	{
             if(url_string == ''){
               return(false);
             }
@@ -966,96 +1008,68 @@
              }
              //search(url_string);
              return(false);
-      }
-      
-      var tag = document.createElement('script');
-
-      tag.src = "https://www.youtube.com/iframe_api?autohide=1";
-      var firstScriptTag = document.getElementsByTagName('script')[0];
-      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+      	}
+      	var tag = document.createElement('script');
+      	tag.src = "https://www.youtube.com/iframe_api?autohide=1";
+      	var firstScriptTag = document.getElementsByTagName('script')[0];
+      	firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
       // 3. This function creates an <iframe> (and YouTube player)
       //    after the API code downloads.
-      
-      
-      function onYouTubeIframeAPIReady() {
-        player = new YT.Player('player', {
-          height: '390',
-          width: '640',
-          playerVars: { 'autoplay': 0, 'rel':0},
-          videoId: 'n5scparvQWE',
-          events: {
-            'onReady': onPlayerReady,
-            'onStateChange': onPlayerStateChange
-          }
-        });
-        
-      }
+      	function onYouTubeIframeAPIReady() {
+        	player = new YT.Player('player', {
+          		height: '390',
+          		width: '640',
+          		playerVars: { 'autoplay': 0, 'rel':0},
+          		videoId: 'n5scparvQWE',
+          		events: {
+            		'onReady': onPlayerReady,
+            		'onStateChange': onPlayerStateChange
+         		}
+        	});
+      	}
 
-      // 4. The API will call this function when the video player is ready.
-      function onPlayerReady(event) {
-       
-        
-        //event.target.playVideo();
-        console.log("video ready");
-      }
+      	// 4. The API will call this function when the video player is ready.
+      	function onPlayerReady(event) {
+        	//event.target.playVideo();
+        	console.log("video ready");
+     	}
 
-      // 5. The API calls this function when the player's state changes.
-      //    The function indicates that when playing a video (state=1),
-      //    the player should play for six seconds and then stop.
-      var done = false;
-      function onPlayerStateChange(event) {
-        // if (event.data == YT.PlayerState.PLAYING && !done) {
-        //   setTimeout(stopVideo, 6000);
-        //   done = true;
-        // }
-        // if(event.data == YT.PlayerState.PAUSED){
-	       //  if(partner_previous_state != YT.PlayerState.BUFFERING){
-	       		 conn.send('{"user_action":"youtube", "user_event": "'+event.data+'", "youtube_time": "'+player.getCurrentTime()+'"}');
-
-	       		 if(event.data == YT.PlayerState.BUFFERING && previous_state == YT.PlayerState.PLAYING){
-
-	       		 	restart_after_buffer = setTimeout(function(){ player.playVideo();
-	       		 		console.log("restarted");
-	       		 	}, 2000);
-	       		 }
-	       		 if(event.data == YT.PlayerState.PAUSED && previous_state == YT.PlayerState.BUFFERING)
-	       		{	
-	       			clearTimeout(restart_after_buffer);
-	       		}
-	       		 previous_state = event.data;
-	    //    	}
-	    // }
-    	// else{
-    	// 	conn.send('{"user_action":"youtube", "user_event": "'+event.data+'", "youtube_time": "'+player.getCurrentTime()+'"}');
-    	// }
-        console.log(event.data);
-      }
-      function stopVideo() {
-        player.stopVideo();
-      }
+	    // 5. The API calls this function when the player's state changes.
+	    //    The function indicates that when playing a video (state=1),
+	    //    the player should play for six seconds and then stop.
+	    var done = false;
+	    function onPlayerStateChange(event) {  
+	       	conn.send('{"user_action":"youtube", "user_event": "'+event.data+'", "youtube_time": "'+player.getCurrentTime()+'"}');
+	       	if(event.data == YT.PlayerState.BUFFERING && previous_state == YT.PlayerState.PLAYING){
+       		 	restart_after_buffer = setTimeout(function(){ player.playVideo();
+       		 		console.log("restarted");
+       		 	}, 2000);
+	       	}
+	       	if(event.data == YT.PlayerState.PAUSED && previous_state == YT.PlayerState.BUFFERING){	
+       			clearTimeout(restart_after_buffer);
+       		}
+	       	previous_state = event.data;
+        	console.log(event.data);
+      	}
+      	function stopVideo() {
+        	player.stopVideo();
+      	}
      //});
 	//END OF YOUTUBE CODE
 	//start of youtube search
 		var my_response;
-		// Helper function to display JavaScript value on HTML page.
+
 		function showResponse(response) {
 		    my_response = response;
-		    //var responseString = JSON.stringify(response, '', 2);
-		    //document.getElementById('response').innerHTML += responseString;
 		}
 
-		// Called automatically when JavaScript client library is loaded.
 		function onClientLoad() {
 		    gapi.client.load('youtube', 'v3', onYouTubeApiLoad);
 		}
 
-		// Called automatically when YouTube API interface is loaded (see line 9).
 		function onYouTubeApiLoad() {
-		    // This API key is intended for use only in this lesson.
-		    // See http://goo.gl/PdPA1 to get a key for your own applications.
 		    gapi.client.setApiKey('AIzaSyCR5In4DZaTP6IEZQ0r1JceuvluJRzQNLE');
-
 		    search('');
 		}
 
@@ -1067,19 +1081,14 @@
 		        q: search_query,
 		        maxResults: 5
 		    });
-		    
-		    // Send the request to the API server,
-		    // and invoke onSearchRepsonse() with the response.
+
 		    request.execute(onSearchResponse);
 		}
 		$(document).ready(function(){
 			$("#the_results").on('click', '.a_search_result', function(e){
-			  e.preventDefault();
-
-			 // alert($(this).attr('video-id'));
-			  load_video_by_id($(this).attr('video-id'));
-
-			  console.log("clicked");
+			  	e.preventDefault();
+			  	load_video_by_id($(this).attr('video-id'));
+			  	console.log("clicked");
 			});
 			// $("#search_button").click(function(e){
 			// 	//alert($("#search_value").val());
@@ -1104,34 +1113,22 @@
 			  	//search($("#search_value").val());
 			  	var vid_id = getQueryVariable($("#youtube_link").val(), 'v');
 		        if(vid_id){
-		          
-		          $("#youtube_link").val('');
-		          load_video_by_id(vid_id);
+		          	$("#youtube_link").val('');
+		          	load_video_by_id(vid_id);
 		        }
 			});
 		});
 		// Called automatically with the response of the YouTube API request.
 		function onSearchResponse(response) {
-		            $('#results').empty();
-		            $('#the_results').empty();
+		    $('#results').empty();
+            $('#the_results').empty();
 
-		            for(var i = 0; i < response.items.length; i++){
-		              if(response.items[i].id.kind == "youtube#video"){
-		                console.log(response.items[i].id.videoId + " " + response.items[i].snippet.title + " " + response.items[i].snippet.thumbnails.default.url);
-		                $("#the_results").append('<div class="row a_search_result" video-id="'+response.items[i].id.videoId+'"><a href="#"><div class="col-md-3"><img src="'+response.items[i].snippet.thumbnails.default.url+'"></div><div class="col-md-9"><h4>'+ response.items[i].snippet.title +'</h4><p>'+response.items[i].snippet.channelTitle+'</p></div></a></div>');
-		              }
-		            }
-
-		            // var srchItems = response.result.items;                      
-		            // $.each(srchItems, function(index, item){
-		            // vidTitle = item.snippet.title;  
-		            // vidThumburl =  item.snippet.thumbnails.default.url;                 
-		            // vidThumbimg = '<img id="thumb" src="'+vidThumburl+'" alt="No  Image  Available." style="width:204px;height:128px">';                   
-
-		            // $('#results').append('<pre>' + vidTitle + vidThumbimg +   '</pre>');                      
-		    // });  
-		  
-		    //showResponse(response);
+            for(var i = 0; i < response.items.length; i++){
+              	if(response.items[i].id.kind == "youtube#video"){
+                	console.log(response.items[i].id.videoId + " " + response.items[i].snippet.title + " " + response.items[i].snippet.thumbnails.default.url);
+                	$("#the_results").append('<div class="row a_search_result" video-id="'+response.items[i].id.videoId+'"><a href="#"><div class="col-md-3"><img src="'+response.items[i].snippet.thumbnails.default.url+'"></div><div class="col-md-9"><h4>'+ response.items[i].snippet.title +'</h4><p>'+response.items[i].snippet.channelTitle+'</p></div></a></div>');
+             	}
+            }
 		}
 	//end of youtube search
 
