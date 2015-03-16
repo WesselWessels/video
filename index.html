@@ -33,6 +33,9 @@
 			.a_search_result{
             padding-bottom: 5px;
           }
+          .link_button{
+          	color:black;
+          }
 			
 		</style>
 	</head>
@@ -55,6 +58,7 @@
 		    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 		      <ul class="nav navbar-nav">
 		        <li ><a href="#section2">Connect<span class="sr-only">(current)</span></a></li>
+		        <li ><a href="#call_section">Call<span class="sr-only">(current)</span></a></li>
 		        <li ><a href="#section3">Watch Video<span class="sr-only">(current)</span></a></li>
 		        <li ><a href="#section4">Watch YouTube<span class="sr-only">(current)</span></a></li>
 		        <li ><a href="#section5">IRC Chat<span class="sr-only">(current)</span></a></li>
@@ -63,9 +67,9 @@
 
 		      </ul>
 				<div class="nav navbar-nav navbar-right">
-					<button type="button" id="server_button" class="btn btn-default navbar-btn" title="Connection with server"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span></button>
-		      		<button type="button" id="user_button" class="btn btn-default navbar-btn" title="Connection with partner"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></button>
-		      		<button type="button" id="call_button" class="btn btn-default navbar-btn" title="Voice call"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span></button>
+					<a href="#section2"><button type="button" id="server_button" class="btn btn-danger navbar-btn" title="Connection with server"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span></button></a>
+		      		<a href="#section2"><button type="button" id="user_button" class="btn btn-danger navbar-btn" title="Connection with partner"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></button></a>
+		      		<a href="#call_section"><button type="button" id="call_button" class="btn btn-danger navbar-btn" title="Voice call"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span></button></a>
 
 		    		<!-- <button type="button" id="video_call_button" class="btn btn-default navbar-btn"><span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span></button>
 		     		 <button type="button" id="play_status_button" class="btn btn-default navbar-btn"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></button> -->
@@ -123,9 +127,7 @@
 				        			You are connected to: <span id="connected_id"></span>
 				        		</div> -->
 				        		<a href="#" class="btn btn-danger" id="disconnect">disconnect</a>
-				        		<a href="#" class="btn btn-success" id="voice_call">voice call</a>
-				        		<a href="#" class="btn btn-info" id="hang_up">cancel call</a>
-				        		<a href="#" class="btn btn-warning" id="end_voice_call">end voice</a>
+				        		
 				        		</span>
 						    </div>
 					 	</div>	
@@ -162,6 +164,23 @@
 	        	</div>
 
          </div>
+         </section>
+         <section class="container-fluid" id="call_section">
+         	<div style="text-align:center;">			
+			<h1>Talk to each other</h1>
+			<div class="container">
+				<div class="row">
+					<div class="col-md-4"></div>
+					<div class="col-md-4">
+						<a href="#" class="btn btn-success" id="voice_call">voice call</a>
+				        <a href="#" class="btn btn-info" id="hang_up">cancel call</a>
+				        <a href="#" class="btn btn-warning" id="end_voice_call">end voice</a>
+					</div>
+					<div class="col-md-4"></div>
+					
+				</div>
+			</div>
+		</div>	
          </section>
          <section class="container-fluid" id="section3">
          <div style="text-align:center;">			
@@ -675,7 +694,7 @@
 
 	    		$("#voice_call").hide();
 	    		$("#hang_up").show();
-		    	call = peer.call($('#connect_id').val(), window.localStream);
+		    	call = peer.call($('#connect_id').val(), window.localStream, {metadata:'voice'});
 		    	call.on('stream', function(stream){
 		    		window.remoteStream = stream;
 			      	change_status_button("call_button","green");

@@ -92,7 +92,10 @@ a.list-group-item.active,[class*='-info'] {
 	background-color: #168ccc;
     color:#ddd;
 }
-
+#call_section {
+    background-color: #1B9CE0;
+    color:#ddd;
+}
 footer {
 	background-color:#494949;
     color:#ddd;
