@@ -87,6 +87,9 @@
 			.me_shout_msg{
 				color:#5CB85C;
 			}
+			.alert_shout_msg{
+				color:#DB524B;
+			}
 			.message_box:last-child { border-bottom:none;
 			}
 			time{ 
@@ -98,6 +101,9 @@
 			}
 			.shout_msg .my_username{
 				color:#5CB85C;
+			}
+			.shout_msg .alert_msg{
+				color:#DB524B;
 			}
 			.user_info input {
 			width: 98%; height: 25px; border: 1px solid #CCC; border-top: none; padding: 3px 0px 0px 3px;
@@ -465,7 +471,7 @@
 		<!-- shoutbox -->
 			<!-- CREDIT: http://www.sanwebe.com/2013/04/creating-shout-box-facebook-style -->
 			<div class="shout_box">
-			<div class="header">Text Chat <div class="close_btn">&nbsp;</div></div>
+			<div class="header">Text Chat <span class="badge" id="unread_badge"></span><div class="close_btn">&nbsp;</div></div>
 			  <div class="toggle_chat" style="display: none;">
 			  <div class="message_box">
 			    </div>
@@ -509,6 +515,8 @@
 		var stat_partner_mic = "-";
 		var stat_partner_video = "-";
 		var stat_partner_size = "-";
+
+		var unread_messages = 0;
 		updateMyStatus();
 		updatePartnerStatus();
 		$("#voice").hide();
@@ -562,6 +570,16 @@
 			}
 			else{
 				$("#"+button).addClass("btn-default");
+			}
+		}
+		function update_badge(){
+			if(unread_messages == 0 || $(".toggle_chat").css('display') == "block"){
+				unread_messages = 0; //unsure if this is needed
+				$("#unread_badge").text('');
+			}
+			else{
+				//unread_messages = unread_messages +1;
+				$("#unread_badge").text(unread_messages);
 			}
 		}
 		get_mic();
@@ -736,6 +754,8 @@
 						var scrolltoh = $('.message_box')[0].scrollHeight;
 						$('.message_box').scrollTop(scrolltoh);
 		    			console.log(received_message);
+		    			unread_messages = unread_messages +1;
+		    			update_badge();
 		    		}
 		    		if(message_json.call_status == "hang_up"){
 		    			if(call){
@@ -1333,11 +1353,14 @@
 				if(toggleState == 'block')
 				{
 					$(".header div").attr('class', 'open_btn');
+
 				}else{
 					$(".header div").attr('class', 'close_btn');
+					$("#shout_message").focus();
 				}
 				var scrolltoh = $('.message_box')[0].scrollHeight;
 				$('.message_box').scrollTop(scrolltoh);
+				update_badge();
 				 
 				 
 			});
@@ -1349,13 +1372,9 @@
 						console.log(to_send);
 						var to_send = JSON.stringify(to_send);
 						console.log(to_send);
-						if(conn != null){
+						if(conn != null && conn.open == true){
 							conn.send(to_send);
-						}
-						//post_data = {'username':iusername, 'message':imessage};
-					 	
-						//send data to "shout.php" using jQuery $.post()
-						//$.post('shout.php', post_data, function(data) {
+							$('.alert_shout_msg').remove();
 							var d= new Date();
 							var msg_time = d.toLocaleTimeString();
 							var data = '<div class="shout_msg me_shout_msg"><time>'+msg_time+'</time><span class="username my_username">You</span><span class="message">'+imessage+'</span></div>';
@@ -1368,6 +1387,25 @@
 							
 							//reset value of message box
 							$('#shout_message').val('');
+						}
+						else{
+							$('.alert_shout_msg').remove();
+							var d= new Date();
+							var msg_time = d.toLocaleTimeString();
+							var data = '<div class="shout_msg alert_shout_msg"><time>'+msg_time+'</time><span class="username alert_msg">Alert</span><span class="message alert_msg">You are not connected</span></div>';
+							//append data into messagebox with jQuery fade effect!
+							$(data).hide().appendTo('.message_box').fadeIn();
+			
+							//keep scrolled to bottom of chat!
+							var scrolltoh = $('.message_box')[0].scrollHeight;
+							$('.message_box').scrollTop(scrolltoh);
+
+						}
+						//post_data = {'username':iusername, 'message':imessage};
+					 	
+						//send data to "shout.php" using jQuery $.post()
+						//$.post('shout.php', post_data, function(data) {
+							
 							
 						// }).fail(function(err) { 
 						
