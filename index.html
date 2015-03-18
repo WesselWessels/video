@@ -13,6 +13,7 @@
 		<script src="js/bootstrap.js"></script>
 		<script src="js/scripts.js"></script>
  		<script type="text/javascript" src="http://cdn.peerjs.com/0.3/peer.js"></script>
+ 		<script type="text/javascript" src="js/jquery.linkify.min.js"></script>
 		<style type="text/css">
 			video, input {
 			    display: block;
@@ -516,6 +517,8 @@
 		var stat_partner_video = "-";
 		var stat_partner_size = "-";
 
+		var regex = /(https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w\/_\.]*(\?\S+)?)?)?)/ig;
+
 		var unread_messages = 0;
 		updateMyStatus();
 		updatePartnerStatus();
@@ -744,6 +747,10 @@
 		    		var message_json = jQuery.parseJSON(data);
 		    		if(message_json.textMessage == "true"){
 		    			var received_message = decodeURIComponent(message_json.message);
+		    			
+       					 // Replace plain text links by hyperlinks
+       				 	var received_message =  received_message.replace(regex, "<a href='$1' target='_blank'>$1</a>");
+		    			
 		    			var d= new Date();
 						var msg_time = d.toLocaleTimeString();
 						var data = '<div class="shout_msg"><time>'+msg_time+'</time><span class="username">Partner</span><span class="message">'+received_message+'</span></div>';
@@ -881,10 +888,13 @@
 	    }
 	    $("#connect").click(function(e){
 	    	e.preventDefault();
+	    	connect_click();
+	    });
+	    function connect_click(){
 	    	console.log($("#connect_id").val());
 	    	conn = peer.connect($("#connect_id").val().trim());
 	    	my_connect(conn);
-	    });
+	    }
 	    $("#disconnect").click(function(e){
 	    	e.preventDefault();
 	    	//console.log($("#connect_id").val());
@@ -1367,31 +1377,36 @@
 			$("#shout_message").keypress(function(evt) {
 				if(evt.which == 13) {
 						var iusername = $('#shout_username').val();
-						var imessage = $('#shout_message').val();
+						var imessage = strip($('#shout_message').val());
+						
 						var to_send = {textMessage:"true", name:encodeURIComponent(iusername), message:encodeURIComponent(imessage)};
 						console.log(to_send);
 						var to_send = JSON.stringify(to_send);
 						console.log(to_send);
+						$('.alert_shout_msg').remove();
+						var d= new Date();
+						var msg_time = d.toLocaleTimeString();
 						if(conn != null && conn.open == true){
-							conn.send(to_send);
-							$('.alert_shout_msg').remove();
-							var d= new Date();
-							var msg_time = d.toLocaleTimeString();
-							var data = '<div class="shout_msg me_shout_msg"><time>'+msg_time+'</time><span class="username my_username">You</span><span class="message">'+imessage+'</span></div>';
-							//append data into messagebox with jQuery fade effect!
-							$(data).hide().appendTo('.message_box').fadeIn();
-			
-							//keep scrolled to bottom of chat!
-							var scrolltoh = $('.message_box')[0].scrollHeight;
-							$('.message_box').scrollTop(scrolltoh);
-							
-							//reset value of message box
-							$('#shout_message').val('');
+
+							if(imessage.length > 0){
+								conn.send(to_send);
+								imessage = imessage.replace(regex, "<a href='$1' target='_blank'>$1</a>");
+								var data = '<div class="shout_msg me_shout_msg"><time>'+msg_time+'</time><span class="username my_username">You</span><span class="message">'+imessage+'</span></div>';
+								//append data into messagebox with jQuery fade effect!
+								$(data).hide().appendTo('.message_box').fadeIn();
+				
+								//keep scrolled to bottom of chat!
+								var scrolltoh = $('.message_box')[0].scrollHeight;
+								$('.message_box').scrollTop(scrolltoh);
+								
+								//reset value of message box
+								$('#shout_message').val('');
+							}
+
 						}
 						else{
-							$('.alert_shout_msg').remove();
-							var d= new Date();
-							var msg_time = d.toLocaleTimeString();
+							//$('.alert_shout_msg').remove();
+							
 							var data = '<div class="shout_msg alert_shout_msg"><time>'+msg_time+'</time><span class="username alert_msg">Alert</span><span class="message alert_msg">You are not connected</span></div>';
 							//append data into messagebox with jQuery fade effect!
 							$(data).hide().appendTo('.message_box').fadeIn();
@@ -1414,6 +1429,12 @@
 						// });
 					}
 			});
+			function strip(html)
+			{
+			   var tmp = document.createElement("DIV");
+			   tmp.innerHTML = html;
+			   return tmp.textContent || tmp.innerText || "";
+			}
 			$("#the_results").on('click', '.a_search_result', function(e){
 			  	e.preventDefault();
 			  	load_video_by_id($(this).attr('video-id'));
@@ -1445,6 +1466,15 @@
 		          	$("#youtube_link").val('');
 		          	load_video_by_id(vid_id);
 		        }
+			});
+			$('#connect_id').keyup(function(e){
+			    if(e.keyCode == 13)
+			    {
+			        $(this).trigger("clickOnConnect");
+			    }
+			});	
+			$('#connect_id').bind("clickOnConnect",function(e){
+			  	connect_click();
 			});
 		});
 		// Called automatically with the response of the YouTube API request.
