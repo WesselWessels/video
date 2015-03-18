@@ -45,6 +45,67 @@
 			    -webkit-transform:rotateY(180deg); /* Safari and Chrome */
 			    -moz-transform:rotateY(180deg); /* Firefox */
 			}
+			.shout_box {
+			background:#1B9CE0; width:260px; overflow:hidden;
+			position:fixed; bottom:0; right:10%; z-index:9;
+			}
+			.shout_box .header .close_btn {
+			background: url(img/close_btn.png) no-repeat 0px 0px; 
+			float:right; width:15px;
+			height: 15px;
+			}
+			.shout_box .header .close_btn:hover {
+			background: url(img/close_btn.png) no-repeat 0px -16px;
+			}
+			.shout_box .header .open_btn {
+			background: url(img/close_btn.png) no-repeat 0px -32px;
+			float:right; width:15px;
+			height:15px;
+			}
+			.shout_box .header .open_btn:hover {
+			background: url(img/close_btn.png) no-repeat 0px -48px;
+			}
+			.shout_box .header{
+			padding: 10px 6px 6px 10px;
+			font: 11px 'lucida grande', tahoma, verdana, arial, sans-serif;
+			font-weight: bold; color:#fff;
+			border: 1px solid rgba(0, 39, 121, .76);
+			border-bottom:none; cursor:pointer;
+			}
+			.shout_box .header:hover{
+			background-color: #168ccc;
+			}
+			.shout_box .message_box {
+			background: #FFFFFF; height: 200px;
+			overflow:auto; border: 1px solid #CCC;
+			}
+			.shout_msg{
+			margin-bottom: 2px; display: block;
+			border-bottom: 1px solid #F3F3F3; padding: 0px 5px 5px 5px;
+			font: 11px 'lucida grande', tahoma, verdana, arial, sans-serif; color:#7C7C7C;
+			}
+			.me_shout_msg{
+				color:#5CB85C;
+			}
+			.message_box:last-child { border-bottom:none;
+			}
+			time{ 
+			font: 11px 'lucida grande', tahoma, verdana, arial, sans-serif;
+			font-weight: normal; float:right; color: #D5D5D5;
+			}
+			.shout_msg .username{
+			margin-bottom: 3px;margin-top: 3px;
+			}
+			.shout_msg .my_username{
+				color:#5CB85C;
+			}
+			.user_info input {
+			width: 98%; height: 25px; border: 1px solid #CCC; border-top: none; padding: 3px 0px 0px 3px;
+			font: 11px 'lucida grande', tahoma, verdana, arial, sans-serif;
+			}
+			.shout_msg .username{
+			font-weight: bold; display: block;
+			}
 			
 		</style>
 	</head>
@@ -401,18 +462,20 @@
 		</div>
 		<br><br>
 		</section>
-		<!--Start of Tawk.to Script-->
-		<script type="text/javascript">
-		var $_Tawk_API={},$_Tawk_LoadStart=new Date();
-		(function(){
-		var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-		s1.async=true;
-		s1.src='https://embed.tawk.to/5508360f059b265f54240909/default';
-		s1.charset='UTF-8';
-		s1.setAttribute('crossorigin','*');
-		s0.parentNode.insertBefore(s1,s0);
-		})();
-		</script>
+		<!-- shoutbox -->
+			<!-- CREDIT: http://www.sanwebe.com/2013/04/creating-shout-box-facebook-style -->
+			<div class="shout_box">
+			<div class="header">Text Chat <div class="close_btn">&nbsp;</div></div>
+			  <div class="toggle_chat" style="display: none;">
+			  <div class="message_box">
+			    </div>
+			    <div class="user_info">
+			    <!-- <input name="shout_username" id="shout_username" type="text" placeholder="Your Name" maxlength="15" /> -->
+			   <input name="shout_message" id="shout_message" type="text" placeholder="Type Message Here" maxlength="100" /> 
+			    </div>
+			    </div>
+			</div>
+			<!-- shoutbox end -->
 		<!--End of Tawk.to Script-->
 	</body>
 </html>
@@ -661,6 +724,19 @@
 	    		
 		    	conn.on('data', function(data){
 		    		var message_json = jQuery.parseJSON(data);
+		    		if(message_json.textMessage == "true"){
+		    			var received_message = decodeURIComponent(message_json.message);
+		    			var d= new Date();
+						var msg_time = d.toLocaleTimeString();
+						var data = '<div class="shout_msg"><time>'+msg_time+'</time><span class="username">Partner</span><span class="message">'+received_message+'</span></div>';
+						//append data into messagebox with jQuery fade effect!
+						$(data).hide().appendTo('.message_box').fadeIn();
+		
+						//keep scrolled to bottom of chat!
+						var scrolltoh = $('.message_box')[0].scrollHeight;
+						$('.message_box').scrollTop(scrolltoh);
+		    			console.log(received_message);
+		    		}
 		    		if(message_json.call_status == "hang_up"){
 		    			if(call){
 	   						call.close();
@@ -1227,6 +1303,79 @@
 		    request.execute(onSearchResponse);
 		}
 		$(document).ready(function(){
+			// $(".close_btn").click(function (e) {
+			// 	//get CSS display state of .toggle_chat element
+			// 	var toggleState = $('.toggle_chat').css('display');
+				
+			// 	//toggle show/hide chat box
+			// 	$('.toggle_chat').slideToggle();
+				
+			// 	//use toggleState var to change close/open icon image
+			// 	if(toggleState == 'block')
+			// 	{
+			// 		$(".header div").attr('class', 'open_btn');
+			// 	}else{
+			// 		$(".header div").attr('class', 'close_btn');
+			// 	}
+			// 	var scrolltoh = $('.message_box')[0].scrollHeight;
+			// 	$('.message_box').scrollTop(scrolltoh);
+				 
+				 
+			// });
+			$(".header").click(function (e) {
+				//get CSS display state of .toggle_chat element
+				var toggleState = $('.toggle_chat').css('display');
+				
+				//toggle show/hide chat box
+				$('.toggle_chat').slideToggle();
+				
+				//use toggleState var to change close/open icon image
+				if(toggleState == 'block')
+				{
+					$(".header div").attr('class', 'open_btn');
+				}else{
+					$(".header div").attr('class', 'close_btn');
+				}
+				var scrolltoh = $('.message_box')[0].scrollHeight;
+				$('.message_box').scrollTop(scrolltoh);
+				 
+				 
+			});
+			$("#shout_message").keypress(function(evt) {
+				if(evt.which == 13) {
+						var iusername = $('#shout_username').val();
+						var imessage = $('#shout_message').val();
+						var to_send = {textMessage:"true", name:encodeURIComponent(iusername), message:encodeURIComponent(imessage)};
+						console.log(to_send);
+						var to_send = JSON.stringify(to_send);
+						console.log(to_send);
+						if(conn != null){
+							conn.send(to_send);
+						}
+						//post_data = {'username':iusername, 'message':imessage};
+					 	
+						//send data to "shout.php" using jQuery $.post()
+						//$.post('shout.php', post_data, function(data) {
+							var d= new Date();
+							var msg_time = d.toLocaleTimeString();
+							var data = '<div class="shout_msg me_shout_msg"><time>'+msg_time+'</time><span class="username my_username">You</span><span class="message">'+imessage+'</span></div>';
+							//append data into messagebox with jQuery fade effect!
+							$(data).hide().appendTo('.message_box').fadeIn();
+			
+							//keep scrolled to bottom of chat!
+							var scrolltoh = $('.message_box')[0].scrollHeight;
+							$('.message_box').scrollTop(scrolltoh);
+							
+							//reset value of message box
+							$('#shout_message').val('');
+							
+						// }).fail(function(err) { 
+						
+						// //alert HTTP server error
+						// alert(err.statusText); 
+						// });
+					}
+			});
 			$("#the_results").on('click', '.a_search_result', function(e){
 			  	e.preventDefault();
 			  	load_video_by_id($(this).attr('video-id'));
