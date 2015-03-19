@@ -12,7 +12,7 @@
 		<link rel="stylesheet" href="css/jquery-impromptu.css">
 		<script src="js/bootstrap.js"></script>
 		<script src="js/scripts.js"></script>
- 		<script type="text/javascript" src="http://cdn.peerjs.com/0.3/peer.js"></script>
+ 		<script type="text/javascript" src="http://cdn.peerjs.com/0.3.9/peer.js"></script>
  		<script type="text/javascript" src="js/jquery.linkify.min.js"></script>
 		<style type="text/css">
 			video, input {
@@ -517,6 +517,8 @@
 		var stat_partner_video = "-";
 		var stat_partner_size = "-";
 
+		var previous_sender = "none";
+
 		var regex = /(https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w\/_\.]*(\?\S+)?)?)?)/ig;
 
 		var unread_messages = 0;
@@ -746,16 +748,23 @@
 		    	conn.on('data', function(data){
 		    		var message_json = jQuery.parseJSON(data);
 		    		if(message_json.textMessage == "true"){
-		    			var received_message = decodeURIComponent(message_json.message);
+		    			var received_message = strip(decodeURIComponent(message_json.message));
 		    			
        					 // Replace plain text links by hyperlinks
-       				 	var received_message =  received_message.replace(regex, "<a href='$1' target='_blank'>$1</a>");
+       				 	//var received_message =  received_message.replace(regex, "<a href='$1' target='_blank'>$1</a>");
 		    			
 		    			var d= new Date();
 						var msg_time = d.toLocaleTimeString();
-						var data = '<div class="shout_msg"><time>'+msg_time+'</time><span class="username">Partner</span><span class="message">'+received_message+'</span></div>';
+						var data;
+						if(previous_sender!="partner"){
+						 	data = '<div class="shout_msg"><time>'+msg_time+'</time><span class="username">Partner</span><span class="message">'+received_message+'</span></div>';
+						 	previous_sender = "partner";
+						}
+						else{
+							data = '<div class="shout_msg"><time>'+msg_time+'</time><span class="message">'+received_message+'</span></div>';
+						}
 						//append data into messagebox with jQuery fade effect!
-						$(data).hide().appendTo('.message_box').fadeIn();
+						$(data).linkify().hide().appendTo('.message_box').fadeIn();
 		
 						//keep scrolled to bottom of chat!
 						var scrolltoh = $('.message_box')[0].scrollHeight;
@@ -1327,11 +1336,17 @@
 		    var request = gapi.client.youtube.search.list({
 		        part: 'snippet',
 		        q: search_query,
-		        maxResults: 5
+		        maxResults: 15
 		    });
 
 		    request.execute(onSearchResponse);
 		}
+		function strip(html)
+			{
+			   var tmp = document.createElement("DIV");
+			   tmp.innerHTML = html;
+			   return tmp.textContent || tmp.innerText || "";
+			}
 		$(document).ready(function(){
 			// $(".close_btn").click(function (e) {
 			// 	//get CSS display state of .toggle_chat element
@@ -1390,10 +1405,17 @@
 
 							if(imessage.length > 0){
 								conn.send(to_send);
-								imessage = imessage.replace(regex, "<a href='$1' target='_blank'>$1</a>");
-								var data = '<div class="shout_msg me_shout_msg"><time>'+msg_time+'</time><span class="username my_username">You</span><span class="message">'+imessage+'</span></div>';
+								//imessage = imessage.replace(regex, "<a href='$1' target='_blank'>$1</a>");
+								var data;
+								if(previous_sender != "me"){
+								 data = '<div class="shout_msg me_shout_msg"><time>'+msg_time+'</time><span class="username my_username">You</span><span class="message">'+imessage+'</span></div>';
+								 	previous_sender = "me";
+								}
+								else{
+									data = '<div class="shout_msg me_shout_msg"><time>'+msg_time+'</time><span class="message">'+imessage+'</span></div>';
+								}
 								//append data into messagebox with jQuery fade effect!
-								$(data).hide().appendTo('.message_box').fadeIn();
+								$(data).linkify().hide().appendTo('.message_box').fadeIn();
 				
 								//keep scrolled to bottom of chat!
 								var scrolltoh = $('.message_box')[0].scrollHeight;
@@ -1429,12 +1451,7 @@
 						// });
 					}
 			});
-			function strip(html)
-			{
-			   var tmp = document.createElement("DIV");
-			   tmp.innerHTML = html;
-			   return tmp.textContent || tmp.innerText || "";
-			}
+			
 			$("#the_results").on('click', '.a_search_result', function(e){
 			  	e.preventDefault();
 			  	load_video_by_id($(this).attr('video-id'));
@@ -1481,11 +1498,15 @@
 		function onSearchResponse(response) {
 		    $('#results').empty();
             $('#the_results').empty();
-
+            var num_of_videos = 0;
             for(var i = 0; i < response.items.length; i++){
               	if(response.items[i].id.kind == "youtube#video"){
                 	console.log(response.items[i].id.videoId + " " + response.items[i].snippet.title + " " + response.items[i].snippet.thumbnails.default.url);
                 	$("#the_results").append('<div class="row a_search_result" video-id="'+response.items[i].id.videoId+'"><a href="#"><div class="col-md-3"><img src="'+response.items[i].snippet.thumbnails.default.url+'"></div><div class="col-md-9"><h4>'+ response.items[i].snippet.title +'</h4><p>'+response.items[i].snippet.channelTitle+'</p></div></a></div>');
+                	num_of_videos = num_of_videos+1
+             	}
+             	if(num_of_videos == 5){
+             		break;
              	}
             }
 		}
