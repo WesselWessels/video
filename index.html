@@ -114,6 +114,13 @@
 			font-weight: bold; display: block;
 			}
 			
+			#floating_video{
+				position: fixed;
+				top: 70px; 
+				left: 30px; 
+				width: 180; 
+				height: 120;
+			}
 		</style>
 	</head>
 
@@ -271,6 +278,9 @@
 						
 					</div>
 				</div>
+			</div>
+			<div id="floating_video">
+				<video id="their-video-smaller" width="180" height="120" autoplay></video>
 			</div>
 			
        		
@@ -478,7 +488,7 @@
 			    </div>
 			    <div class="user_info">
 			    <!-- <input name="shout_username" id="shout_username" type="text" placeholder="Your Name" maxlength="15" /> -->
-			   <input name="shout_message" id="shout_message" type="text" placeholder="Type Message Here" maxlength="100" /> 
+			   <input name="shout_message" id="shout_message" type="text" placeholder="Type Message Here"  /> 
 			    </div>
 			    </div>
 			</div>
@@ -554,6 +564,7 @@
 			navigator.getUserMedia({audio: true, video: true}, function(stream){
 	        	window.localStream = stream;
 	        	$('#my-video').prop('src', URL.createObjectURL(stream));
+	        	
 	        	//$("#stat_my_mic").text("Active");
 	        	//stat_my_mic = "active";
 	        	//sendStatus();
@@ -698,6 +709,7 @@
 
 						      		change_status_button("video_call_button","green");
 						        	$('#their-video').prop('src', URL.createObjectURL(stream));
+						        	$('#their-video-smaller').prop('src', URL.createObjectURL(stream));
 						        	$("#end_video_call").show();
 							    	$("#video_call").hide();
 							    	$("#hang_up_video").hide();
@@ -960,6 +972,7 @@
 			      	change_status_button("video_call_button","green");
 		    		$("#hang_up_video").hide();
 			        $('#their-video').prop('src', URL.createObjectURL(stream));
+			        $('#their-video-smaller').prop('src', URL.createObjectURL(stream));
 			        $("#end_video_call").show();
 			        //$("#voice_call").hide();
 			    });
@@ -1025,7 +1038,9 @@
 	    }
 
 	    function sendStatus(){
-	    	conn.send('{"stat_mic":"'+stat_my_mic+'","stat_video":"'+stat_my_video+'","stat_size":"'+stat_my_size+'"}');
+	    	if(conn != null && conn.open == true){
+	    		conn.send('{"stat_mic":"'+stat_my_mic+'","stat_video":"'+stat_my_video+'","stat_size":"'+stat_my_size+'"}');
+	    	}
 	    }
 
 	    function takeTour(){
@@ -1367,6 +1382,14 @@
 				 
 				 
 			// });
+			$("#floating_video").hide();
+			$("#call_section").hover(function(){
+				$("#floating_video").hide();
+			},function(){
+				if(call != null && call.open == true){
+					$("#floating_video").show();
+				}
+			});
 			$(".header").click(function (e) {
 				//get CSS display state of .toggle_chat element
 				var toggleState = $('.toggle_chat').css('display');
