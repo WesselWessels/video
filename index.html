@@ -18,11 +18,9 @@
 			video, input {
 			    display: block;
 			}
-
 			input {
 			    width: 100%;       
 			}
-
 			.info {
 			    background-color: aqua;            
 			}
@@ -32,58 +30,57 @@
 			    color: white;
 			}
 			.a_search_result{
-            padding-bottom: 5px;
-          }
-          .link_button{
-          	color:black;
-          }
-          #my-video-div{
-          	vertical-align: bottom;
-          }
-          #my-video
-			{
+            	padding-bottom: 5px;
+          	}
+          	.link_button{
+          		color:black;
+         	}
+          	#my-video-div{
+          		vertical-align: bottom;
+          	}
+          	#my-video{
 			    transform: rotateY(180deg);
 			    -webkit-transform:rotateY(180deg); /* Safari and Chrome */
 			    -moz-transform:rotateY(180deg); /* Firefox */
 			}
 			.shout_box {
-			background:#1B9CE0; width:260px; overflow:hidden;
-			position:fixed; bottom:0; right:10%; z-index:9;
+				background:#1B9CE0; width:260px; overflow:hidden;
+				position:fixed; bottom:0; right:10%; z-index:9;
 			}
 			.shout_box .header .close_btn {
-			background: url(img/close_btn.png) no-repeat 0px 0px; 
-			float:right; width:15px;
-			height: 15px;
+				background: url(img/close_btn.png) no-repeat 0px 0px; 
+				float:right; width:15px;
+				height: 15px;
 			}
 			.shout_box .header .close_btn:hover {
-			background: url(img/close_btn.png) no-repeat 0px -16px;
+				background: url(img/close_btn.png) no-repeat 0px -16px;
 			}
 			.shout_box .header .open_btn {
-			background: url(img/close_btn.png) no-repeat 0px -32px;
-			float:right; width:15px;
-			height:15px;
+				background: url(img/close_btn.png) no-repeat 0px -32px;
+				float:right; width:15px;
+				height:15px;
 			}
 			.shout_box .header .open_btn:hover {
-			background: url(img/close_btn.png) no-repeat 0px -48px;
+				background: url(img/close_btn.png) no-repeat 0px -48px;
 			}
 			.shout_box .header{
-			padding: 10px 6px 6px 10px;
-			font: 11px 'lucida grande', tahoma, verdana, arial, sans-serif;
-			font-weight: bold; color:#fff;
-			border: 1px solid rgba(0, 39, 121, .76);
-			border-bottom:none; cursor:pointer;
+				padding: 10px 6px 6px 10px;
+				font: 11px 'lucida grande', tahoma, verdana, arial, sans-serif;
+				font-weight: bold; color:#fff;
+				border: 1px solid rgba(0, 39, 121, .76);
+				border-bottom:none; cursor:pointer;
 			}
 			.shout_box .header:hover{
-			background-color: #168ccc;
+				background-color: #168ccc;
 			}
 			.shout_box .message_box {
-			background: #FFFFFF; height: 200px;
-			overflow:auto; border: 1px solid #CCC;
+				background: #FFFFFF; height: 200px;
+				overflow:auto; border: 1px solid #CCC;
 			}
 			.shout_msg{
-			margin-bottom: 2px; display: block;
-			border-bottom: 1px solid #F3F3F3; padding: 0px 5px 5px 5px;
-			font: 11px 'lucida grande', tahoma, verdana, arial, sans-serif; color:#7C7C7C;
+				margin-bottom: 2px; display: block;
+				border-bottom: 1px solid #F3F3F3; padding: 0px 5px 5px 5px;
+				font: 11px 'lucida grande', tahoma, verdana, arial, sans-serif; color:#7C7C7C;
 			}
 			.me_shout_msg{
 				color:#5CB85C;
@@ -91,14 +88,15 @@
 			.alert_shout_msg{
 				color:#DB524B;
 			}
-			.message_box:last-child { border-bottom:none;
+			.message_box:last-child { 
+				border-bottom:none;
 			}
 			time{ 
-			font: 11px 'lucida grande', tahoma, verdana, arial, sans-serif;
-			font-weight: normal; float:right; color: #D5D5D5;
+				font: 11px 'lucida grande', tahoma, verdana, arial, sans-serif;
+				font-weight: normal; float:right; color: #D5D5D5;
 			}
 			.shout_msg .username{
-			margin-bottom: 3px;margin-top: 3px;
+				margin-bottom: 3px;margin-top: 3px;
 			}
 			.shout_msg .my_username{
 				color:#5CB85C;
@@ -107,13 +105,12 @@
 				color:#DB524B;
 			}
 			.user_info input {
-			width: 98%; height: 25px; border: 1px solid #CCC; border-top: none; padding: 3px 0px 0px 3px;
-			font: 11px 'lucida grande', tahoma, verdana, arial, sans-serif;
+				width: 98%; height: 25px; border: 1px solid #CCC; border-top: none; padding: 3px 0px 0px 3px;
+				font: 11px 'lucida grande', tahoma, verdana, arial, sans-serif;
 			}
 			.shout_msg .username{
-			font-weight: bold; display: block;
+				font-weight: bold; display: block;
 			}
-			
 			#floating_video{
 				position: fixed;
 				top: 70px; 
@@ -124,44 +121,37 @@
 		</style>
 	</head>
 
-	<body >
+	<body>
 		<nav class="navbar navbar-trans navbar-fixed-top" role="navigation">
-		  <div class="container">
-		    <!-- Brand and toggle get grouped for better mobile display -->
-		    <div class="navbar-header">
-		      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-		        <span class="sr-only">Toggle navigation</span>
-		        <span class="icon-bar"></span>
-		        <span class="icon-bar"></span>
-		        <span class="icon-bar"></span>
-		      </button>
-		      <a class="navbar-brand" href="#section1">simulchat.com</a>
-		    </div>
+		  	<div class="container">
+			    <!-- Brand and toggle get grouped for better mobile display -->
+			    <div class="navbar-header">
+			      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+			        <span class="sr-only">Toggle navigation</span>
+			        <span class="icon-bar"></span>
+			        <span class="icon-bar"></span>
+			        <span class="icon-bar"></span>
+			      </button>
+			      <a class="navbar-brand" href="#section1">simulchat.com</a>
+			    </div>
 
-		    <!-- Collect the nav links, forms, and other content for toggling -->
-		    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-		      <ul class="nav navbar-nav">
-		        <li ><a href="#section2">Connect<span class="sr-only">(current)</span></a></li>
-		        <li ><a href="#call_section">Talk<span class="sr-only">(current)</span></a></li>
-		        <li ><a href="#section3">Watch Video<span class="sr-only">(current)</span></a></li>
-		        <li ><a href="#section4">Watch YouTube<span class="sr-only">(current)</span></a></li>
-		        <li ><a href="#section5">IRC Chat<span class="sr-only">(current)</span></a></li>
-
-		       
-
-		      </ul>
-				<div class="nav navbar-nav navbar-right">
-					<a href="#section2"><button type="button" id="server_button" class="btn btn-danger navbar-btn" title="Connection with server"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span></button></a>
-		      		<a href="#section2"><button type="button" id="user_button" class="btn btn-danger navbar-btn" title="Connection with partner"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></button></a>
-		      		<a href="#call_section"><button type="button" id="call_button" class="btn btn-danger navbar-btn" title="Voice call"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span></button></a>
-		      		<a href="#call_section"><button type="button" id="video_call_button" class="btn btn-danger navbar-btn" title="Video call"><span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span></button></a>
-
-		    		<!-- <button type="button" id="video_call_button" class="btn btn-default navbar-btn"><span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span></button>
-		     		 <button type="button" id="play_status_button" class="btn btn-default navbar-btn"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></button> -->
-		    	</div>
-		    </div><!-- /.navbar-collapse -->
-
-		  </div><!-- /.container-fluid -->
+			    <!-- Collect the nav links, forms, and other content for toggling -->
+			    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+				    <ul class="nav navbar-nav">
+				        <li ><a href="#section2">Connect<span class="sr-only">(current)</span></a></li>
+				        <li ><a href="#call_section">Talk<span class="sr-only">(current)</span></a></li>
+				        <li ><a href="#section3">Watch Video<span class="sr-only">(current)</span></a></li>
+				        <li ><a href="#section4">Watch YouTube<span class="sr-only">(current)</span></a></li>
+				        <li ><a href="#section5">IRC Chat<span class="sr-only">(current)</span></a></li>
+				    </ul>
+					<div class="nav navbar-nav navbar-right">
+						<a href="#section2"><button type="button" id="server_button" class="btn btn-danger navbar-btn" title="Connection with server"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span></button></a>
+			      		<a href="#section2"><button type="button" id="user_button" class="btn btn-danger navbar-btn" title="Connection with partner"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></button></a>
+			      		<a href="#call_section"><button type="button" id="call_button" class="btn btn-danger navbar-btn" title="Voice call"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span></button></a>
+			      		<a href="#call_section"><button type="button" id="video_call_button" class="btn btn-danger navbar-btn" title="Video call"><span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span></button></a>
+			    	</div>
+			    </div><!-- /.navbar-collapse -->
+		  	</div><!-- /.container-fluid -->
 		</nav>
 
 		<section class="container-fluid" id="section1">
@@ -177,7 +167,6 @@
 					<h4>Talk to each other</h4>
 				</div>
 				<div class="col-md-3"></div>
-
 			</div>
 		</div>
 
@@ -196,7 +185,6 @@
 				<div class="col-md-4"></div>
 				<div class="col-md-4">
 					<div class="form-horizontal">
-						<!-- <div id="message">Your ID is: <input type="text" id="my_id" size="15"></div>  -->
 						<div class="form-group">
 						    <label for="my_id" class="col-md-4 control-label">Your ID is: </label>
 						    <div class="col-md-8">
@@ -209,11 +197,7 @@
 							    <input type="text" class="form-control" id="connect_id" autocomplete="off">
 							    <a href="#" class="btn btn-success" id="connect">connect</a>
 							    <span id="disconnect_div">
-				        		<!-- <div>
-				        			You are connected to: <span id="connected_id"></span>
-				        		</div> -->
-				        		<a href="#" class="btn btn-danger" id="disconnect">disconnect</a>
-				        		
+				        		<a href="#" class="btn btn-danger" id="disconnect">disconnect</a>			        		
 				        		</span>
 						    </div>
 					 	</div>	
@@ -238,20 +222,8 @@
 				</div>
 			</div>
 		</div>	
-		<div class="container-fluid">
-			
-				<!-- <div id="connect_div" class="col-md-3">
-		            <input type="text" placeholder="Connect user id..." id="connect_id">
-		            <a href="#" class="btn btn-success" id="connect">connect</a>
-	        	</div> -->
-	        	<div class="row" style="text-align:center;">
-
-		        	
-	        	</div>
-
-         </div>
-         </section>
-         <section class="container-fluid" id="call_section">
+        </section>
+        <section class="container-fluid" id="call_section">
          	<div style="text-align:center;">			
 			<h1 id="talk_heading">Talk to each other</h1>
 			<div class="container">
@@ -266,7 +238,6 @@
 				        <a href="#" class="btn btn-warning" id="end_video_call"><span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span> end video call</a>
 					</div>
 					<div class="col-md-4"></div>
-					
 				</div>
 			</div>
 			<div class="container">
@@ -280,16 +251,13 @@
 					</div>
 				</div>
 			</div>
-			
-			
-       		
 		</div>	
-         </section>
-         <div id="floating_video">
-				<video id="their-video-smaller" width="180" height="120" autoplay></video>
-			</div>
-         <section class="container-fluid" id="section3">
-         <div style="text-align:center;">			
+        </section>
+        <div id="floating_video">
+			<video id="their-video-smaller" width="180" height="120" autoplay></video>
+		</div>
+        <section class="container-fluid" id="section3">
+        <div style="text-align:center;">			
 			<h1>Watch Videos Together</h1>
 		</div>	
 		<br><br>
@@ -945,10 +913,7 @@
 	    }
 	    $("#disconnect").click(function(e){
 	    	e.preventDefault();
-	    	//console.log($("#connect_id").val());
 	    	conn.close();
-
-	    	//my_connect(conn);
 	    });
 	    $("#voice_call").click(function(e){
 	    	e.preventDefault();
@@ -957,9 +922,6 @@
 	    	}
 	    	if(window.localStream != null || window.localStream.getAudioTracks().length > 0)
 	    	{
-	    		// console.log(window.localStream);
-	    		// console.log(window.localStream.getAudioTracks().length);
-	    		// console.log(window.localStream.ended);
 	    		$("#voice_call").hide();
 	    		$("#hang_up").show();
 	    		if(window.localStream.getVideoTracks().length > 0){
@@ -994,7 +956,6 @@
 	    	if(call != null){
 	    		call.close();
 	    	}
-	    	
 	    	if(window.localStream != null && window.localStream.getVideoTracks().length > 0)
 	    	{
 	    		$("#video_call").hide();
@@ -1163,25 +1124,6 @@
 					position: { container: '#search_value', x: 40, y: 0, width:300, arrow: 'lt' },
 					submit: tourSubmitFunc
 				},
-				// {
-				// 	title: 'My Status',
-				// 	html: 'This table gives you some information about your status',
-				// 	buttons: { Prev: -1, Next: 1 },
-				// 	focus: 1,
-				// 	position: { container: '#my_status_table', x: 200, y: 0, width: 200, arrow: 'lt' },
-				// 	submit: tourSubmitFunc
-				// },
-				// {
-				// 	title: 'Partner Status',
-				// 	html: 'This table gives you some information about your partner\'s status',
-				// 	buttons: { Prev: -1, Next: 1 },
-				// 	focus: 1,
-				// 	position: { container: '#partner_status_table', x: -200, y: 0, width: 200, arrow: 'rt' },
-				// 	submit: tourSubmitFunc
-				// },
-				
-				
-				
 				{
 					title: 'IRC Chat [optional]',
 					html: 'This is a web IRC client that connects to a channel called ##simulchat. Here you can find your partner if they are online and send them your ID. It is advised to send a private message, since anyone can see what you time in the defualt channel. Just pick a Nickname and click start. Note that you do not need to use this chat box. It is just there to help you exchange your ID\'s. You can also send your ID to your partner in any way you please, like email',
@@ -1246,7 +1188,6 @@
 	            sendStatus();
 	            updateMyStatus();
 				videoNode.onpause = function() {
-					
 				   	console.log("Paused " + videoNode.currentTime);
 	            	my_send('{"action_change":"paused", "time_of_movie":"'+videoNode.currentTime+'", "status":"'+videoNode.readyState+'"}');
 
@@ -1407,26 +1348,6 @@
 			   return tmp.textContent || tmp.innerText || "";
 			}
 		$(document).ready(function(){
-			// $(".close_btn").click(function (e) {
-			// 	//get CSS display state of .toggle_chat element
-			// 	var toggleState = $('.toggle_chat').css('display');
-				
-			// 	//toggle show/hide chat box
-			// 	$('.toggle_chat').slideToggle();
-				
-			// 	//use toggleState var to change close/open icon image
-			// 	if(toggleState == 'block')
-			// 	{
-			// 		$(".header div").attr('class', 'open_btn');
-			// 	}else{
-			// 		$(".header div").attr('class', 'close_btn');
-			// 	}
-			// 	var scrolltoh = $('.message_box')[0].scrollHeight;
-			// 	$('.message_box').scrollTop(scrolltoh);
-				 
-				 
-			// });
-			//my_scroll("#section1");
 			$("#floating_video").hide();
 			$("#call_section").hover(function(){
 				$("#floating_video").hide();
@@ -1454,82 +1375,64 @@
 				var scrolltoh = $('.message_box')[0].scrollHeight;
 				$('.message_box').scrollTop(scrolltoh);
 				update_badge();
-				 
-				 
 			});
 			$("#shout_message").keypress(function(evt) {
 				if(evt.which == 13) {
-						var iusername = $('#shout_username').val();
-						var imessage = strip($('#shout_message').val());
-						
-						var to_send = {textMessage:"true", name:encodeURIComponent(iusername), message:encodeURIComponent(imessage)};
-						console.log(to_send);
-						var to_send = JSON.stringify(to_send);
-						console.log(to_send);
-						$('.alert_shout_msg').remove();
-						var d= new Date();
-						var msg_time = d.toLocaleTimeString();
-						if(conn != null && conn.open == true){
+					var iusername = $('#shout_username').val();
+					var imessage = strip($('#shout_message').val());
+					
+					var to_send = {textMessage:"true", name:encodeURIComponent(iusername), message:encodeURIComponent(imessage)};
+					console.log(to_send);
+					var to_send = JSON.stringify(to_send);
+					console.log(to_send);
+					$('.alert_shout_msg').remove();
+					var d= new Date();
+					var msg_time = d.toLocaleTimeString();
+					if(conn != null && conn.open == true){
 
-							if(imessage.length > 0){
-								my_send(to_send);
-								//imessage = imessage.replace(regex, "<a href='$1' target='_blank'>$1</a>");
-								var data;
-								if(previous_sender != "me"){
-								 data = '<div class="shout_msg me_shout_msg"><time>'+msg_time+'</time><span class="username my_username">You</span><span class="message">'+imessage+'</span></div>';
-								 	previous_sender = "me";
-								}
-								else{
-									data = '<div class="shout_msg me_shout_msg"><time>'+msg_time+'</time><span class="message">'+imessage+'</span></div>';
-								}
-								//append data into messagebox with jQuery fade effect!
-								$(data).linkify().hide().appendTo('.message_box').fadeIn();
-				
-								//keep scrolled to bottom of chat!
-								var scrolltoh = $('.message_box')[0].scrollHeight;
-								$('.message_box').scrollTop(scrolltoh);
-								
-								//reset value of message box
-								$('#shout_message').val('');
+						if(imessage.length > 0){
+							my_send(to_send);
+							//imessage = imessage.replace(regex, "<a href='$1' target='_blank'>$1</a>");
+							var data;
+							if(previous_sender != "me"){
+							 data = '<div class="shout_msg me_shout_msg"><time>'+msg_time+'</time><span class="username my_username">You</span><span class="message">'+imessage+'</span></div>';
+							 	previous_sender = "me";
 							}
-
-						}
-						else{
-							//$('.alert_shout_msg').remove();
-							
-							var data = '<div class="shout_msg alert_shout_msg"><time>'+msg_time+'</time><span class="username alert_msg">Alert</span><span class="message alert_msg">You are not connected</span></div>';
+							else{
+								data = '<div class="shout_msg me_shout_msg"><time>'+msg_time+'</time><span class="message">'+imessage+'</span></div>';
+							}
 							//append data into messagebox with jQuery fade effect!
-							$(data).hide().appendTo('.message_box').fadeIn();
+							$(data).linkify().hide().appendTo('.message_box').fadeIn();
 			
 							//keep scrolled to bottom of chat!
 							var scrolltoh = $('.message_box')[0].scrollHeight;
 							$('.message_box').scrollTop(scrolltoh);
-
+							
+							//reset value of message box
+							$('#shout_message').val('');
 						}
-						//post_data = {'username':iusername, 'message':imessage};
-					 	
-						//send data to "shout.php" using jQuery $.post()
-						//$.post('shout.php', post_data, function(data) {
-							
-							
-						// }).fail(function(err) { 
-						
-						// //alert HTTP server error
-						// alert(err.statusText); 
-						// });
+
 					}
+					else{
+						//$('.alert_shout_msg').remove();
+						
+						var data = '<div class="shout_msg alert_shout_msg"><time>'+msg_time+'</time><span class="username alert_msg">Alert</span><span class="message alert_msg">You are not connected</span></div>';
+						//append data into messagebox with jQuery fade effect!
+						$(data).hide().appendTo('.message_box').fadeIn();
+		
+						//keep scrolled to bottom of chat!
+						var scrolltoh = $('.message_box')[0].scrollHeight;
+						$('.message_box').scrollTop(scrolltoh);
+
+					}
+				}
 			});
-			
 			$("#the_results").on('click', '.a_search_result', function(e){
 			  	e.preventDefault();
 			  	load_video_by_id($(this).attr('video-id'));
 			  	my_scroll("#youtube_heading");
 			  	console.log("clicked");
 			});
-			// $("#search_button").click(function(e){
-			// 	//alert($("#search_value").val());
-			// 	search($("#search_value").val());
-			// });
 			$('#search_value').keyup(function(e){
 			    if(e.keyCode == 13)
 			    {
@@ -1581,8 +1484,6 @@
             }
 		}
 	//end of youtube search
-
-
 </script>
  <script src="https://apis.google.com/js/client.js?onload=onClientLoad" type="text/javascript"></script>
 <script>
