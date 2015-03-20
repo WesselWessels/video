@@ -279,13 +279,14 @@
 					</div>
 				</div>
 			</div>
-			<div id="floating_video">
-				<video id="their-video-smaller" width="180" height="120" autoplay></video>
-			</div>
+			
 			
        		
 		</div>	
          </section>
+         <div id="floating_video">
+				<video id="their-video-smaller" width="180" height="120" autoplay></video>
+			</div>
          <section class="container-fluid" id="section3">
          <div style="text-align:center;">			
 			<h1>Watch Videos Together</h1>
@@ -944,7 +945,7 @@
 	    		if(window.localStream.getVideoTracks().length > 0){
 	    			window.localStream.getVideoTracks()[0].enabled = false;
 	    		}
-		    	call = peer.call($('#connect_id').val(), window.localStream, {metadata:'voice'});
+		    	call = peer.call(conn.peer, window.localStream, {metadata:'voice'});
 		    	call.on('stream', function(stream){
 		    		window.remoteStream = stream;
 			      	change_status_button("call_button","green");
@@ -981,7 +982,7 @@
 	    		if(window.localStream.getVideoTracks().length > 0){
 	    			window.localStream.getVideoTracks()[0].enabled = true;
 	    		}
-		    	call = peer.call($('#connect_id').val(), window.localStream, {metadata:'video'});
+		    	call = peer.call(conn.peer, window.localStream, {metadata:'video'});
 		    	call.on('stream', function(stream){
 		    		window.remoteStream = stream;
 			      	change_status_button("video_call_button","green");
