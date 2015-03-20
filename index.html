@@ -183,6 +183,7 @@
 
 		<div style="text-align:center;">
 			<button class="btn btn-success btn-lg" id="take_tour"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>Take Tour</button>
+			<a href="#section2" class="btn btn-success btn-lg">Get Started</a>
 		</div>
 		</section>
 		<section class="container-fluid" id="section2">
@@ -205,7 +206,7 @@
 					 	<div class="form-group">
 						    <label for="my_id" class="col-md-4 control-label">Partner ID: </label>
 						    <div class="col-md-8">
-							    <input type="text" class="form-control" id="connect_id">
+							    <input type="text" class="form-control" id="connect_id" autocomplete="off">
 							    <a href="#" class="btn btn-success" id="connect">connect</a>
 							    <span id="disconnect_div">
 				        		<!-- <div>
@@ -565,6 +566,7 @@
 		      return false;
 		    }
 		}
+
 		function get_mic(){
 			
 			navigator.getUserMedia({audio: true, video: false}, function(stream){
@@ -1424,6 +1426,7 @@
 				 
 				 
 			// });
+			//my_scroll("#section1");
 			$("#floating_video").hide();
 			$("#call_section").hover(function(){
 				$("#floating_video").hide();
