@@ -252,7 +252,7 @@
          </section>
          <section class="container-fluid" id="call_section">
          	<div style="text-align:center;">			
-			<h1>Talk to each other</h1>
+			<h1 id="talk_heading">Talk to each other</h1>
 			<div class="container">
 				<div class="row">
 					<div class="col-md-4"></div>
@@ -368,7 +368,7 @@
 		</section>
 		<section class="container-fluid" id="section4">
 		<div style="text-align:center;">			
-			<h1>Watch YouTube Together</h1>
+			<h1 id="youtube_heading">Watch YouTube Together</h1>
 		</div>	
 		<div class="container" style="text-align:center;">
 	      <div class="row">
@@ -449,7 +449,7 @@
               <!-- <div id="buttons">
                <label> <input value='cats' type="text" id="search_value"/><button id="search_button" class="btn">Search YouTube</button></label>
            </div> -->
-                <h1>Search Results</h1>
+                <h1 id="results_heading">Search Results</h1>
               </div>
               <div id="the_results">
               </div>
@@ -548,6 +548,23 @@
 		$("#my_video").height(video_height);
 		var file;
 		navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+		function my_send(data){
+			if(conn != null && conn.open == true){
+				conn.send(data);
+			}
+		}
+		function my_scroll(id){
+		   var target = $(id);
+		    //console.log(this.hash);
+		    target = target.length ? target : $('[name=' + id.slice(1) +']');
+		    //console.log(target);
+		    if (target.length) {
+		      $('html,body').animate({
+		        scrollTop: target.offset().top - 50
+		      }, 750);
+		      return false;
+		    }
+		}
 		function get_mic(){
 			
 			navigator.getUserMedia({audio: true, video: false}, function(stream){
@@ -644,7 +661,7 @@
 	      	if(call.metadata == "voice"){
 		      	if(window.localStream == null || window.localStream.getAudioTracks().length == 0){
 		      		get_mic();
-		      		conn.send('{"call_status": "mic_inactive"}');
+		      		my_send('{"call_status": "mic_inactive"}');
 		      		$.prompt("There is an incoming voice call from your partner, but your microphone is not activated. Please activate your microphone.", {
 						title: "Activate your microphone",
 						buttons: { "OK": true}
@@ -680,7 +697,7 @@
 				  	  			});
 							}
 							else{
-								conn.send('{"call_status": "hang_up"}');
+								my_send('{"call_status": "hang_up"}');
 							}
 							console.log("Value clicked was: "+ v);
 						}
@@ -690,7 +707,7 @@
 	 		if(call.metadata == "video"){
 		      	if(window.localStream == null || window.localStream.getVideoTracks().length == 0){
 		      		get_cam();
-		      		conn.send('{"call_status": "cam_inactive"}');
+		      		my_send('{"call_status": "cam_inactive"}');
 		      		$.prompt("There is an incoming video call from your partner, but your camera is not activated. Please activate your camera.", {
 						title: "Activate your Camera",
 						buttons: { "OK": true}
@@ -710,6 +727,7 @@
 								if(window.localStream.getVideoTracks().length > 0){
 	    							window.localStream.getVideoTracks()[0].enabled = true;
 	    						}
+	    						my_scroll("#talk_heading");
 						  		call.answer(window.localStream);
 					      		call.on('stream', function(stream){
 				    				window.remoteStream = stream;
@@ -728,7 +746,7 @@
 				  	  			});
 							}
 							else{
-								conn.send('{"call_status": "hang_up_video"}');
+								my_send('{"call_status": "hang_up_video"}');
 							}
 							console.log("Value clicked was: "+ v);
 						}
@@ -1011,27 +1029,27 @@
 	    	e.preventDefault();
 	    	$("#hang_up").hide();
 	    	$("#voice_call").show();
-	    	conn.send('{"call_status": "hang_up"}');
+	    	my_send('{"call_status": "hang_up"}');
 	    });
 	    $("#hang_up_video").click(function(e){
 	    	e.preventDefault();
 	    	$("#hang_up_video").hide();
 	    	$("#video_call").show();
-	    	conn.send('{"call_status": "hang_up_video"}');
+	    	my_send('{"call_status": "hang_up_video"}');
 	    });
 	    $("#end_voice_call").click(function(e){
 	    	e.preventDefault();
 	    	if(call){
 	    		call.close();
 	    	}
-	    	conn.send('{"call_status": "hang_up"}');
+	    	my_send('{"call_status": "hang_up"}');
 	    });
 	    $("#end_video_call").click(function(e){
 	    	e.preventDefault();
 	    	if(call){
 	    		call.close();
 	    	}
-	    	conn.send('{"call_status": "hang_up_video"}');
+	    	my_send('{"call_status": "hang_up_video"}');
 	    });
 	    $("#take_tour").click(function(e){
 	    	e.preventDefault();
@@ -1054,9 +1072,9 @@
 	    }
 
 	    function sendStatus(){
-	    	if(conn != null && conn.open == true){
-	    		conn.send('{"stat_mic":"'+stat_my_mic+'","stat_video":"'+stat_my_video+'","stat_size":"'+stat_my_size+'"}');
-	    	}
+	    	//if(conn != null && conn.open == true){
+	    		my_send('{"stat_mic":"'+stat_my_mic+'","stat_video":"'+stat_my_video+'","stat_size":"'+stat_my_size+'"}');
+	    	//}
 	    }
 
 	    function takeTour(){
@@ -1228,19 +1246,19 @@
 				videoNode.onpause = function() {
 					
 				   	console.log("Paused " + videoNode.currentTime);
-	            	conn.send('{"action_change":"paused", "time_of_movie":"'+videoNode.currentTime+'", "status":"'+videoNode.readyState+'"}');
+	            	my_send('{"action_change":"paused", "time_of_movie":"'+videoNode.currentTime+'", "status":"'+videoNode.readyState+'"}');
 
 				};
 				videoNode.onseeked = function() {
 				    console.log("Seeked " + videoNode.currentTime);
 				    if(Math.abs(videoNode.currentTime - last_received_time) > 1){ //do this so that a infinite loop does not happen (hopefully)
-				   		conn.send('{"action_change":"seek", "time_of_movie":"'+videoNode.currentTime+'", "status":"'+videoNode.readyState+'"}');
+				   		my_send('{"action_change":"seek", "time_of_movie":"'+videoNode.currentTime+'", "status":"'+videoNode.readyState+'"}');
 					}
 				};
 				videoNode.onplaying = function() {
 				    console.log("Playing " + videoNode.currentTime);
-				    //conn.send('{"action":"status", "time":"'+videoNode.currentTime+'"}');
-				    conn.send('{"action_change":"play", "time_of_movie":"'+videoNode.currentTime+'", "status":"'+videoNode.readyState+'"}');
+				    //my_send('{"action":"status", "time":"'+videoNode.currentTime+'"}');
+				    my_send('{"action_change":"play", "time_of_movie":"'+videoNode.currentTime+'", "status":"'+videoNode.readyState+'"}');
 				};
 	        },
 	        inputNode = document.querySelector('#video_file');
@@ -1259,7 +1277,7 @@
             	var cur_time = player.getCurrentTime();
 				if (Math.abs(time-cur_time) > 1) {
 	                console.log("seeked from "+ time + " to " + cur_time);
-	                conn.send('{"user_action":"youtube", "user_event": "seeked", "youtube_time": "'+player.getCurrentTime()+'"}');
+	                my_send('{"user_action":"youtube", "user_event": "seeked", "youtube_time": "'+player.getCurrentTime()+'"}');
             	}
            		time = cur_time;
         	}, 100);
@@ -1281,7 +1299,9 @@
       	  	player.loadVideoById(vid_id);
           	player.seekTo(0);
           	//player.pauseVideo();
-          	conn.send('{"user_action":"youtube", "user_event": "new_video", "new_vid_id": "'+vid_id+'"}');
+          	//if(conn != null && conn.open == true){
+          		my_send('{"user_action":"youtube", "user_event": "new_video", "new_vid_id": "'+vid_id+'"}');
+          	//}
       	}
       	function getQueryVariable(url_string, variable)
       	{
@@ -1328,7 +1348,7 @@
 	    //    the player should play for six seconds and then stop.
 	    var done = false;
 	    function onPlayerStateChange(event) {  
-	       	conn.send('{"user_action":"youtube", "user_event": "'+event.data+'", "youtube_time": "'+player.getCurrentTime()+'"}');
+	       	my_send('{"user_action":"youtube", "user_event": "'+event.data+'", "youtube_time": "'+player.getCurrentTime()+'"}');
 	       	if(event.data == YT.PlayerState.BUFFERING && previous_state == YT.PlayerState.PLAYING){
        		 	restart_after_buffer = setTimeout(function(){ player.playVideo();
        		 		console.log("restarted");
@@ -1443,7 +1463,7 @@
 						if(conn != null && conn.open == true){
 
 							if(imessage.length > 0){
-								conn.send(to_send);
+								my_send(to_send);
 								//imessage = imessage.replace(regex, "<a href='$1' target='_blank'>$1</a>");
 								var data;
 								if(previous_sender != "me"){
@@ -1494,6 +1514,7 @@
 			$("#the_results").on('click', '.a_search_result', function(e){
 			  	e.preventDefault();
 			  	load_video_by_id($(this).attr('video-id'));
+			  	my_scroll("#youtube_heading");
 			  	console.log("clicked");
 			});
 			// $("#search_button").click(function(e){
@@ -1508,6 +1529,7 @@
 			});	
 			$('#search_value').bind("searchYoutube",function(e){
 			  	search($("#search_value").val());
+			  	my_scroll("#results_heading");
 			});
 			$('#youtube_link').keyup(function(e){
 			    if(e.keyCode == 13)
