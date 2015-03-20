@@ -1295,6 +1295,12 @@
 	        }
 	        console.log(vid_id);
       	});
+      	$("#server_button").click(function(e){
+      		e.preventDefault();
+      		if(peer.open == false){
+      			peer.reconnect();
+      		}
+      	});
       	function load_video_by_id(vid_id){
       	  	player.loadVideoById(vid_id);
           	player.seekTo(0);
