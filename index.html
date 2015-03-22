@@ -118,6 +118,51 @@
 				width: 180; 
 				height: 120;
 			}
+			.youtube_history{
+			    margin: 0;
+			    padding: 0;
+			    height: 390px;
+			    width: 100%;
+			    display: block; 
+			    /* border:solid #000 1px */
+			}
+			.content_bla{
+			    padding:0;
+			    overflow: scroll; 
+			    overflow-x:hidden;
+			    height:100%
+			    /*-webkit-overflow-scrolling: touch;*/    
+			}
+			.related_box{
+			    margin: 0;
+			    padding: 0;
+			    height: 390px;
+			    width: 100%;
+			    display: block; 
+			    /* border:solid #000 1px */
+			}
+			.related_items{
+			    padding:0;
+			    overflow: scroll; 
+			    overflow-x:hidden;
+			    height:100%
+			    /*-webkit-overflow-scrolling: touch;*/    
+			}
+			.results_box{
+			    margin: 0;
+			    padding: 0;
+			    height: 390px;
+			    width: 100%;
+			    display: block; 
+			    /* border:solid #000 1px */
+			}
+			#the_results{
+			    padding:0;
+			    overflow: scroll; 
+			    overflow-x:hidden;
+			    height:100%
+			    /*-webkit-overflow-scrolling: touch;*/    
+			}
 		</style>
 	</head>
 
@@ -134,7 +179,6 @@
 			      </button>
 			      <a class="navbar-brand" href="#section1">simulchat.com</a>
 			    </div>
-
 			    <!-- Collect the nav links, forms, and other content for toggling -->
 			    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 				    <ul class="nav navbar-nav">
@@ -153,7 +197,9 @@
 			    </div><!-- /.navbar-collapse -->
 		  	</div><!-- /.container-fluid -->
 		</nav>
-
+		<div id="floating_video">
+			<video id="their-video-smaller" width="180" height="120" autoplay></video>
+		</div>
 		<section class="container-fluid" id="section1">
 		<div class="container">
 			<div style="text-align:center;">			
@@ -169,7 +215,6 @@
 				<div class="col-md-3"></div>
 			</div>
 		</div>
-
 		<div style="text-align:center;">
 			<button class="btn btn-success btn-lg" id="take_tour"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>Take Tour</button>
 			<a href="#section2" class="btn btn-success btn-lg">Get Started</a>
@@ -205,7 +250,6 @@
 				</div>
 				<div class="col-md-4"></div>
 			</div>
-			
 		</div>	
 		<div style="text-align:center;">			
 			<h1>No sign-up needed</h1>
@@ -253,9 +297,7 @@
 			</div>
 		</div>	
         </section>
-        <div id="floating_video">
-			<video id="their-video-smaller" width="180" height="120" autoplay></video>
-		</div>
+        
         <section class="container-fluid" id="section3">
         <div style="text-align:center;">			
 			<h1>Watch Videos Together</h1>
@@ -317,7 +359,6 @@
         			</tbody>
         		</table>
         	</div>
-
 		</div>
 		<div style="text-align:center;">			
 			<h1>Please note</h1>
@@ -329,8 +370,7 @@
 						<div>Both people need to open</div>
 						<div>a video from their own computer.</div>
 					</div>
-					<div class="col-md-4"></div>
-					
+					<div class="col-md-4"></div>	
 				</div>
 			</div>
 		</div>	
@@ -339,100 +379,77 @@
 		<div style="text-align:center;">			
 			<h1 id="youtube_heading">Watch YouTube Together</h1>
 		</div>	
-		<div class="container" style="text-align:center;">
+		<div class="container-fluid" >
 	      <div class="row">
-	        <div class="col-md-2"></div>
-	        <div id="the_player" class="col-md-8">
-	          <div id="player"></div>
-	          <div>
-	           
-	          </div>
-	        </div>
-	        <div class="col-md-2">
-	        		<div>
-	        		Please note that the YouTube sync function is still in progress. Feel free to use it, but expect some issues.
+	        <div class="col-md-3" style="margin:0;padding:0;">
+	        	<div class="youtube_history">
+	        		<div class="content_bla">
+
+	        		</div>
+
 	        	</div>
 	        </div>
 
+	        <div id="the_player" class="col-md-6">
+	          	<div id="player"></div>
+	        </div>
+	        <div class="col-md-3">
+	        	<h3>Related Videos</h3>
+	        	<div class="related_box">
+	        		<div id="related_videos" class="related_items">
+	        		</div>
+	        	</div>
+	        </div>
 	      </div>
 	    </div>
 	    <div style="text-align:center;">			
 			<h2>Load new YouTube video</h2>
 		</div>	
 		<div class="container">
-				<div class="row" style="text-align:center;">
-					<div class="col-md-4"></div>
-					<div class="col-md-4">
-						<div>This will load the video for you and your partner</div>
-					</div>
-					<div class="col-md-4"></div>
-					
+			<div class="row" style="text-align:center;">
+				<div class="col-md-4"></div>
+				<div class="col-md-4">
+					<div>This will load the video for you and your partner</div>
 				</div>
+				<div class="col-md-4"></div>
 			</div>
+		</div>
 	    <div class="container">
-	      <div class="form-horizontal">
+	      	<div class="form-horizontal">
 	      		<div class="form-group">
 				    <label for="youtube_link" class="col-md-4 control-label"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> Search YouTube: </label>
 				    <div class="col-md-4 input-group">
-				   		<input type="text" placeholder="search YouTube" id="search_value" class="form-control" >
+				   		<input type="text" placeholder="search YouTube" id="search_value" class="form-control">
 				   		<!-- <button class="btn btn-success" id="search_button">load</button> -->
-				   	</div>
-				   
+				   	</div>   
 			 	</div>
 				<div class="form-group">
 				    <label for="youtube_link" class="col-md-4 control-label"><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span>  Enter link: </label>
 				    <div class="col-md-4 input-group">
-				   		<input type="text" placeholder="enter youtube link" id="youtube_link" class="form-control" >
+				   		<input type="text" placeholder="enter YouTube link" id="youtube_link" class="form-control">
 				   		<!-- <a href="#" class="btn btn-success" id="load_vid">load</a> -->
 				   	</div>
-				   
 			 	</div>
-			 	
-		  </div>
-	      <!-- <div class="row">
-	        <div class="col-md-3"></div>
-	          <div id="load_new_vid" class="col-md-6">
-	              <input type="text" placeholder="enter youtube link" id="youtube_link"  >
-	              
-	          </div>
-	      
-	        <div class="col-md-3">
-	        </div>
-	      </div>   -->
-
-	        <!-- <div class="row">
-	          <div class="col-md-2"></div>
-	          <div class="col-md-8">
-	              <a href="#" class="btn btn-success" id="load_vid">load</a>
-	          </div>
-	          
-	          <div class="col-md-2"></div>
-	        </div> -->
+		  	</div>
 	    </div>
-	    <div  id="search_result">
-          
-          <div class="row">
-            <div class="col-md-3"></div>
-            <div class="col-md-6">
-              <div style="text-align:center;">
-              <!-- <div id="buttons">
-               <label> <input value='cats' type="text" id="search_value"/><button id="search_button" class="btn">Search YouTube</button></label>
-           </div> -->
-                <h1 id="results_heading">Search Results</h1>
-              </div>
-              <div id="the_results">
-              </div>
-            </div>
-            <div class="col-md-3"></div>
-           
-          </div>
-          
+	    <div id="search_result">
+          	<div class="row">
+            	<div class="col-md-3"></div>
+	            <div class="col-md-6">
+	              	<div style="text-align:center;">
+	                	<h1 id="results_heading">Search Results</h1>
+	              	</div>
+	              	<div class="results_box">
+	              		<div id="the_results"></div>
+	              	</div>
+	            </div>
+            	<div class="col-md-3"></div>
+          	</div> 
         </div>  
 		<div id="voice">
 			<audio controls autoplay></audio>
 		</div>
 		</section>
-
 		<section class="container-fluid" id="section5">
 		<div style="text-align:center;">			
 			<h1>Find Partner and exchange ID's</h1>
@@ -452,14 +469,12 @@
 		<!-- shoutbox -->
 			<!-- CREDIT: http://www.sanwebe.com/2013/04/creating-shout-box-facebook-style -->
 			<div class="shout_box">
-			<div class="header">Text Chat <span class="badge" id="unread_badge"></span><div class="close_btn">&nbsp;</div></div>
-			  <div class="toggle_chat" style="display: none;">
-			  <div class="message_box">
-			    </div>
-			    <div class="user_info">
-			    <!-- <input name="shout_username" id="shout_username" type="text" placeholder="Your Name" maxlength="15" /> -->
-			   <input name="shout_message" id="shout_message" type="text" placeholder="Type Message Here"  /> 
-			    </div>
+				<div class="header">Text Chat <span class="badge" id="unread_badge"></span><div class="close_btn">&nbsp;</div></div>
+			  	<div class="toggle_chat" style="display: none;">
+				  	<div class="message_box"></div>
+				    <div class="user_info">
+				   		<input name="shout_message" id="shout_message" type="text" placeholder="Type Message Here"  /> 
+				    </div>
 			    </div>
 			</div>
 			<!-- shoutbox end -->
@@ -536,7 +551,6 @@
 		}
 
 		function get_mic(){
-			
 			navigator.getUserMedia({audio: true, video: false}, function(stream){
 	        	window.localStream = stream;
 	        	//$("#stat_my_mic").text("Active");
@@ -548,7 +562,6 @@
 	      	});
 		}
 		function get_cam(){
-			
 			navigator.getUserMedia({audio: true, video: true}, function(stream){
 	        	window.localStream = stream;
 	        	$('#my-video').prop('src', URL.createObjectURL(stream));
@@ -637,7 +650,6 @@
 						buttons: { "OK": true}
 						//timeout: 20000,
 					});
-
 		      	}
 		      	else{
 		      		$.prompt("There is an incoming voice call from your partner.", {
@@ -683,7 +695,6 @@
 						buttons: { "OK": true}
 						//timeout: 20000,
 					});
-
 		      	}
 		      	else{
 		      		$.prompt("There is an incoming video call from your partner.", {
@@ -756,9 +767,6 @@
 		    		var message_json = jQuery.parseJSON(data);
 		    		if(message_json.textMessage == "true"){
 		    			var received_message = strip(decodeURIComponent(message_json.message));
-		    			
-       					 // Replace plain text links by hyperlinks
-       				 	//var received_message =  received_message.replace(regex, "<a href='$1' target='_blank'>$1</a>");
 		    			
 		    			var d= new Date();
 						var msg_time = d.toLocaleTimeString();
@@ -889,8 +897,7 @@
 		    		}
 		    		updatePartnerStatus();
 		    		console.log('Received ' + data);
-	    		});
-	    		
+	    		});	
 	   		});
 	   		conn.on('close', function(){
 	   			console.log("Disconnected");
@@ -1247,24 +1254,22 @@
       	function load_video_by_id(vid_id){
       	  	player.loadVideoById(vid_id);
           	player.seekTo(0);
-          	//player.pauseVideo();
-          	//if(conn != null && conn.open == true){
-          		my_send('{"user_action":"youtube", "user_event": "new_video", "new_vid_id": "'+vid_id+'"}');
-          	//}
+          	get_related(vid_id);
+          	my_send('{"user_action":"youtube", "user_event": "new_video", "new_vid_id": "'+vid_id+'"}');
       	}
       	function getQueryVariable(url_string, variable)
       	{
             if(url_string == ''){
-              return(false);
+              	return(false);
             }
-             var query = url_string.split("?");
-             var vars = query[1].split("&");
-             for (var i=0;i<vars.length;i++) {
-                     var pair = vars[i].split("=");
-                     if(pair[0] == variable){return pair[1];}
-             }
-             //search(url_string);
-             return(false);
+            var query = url_string.split("?");
+            var vars = query[1].split("&");
+            for (var i=0;i<vars.length;i++) {
+                var pair = vars[i].split("=");
+                if(pair[0] == variable){return pair[1];}
+            }
+            //search(url_string);
+            return(false);
       	}
       	var tag = document.createElement('script');
       	tag.src = "https://www.youtube.com/iframe_api?autohide=1";
@@ -1285,13 +1290,11 @@
          		}
         	});
       	}
-
       	// 4. The API will call this function when the video player is ready.
       	function onPlayerReady(event) {
         	//event.target.playVideo();
         	console.log("video ready");
      	}
-
 	    // 5. The API calls this function when the player's state changes.
 	    //    The function indicates that when playing a video (state=1),
 	    //    the player should play for six seconds and then stop.
@@ -1336,10 +1339,20 @@
 		    var request = gapi.client.youtube.search.list({
 		        part: 'snippet',
 		        q: search_query,
-		        maxResults: 15
+		        //relatedToVideoId: '09R8_2nJtjg',
+		        //type: 'video'
+		        maxResults: 25
 		    });
-
 		    request.execute(onSearchResponse);
+		}
+		function get_related(video_id){
+			$("#related_videos").empty();
+			var request = gapi.client.youtube.search.list({
+		        part: 'snippet',
+		        relatedToVideoId: video_id,
+		        type: 'video'
+		    });
+		    request.execute(onRelatedResponse);
 		}
 		function strip(html)
 			{
@@ -1389,7 +1402,6 @@
 					var d= new Date();
 					var msg_time = d.toLocaleTimeString();
 					if(conn != null && conn.open == true){
-
 						if(imessage.length > 0){
 							my_send(to_send);
 							//imessage = imessage.replace(regex, "<a href='$1' target='_blank'>$1</a>");
@@ -1411,11 +1423,9 @@
 							//reset value of message box
 							$('#shout_message').val('');
 						}
-
 					}
 					else{
 						//$('.alert_shout_msg').remove();
-						
 						var data = '<div class="shout_msg alert_shout_msg"><time>'+msg_time+'</time><span class="username alert_msg">Alert</span><span class="message alert_msg">You are not connected</span></div>';
 						//append data into messagebox with jQuery fade effect!
 						$(data).hide().appendTo('.message_box').fadeIn();
@@ -1423,11 +1433,16 @@
 						//keep scrolled to bottom of chat!
 						var scrolltoh = $('.message_box')[0].scrollHeight;
 						$('.message_box').scrollTop(scrolltoh);
-
 					}
 				}
 			});
 			$("#the_results").on('click', '.a_search_result', function(e){
+			  	e.preventDefault();
+			  	load_video_by_id($(this).attr('video-id'));
+			  	my_scroll("#youtube_heading");
+			  	console.log("clicked");
+			});
+			$("#related_videos").on('click', '.a_search_result', function(e){
 			  	e.preventDefault();
 			  	load_video_by_id($(this).attr('video-id'));
 			  	my_scroll("#youtube_heading");
@@ -1440,6 +1455,8 @@
 			    }
 			});	
 			$('#search_value').bind("searchYoutube",function(e){
+				$("#the_results").scrollTop(0);
+				$('#the_results').empty();
 			  	search($("#search_value").val());
 			  	my_scroll("#results_heading");
 			});
@@ -1469,18 +1486,33 @@
 		});
 		// Called automatically with the response of the YouTube API request.
 		function onSearchResponse(response) {
-		    $('#results').empty();
-            $('#the_results').empty();
+		    //$('#results').empty();
+            //$('#the_results').empty();
             var num_of_videos = 0;
             for(var i = 0; i < response.items.length; i++){
               	if(response.items[i].id.kind == "youtube#video"){
-                	console.log(response.items[i].id.videoId + " " + response.items[i].snippet.title + " " + response.items[i].snippet.thumbnails.default.url);
+                	//console.log(response.items[i].id.videoId + " " + response.items[i].snippet.title + " " + response.items[i].snippet.thumbnails.default.url);
                 	$("#the_results").append('<div class="row a_search_result" video-id="'+response.items[i].id.videoId+'"><a href="#"><div class="col-md-3"><img src="'+response.items[i].snippet.thumbnails.default.url+'"></div><div class="col-md-9"><h4>'+ response.items[i].snippet.title +'</h4><p>'+response.items[i].snippet.channelTitle+'</p></div></a></div>');
-                	num_of_videos = num_of_videos+1
+                	num_of_videos = num_of_videos+1;
              	}
-             	if(num_of_videos == 5){
-             		break;
+             	// if(num_of_videos == 5){
+             	// 	break;
+             	// }
+            }
+		}
+		function onRelatedResponse(response) {
+		    //$('#results').empty();
+            //$('#the_results').empty();
+            var num_of_videos = 0;
+            for(var i = 0; i < response.items.length; i++){
+              	if(response.items[i].id.kind == "youtube#video"){
+                	//console.log(response.items[i].id.videoId + " " + response.items[i].snippet.title + " " + response.items[i].snippet.thumbnails.default.url);
+                	$("#related_videos").append('<div class="container-fluid"><div class="row a_search_result" video-id="'+response.items[i].id.videoId+'"><a href="#"><div class="col-md-6"><img src="'+response.items[i].snippet.thumbnails.default.url+'"></div><div class="col-md-6"><h6>'+ response.items[i].snippet.title +'</h6><p>'+response.items[i].snippet.channelTitle+'</p></div></a></div></div>');
+                	num_of_videos = num_of_videos+1;
              	}
+             	// if(num_of_videos == 5){
+             	// 	break;
+             	// }
             }
 		}
 	//end of youtube search
@@ -1494,5 +1526,4 @@
 
   ga('create', 'UA-60494371-1', 'auto');
   ga('send', 'pageview');
-
 </script>
