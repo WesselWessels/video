@@ -931,123 +931,7 @@
 	    		$("#disconnect_div").hide();
 	   		});
 	    }
-	    $("#connect").click(function(e){
-	    	e.preventDefault();
-	    	connect_click();
-	    });
-	    function connect_click(){
-	    	console.log($("#connect_id").val());
-	    	conn = peer.connect($("#connect_id").val().trim());
-	    	my_connect(conn);
-	    }
-	    $("#disconnect").click(function(e){
-	    	e.preventDefault();
-	    	conn.close();
-	    });
-	    $("#voice_call").click(function(e){
-	    	e.preventDefault();
-	    	if(call != null){
-	    		call.close();
-	    	}
-	    	if(window.localStream != null || window.localStream.getAudioTracks().length > 0)
-	    	{
-	    		$("#voice_call").hide();
-	    		$("#hang_up").show();
-	    		if(window.localStream.getVideoTracks().length > 0){
-	    			window.localStream.getVideoTracks()[0].enabled = false;
-	    		}
-		    	call = peer.call(conn.peer, window.localStream, {metadata:'voice'});
-		    	call.on('stream', function(stream){
-		    		window.remoteStream = stream;
-			      	change_status_button("call_button","green");
-		    		$("#hang_up").hide();
-			        $('audio').prop('src', URL.createObjectURL(stream));
-			        $("#end_voice_call").show();
-			        $("#voice_call").hide();
-			    });
-			    call.on('close', function(){
-			      	change_status_button("call_button","red");
-			  	  	$("#end_voice_call").hide();
-				    $("#voice_call").show();
-				    $("#hang_up").hide();
-		  	 	});
-			}
-			else{
-				get_mic();
-				$.prompt("Your browser is asking you to activate your microphone. The popup should be somewhere on the top or bottom of your screen", {
-					title: "Activate Your Microphone and try again.",
-					buttons: { "OK": true}
-				});
-			}
-	    });
-		$("#video_call").click(function(e){
-	    	e.preventDefault();
-	    	if(call != null){
-	    		call.close();
-	    	}
-	    	if(window.localStream != null && window.localStream.getVideoTracks().length > 0)
-	    	{
-	    		$("#video_call").hide();
-	    		$("#hang_up_video").show();
-	    		if(window.localStream.getVideoTracks().length > 0){
-	    			window.localStream.getVideoTracks()[0].enabled = true;
-	    		}
-		    	call = peer.call(conn.peer, window.localStream, {metadata:'video'});
-		    	call.on('stream', function(stream){
-		    		window.remoteStream = stream;
-			      	change_status_button("video_call_button","green");
-		    		$("#hang_up_video").hide();
-			        $('#their-video').prop('src', URL.createObjectURL(stream));
-			        $('#their-video-smaller').prop('src', URL.createObjectURL(stream));
-			        $("#end_video_call").show();
-			        //$("#voice_call").hide();
-			    });
-			    call.on('close', function(){
-			      	change_status_button("video_call_button","red");
-			  	  	$("#end_video_call").hide();
-				    $("#video_call").show();
-				    $("#hang_up_video").hide();
-		  	 	});
-			}
-			else{
-				get_cam();
-				$.prompt("Your browser is asking you to activate your camera. The popup should be somewhere on the top or bottom of your screen", {
-					title: "Activate Your Camera and try again.",
-					buttons: { "OK": true}
-				});
-			}
-	    });
-	    $("#hang_up").click(function(e){
-	    	e.preventDefault();
-	    	$("#hang_up").hide();
-	    	$("#voice_call").show();
-	    	my_send('{"call_status": "hang_up"}');
-	    });
-	    $("#hang_up_video").click(function(e){
-	    	e.preventDefault();
-	    	$("#hang_up_video").hide();
-	    	$("#video_call").show();
-	    	my_send('{"call_status": "hang_up_video"}');
-	    });
-	    $("#end_voice_call").click(function(e){
-	    	e.preventDefault();
-	    	if(call){
-	    		call.close();
-	    	}
-	    	my_send('{"call_status": "hang_up"}');
-	    });
-	    $("#end_video_call").click(function(e){
-	    	e.preventDefault();
-	    	if(call){
-	    		call.close();
-	    	}
-	    	my_send('{"call_status": "hang_up_video"}');
-	    });
-	    $("#take_tour").click(function(e){
-	    	e.preventDefault();
-	    	ga('send', 'event', 'Clicks', 'Tour');
-	    	takeTour();
-	    });
+	    
 
 	    function updateMyStatus(){
 	    	$("#stat_my_id").text(stat_my_id);
@@ -1389,14 +1273,132 @@
 		    });
 		    request.execute(onRelatedResponse);
 		}
-		function strip(html)
-			{
-			   var tmp = document.createElement("DIV");
-			   tmp.innerHTML = html;
-			   return tmp.textContent || tmp.innerText || "";
-			}
+		function strip(html){
+		   var tmp = document.createElement("DIV");
+		   tmp.innerHTML = html;
+		   return tmp.textContent || tmp.innerText || "";
+		}
+		function connect_click(){
+	    	console.log($("#connect_id").val());
+	    	conn = peer.connect($("#connect_id").val().trim());
+	    	my_connect(conn);
+	    }
 		$(document).ready(function(){
 			$("#floating_video").hide();
+
+			$("#connect").click(function(e){
+		    	e.preventDefault();
+		    	connect_click();
+		    });
+		    
+		    $("#disconnect").click(function(e){
+		    	e.preventDefault();
+		    	conn.close();
+		    });
+		    $("#voice_call").click(function(e){
+		    	e.preventDefault();
+		    	if(call != null){
+		    		call.close();
+		    	}
+		    	if(window.localStream != null || window.localStream.getAudioTracks().length > 0)
+		    	{
+		    		$("#voice_call").hide();
+		    		$("#hang_up").show();
+		    		if(window.localStream.getVideoTracks().length > 0){
+		    			window.localStream.getVideoTracks()[0].enabled = false;
+		    		}
+			    	call = peer.call(conn.peer, window.localStream, {metadata:'voice'});
+			    	call.on('stream', function(stream){
+			    		window.remoteStream = stream;
+				      	change_status_button("call_button","green");
+			    		$("#hang_up").hide();
+				        $('audio').prop('src', URL.createObjectURL(stream));
+				        $("#end_voice_call").show();
+				        $("#voice_call").hide();
+				    });
+				    call.on('close', function(){
+				      	change_status_button("call_button","red");
+				  	  	$("#end_voice_call").hide();
+					    $("#voice_call").show();
+					    $("#hang_up").hide();
+			  	 	});
+				}
+				else{
+					get_mic();
+					$.prompt("Your browser is asking you to activate your microphone. The popup should be somewhere on the top or bottom of your screen", {
+						title: "Activate Your Microphone and try again.",
+						buttons: { "OK": true}
+					});
+				}
+		    });
+			$("#video_call").click(function(e){
+		    	e.preventDefault();
+		    	if(call != null){
+		    		call.close();
+		    	}
+		    	if(window.localStream != null && window.localStream.getVideoTracks().length > 0)
+		    	{
+		    		$("#video_call").hide();
+		    		$("#hang_up_video").show();
+		    		if(window.localStream.getVideoTracks().length > 0){
+		    			window.localStream.getVideoTracks()[0].enabled = true;
+		    		}
+			    	call = peer.call(conn.peer, window.localStream, {metadata:'video'});
+			    	call.on('stream', function(stream){
+			    		window.remoteStream = stream;
+				      	change_status_button("video_call_button","green");
+			    		$("#hang_up_video").hide();
+				        $('#their-video').prop('src', URL.createObjectURL(stream));
+				        $('#their-video-smaller').prop('src', URL.createObjectURL(stream));
+				        $("#end_video_call").show();
+				        //$("#voice_call").hide();
+				    });
+				    call.on('close', function(){
+				      	change_status_button("video_call_button","red");
+				  	  	$("#end_video_call").hide();
+					    $("#video_call").show();
+					    $("#hang_up_video").hide();
+			  	 	});
+				}
+				else{
+					get_cam();
+					$.prompt("Your browser is asking you to activate your camera. The popup should be somewhere on the top or bottom of your screen", {
+						title: "Activate Your Camera and try again.",
+						buttons: { "OK": true}
+					});
+				}
+		    });
+		    $("#hang_up").click(function(e){
+		    	e.preventDefault();
+		    	$("#hang_up").hide();
+		    	$("#voice_call").show();
+		    	my_send('{"call_status": "hang_up"}');
+		    });
+		    $("#hang_up_video").click(function(e){
+		    	e.preventDefault();
+		    	$("#hang_up_video").hide();
+		    	$("#video_call").show();
+		    	my_send('{"call_status": "hang_up_video"}');
+		    });
+		    $("#end_voice_call").click(function(e){
+		    	e.preventDefault();
+		    	if(call){
+		    		call.close();
+		    	}
+		    	my_send('{"call_status": "hang_up"}');
+		    });
+		    $("#end_video_call").click(function(e){
+		    	e.preventDefault();
+		    	if(call){
+		    		call.close();
+		    	}
+		    	my_send('{"call_status": "hang_up_video"}');
+		    });
+		    $("#take_tour").click(function(e){
+		    	e.preventDefault();
+		    	ga('send', 'event', 'Clicks', 'Tour');
+		    	takeTour();
+		    });
 			$("#call_section").hover(function(){
 				$("#floating_video").hide();
 			},function(){
