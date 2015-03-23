@@ -163,6 +163,10 @@
 			    height:100%
 			    /*-webkit-overflow-scrolling: touch;*/    
 			}
+			.typing_msg{
+				padding-left: 3em;
+				font-style: italic;
+			}
 		</style>
 	</head>
 
@@ -186,7 +190,7 @@
 				        <li ><a href="#call_section">Talk<span class="sr-only">(current)</span></a></li>
 				        <li ><a href="#section3">Watch Video<span class="sr-only">(current)</span></a></li>
 				        <li ><a href="#section4">Watch YouTube<span class="sr-only">(current)</span></a></li>
-				        <li ><a href="#section5">IRC Chat<span class="sr-only">(current)</span></a></li>
+				        <!-- <li ><a href="#section5">IRC Chat<span class="sr-only">(current)</span></a></li> -->
 				    </ul>
 					<div class="nav navbar-nav navbar-right">
 						<a href="#section2"><button type="button" id="server_button" class="btn btn-danger navbar-btn" title="Connection with server"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span></button></a>
@@ -451,7 +455,7 @@
 			<audio controls autoplay></audio>
 		</div>
 		</section>
-		<section class="container-fluid" id="section5">
+		<!-- <section class="container-fluid" id="section5">
 		<div style="text-align:center;">			
 			<h1>Find Partner and exchange ID's</h1>
 		</div>	
@@ -466,7 +470,7 @@
 			</div>
 		</div>
 		<br><br>
-		</section>
+		</section> -->
 		<!-- shoutbox -->
 			<!-- CREDIT: http://www.sanwebe.com/2013/04/creating-shout-box-facebook-style -->
 			<div class="shout_box">
@@ -1146,14 +1150,14 @@
 					position: { container: '#search_value', x: 40, y: 0, width:300, arrow: 'lt' },
 					submit: tourSubmitFunc
 				},
-				{
-					title: 'IRC Chat [optional]',
-					html: 'This is a web IRC client that connects to a channel called ##simulchat. Here you can find your partner if they are online and send them your ID. It is advised to send a private message, since anyone can see what you time in the defualt channel. Just pick a Nickname and click start. Note that you do not need to use this chat box. It is just there to help you exchange your ID\'s. You can also send your ID to your partner in any way you please, like email',
-					buttons: { Prev: -1, Next: 1 },
-					focus: 1,
-					position: { container: '#kiwi_irc_frame', x: 200, y: 120, width: 400, arrow: 'tm' },
-					submit: tourSubmitFunc
-				},
+				// {
+				// 	title: 'IRC Chat [optional]',
+				// 	html: 'This is a web IRC client that connects to a channel called ##simulchat. Here you can find your partner if they are online and send them your ID. It is advised to send a private message, since anyone can see what you time in the defualt channel. Just pick a Nickname and click start. Note that you do not need to use this chat box. It is just there to help you exchange your ID\'s. You can also send your ID to your partner in any way you please, like email',
+				// 	buttons: { Prev: -1, Next: 1 },
+				// 	focus: 1,
+				// 	position: { container: '#kiwi_irc_frame', x: 200, y: 120, width: 400, arrow: 'tm' },
+				// 	submit: tourSubmitFunc
+				// },
 				{
 				title: 'Done',
 				html: 'Thank you for finishing the tour. This site was made so that people can connect to each other in an easy way. It is still under construction, so watch this space',
