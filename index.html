@@ -540,6 +540,7 @@
 		function my_send(data){
 			if(conn != null && conn.open == true){
 				conn.send(data);
+				console.log("Sent: "+ data);
 			}
 		}
 		function my_scroll(id){
@@ -902,12 +903,14 @@
 				          	player.seekTo(0);
 				          	var title_timeout =  setInterval(function(){
 				          		console.log("title: "+player.getVideoData().title);
-				          		if(player.getVideoData().title.length > 0){
+				          		if(player.getPlayerState() != -1){
 				          			$("#youtube_title").text(player.getVideoData().title);
 				          			clearInterval(title_timeout);
+				          			player.playVideo();
 				          		}
 				          		else{
 				          			player.seekTo(0);
+				          			player.playVideo();
 				          		}
 				          	}, 1000);
 
@@ -1240,7 +1243,7 @@
       
      	$("#the_player").hover(function(){
        		// $("#the_player").css("background-color", "yellow");
-       		console.log("inside");
+       		//console.log("inside");
         	time = player.getCurrentTime();
          	my_timer = setInterval(function () {
             	var cur_time = player.getCurrentTime();
@@ -1252,7 +1255,7 @@
         	}, 100);
         },function(){
         // $("#the_player").css("background-color", "pink");
-	        console.log("outside");
+	        //console.log("outside");
 	        clearInterval(my_timer);
    		 });
       	$("#load_vid").click(function(e){
@@ -1276,12 +1279,14 @@
 
           	var title_timeout =  setInterval(function(){
           		console.log("title: "+player.getVideoData().title);
-          		if(player.getVideoData().title.length > 0){
+          		if(player.getPlayerState() != -1){
           			$("#youtube_title").text(player.getVideoData().title);
           			clearInterval(title_timeout);
+          			player.playVideo();
           		}
           		else{
           			player.seekTo(0);
+          			player.playVideo();
           		}
           	}, 1000);
           	get_related(vid_id);
