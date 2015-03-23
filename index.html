@@ -524,17 +524,7 @@
 		var unread_messages = 0;
 		updateMyStatus();
 		updatePartnerStatus();
-		$("#voice").hide();
-		$("#disconnect_div").hide();
-		$("#end_voice_call").hide();
-		$("#hang_up").hide();
-		$("#end_video_call").hide();
-		$("#hang_up_video").hide();
-		var video_width = $("#video_div").width();
-		var video_height = Math.round(video_width * 9 / 16);
-		//var previous_partner_seektime = 0;
-		$("#my_video").width(video_width);
-		$("#my_video").height(video_height);
+		
 		var file;
 		navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 		function my_send(data){
@@ -1124,39 +1114,7 @@
 	}(window));
 	//YOUTUBE CODE
 		var my_timer;
-      
-     	$("#the_player").hover(function(){
-       		// $("#the_player").css("background-color", "yellow");
-       		//console.log("inside");
-        	time = player.getCurrentTime();
-         	my_timer = setInterval(function () {
-            	var cur_time = player.getCurrentTime();
-				if (Math.abs(time-cur_time) > 1) {
-	                console.log("seeked from "+ time + " to " + cur_time);
-	                my_send('{"user_action":"youtube", "user_event": "seeked", "youtube_time": "'+player.getCurrentTime()+'"}');
-            	}
-           		time = cur_time;
-        	}, 100);
-        },function(){
-        // $("#the_player").css("background-color", "pink");
-	        //console.log("outside");
-	        clearInterval(my_timer);
-   		 });
-      	$("#load_vid").click(function(e){
-	      	e.preventDefault();
-	        var vid_id = getQueryVariable($("#youtube_link").val(), 'v');
-	        if(vid_id){
-	          	$("#youtube_link").val('');
-	          	load_video_by_id(vid_id);
-	        }
-	        console.log(vid_id);
-      	});
-      	$("#server_button").click(function(e){
-      		e.preventDefault();
-      		if(peer.open == false){
-      			peer.reconnect();
-      		}
-      	});
+     
       	function load_video_by_id(vid_id){
       	  	player.loadVideoById(vid_id);
           	player.seekTo(0);
@@ -1283,7 +1241,53 @@
 	    	conn = peer.connect($("#connect_id").val().trim());
 	    	my_connect(conn);
 	    }
+	    /////////////////////////////////////////////////
+	    // DOCUMENT READY	
+	    /////////////////////////////////////////////////
 		$(document).ready(function(){
+			$("#voice").hide();
+			$("#disconnect_div").hide();
+			$("#end_voice_call").hide();
+			$("#hang_up").hide();
+			$("#end_video_call").hide();
+			$("#hang_up_video").hide();
+			var video_width = $("#video_div").width();
+			var video_height = Math.round(video_width * 9 / 16);
+			//var previous_partner_seektime = 0;
+			$("#my_video").width(video_width);
+			$("#my_video").height(video_height);
+			$("#the_player").hover(function(){
+	       		// $("#the_player").css("background-color", "yellow");
+	       		//console.log("inside");
+	        	time = player.getCurrentTime();
+	         	my_timer = setInterval(function () {
+	            	var cur_time = player.getCurrentTime();
+					if (Math.abs(time-cur_time) > 1) {
+		                console.log("seeked from "+ time + " to " + cur_time);
+		                my_send('{"user_action":"youtube", "user_event": "seeked", "youtube_time": "'+player.getCurrentTime()+'"}');
+	            	}
+	           		time = cur_time;
+	        	}, 100);
+	        },function(){
+	        // $("#the_player").css("background-color", "pink");
+		        //console.log("outside");
+		        clearInterval(my_timer);
+	   		});
+			$("#load_vid").click(function(e){
+		      	e.preventDefault();
+		        var vid_id = getQueryVariable($("#youtube_link").val(), 'v');
+		        if(vid_id){
+		          	$("#youtube_link").val('');
+		          	load_video_by_id(vid_id);
+		        }
+		        console.log(vid_id);
+	      	});
+	      	$("#server_button").click(function(e){
+	      		e.preventDefault();
+	      		if(peer.open == false){
+	      			peer.reconnect();
+	      		}
+	      	});
 			$("#floating_video").hide();
 
 			$("#connect").click(function(e){
