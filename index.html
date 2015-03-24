@@ -14,6 +14,7 @@
 		<script src="js/scripts.js"></script>
  		<script type="text/javascript" src="http://cdn.peerjs.com/0.3/peer.js"></script>
  		<script type="text/javascript" src="js/jquery.linkify.min.js"></script>
+ 		<script type="text/javascript" src="js/ion.sound.min.js"></script>
 		<style type="text/css">
 			video, input {
 			    display: block;
@@ -781,6 +782,7 @@
 						var scrolltoh = $('.message_box')[0].scrollHeight;
 						$('.message_box').scrollTop(scrolltoh);
 		    			console.log(received_message);
+		    			ion.sound.play("message_drop");
 		    			unread_messages = unread_messages +1;
 		    			update_badge();
 		    		}
@@ -1246,6 +1248,17 @@
 	    // DOCUMENT READY	
 	    /////////////////////////////////////////////////
 		$(document).ready(function(){
+			ion.sound({
+			    sounds: [
+			        {
+			            name: "message_drop"
+			        }
+			    ],
+			    volume: 0.6,
+			    path: "sounds/",
+			    preload: true
+			});
+
 			$("#voice").hide();
 			$("#disconnect_div").hide();
 			$("#end_voice_call").hide();
