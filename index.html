@@ -15,6 +15,7 @@
  		<script type="text/javascript" src="http://cdn.peerjs.com/0.3/peer.js"></script>
  		<script type="text/javascript" src="js/jquery.linkify.min.js"></script>
  		<script type="text/javascript" src="js/ion.sound.min.js"></script>
+ 		<link href="//vjs.zencdn.net/4.12/video-js.css" rel="stylesheet">
 		<style type="text/css">
 			video, input {
 			    display: block;
@@ -336,7 +337,7 @@
         	</div>
 	        <div id="video_div" class="col-md-6">
 				<input type="file" accept="video/mp4,video/webm,video/ogg,audio/*" id="video_file"/>
-				<video id="my_video" width="720" height="480" controls >
+				<video class="video-js vjs-default-skin" id="my_video" width="720" height="480" controls >
 				</video>
 			</div>	
         	<div class="col-md-3">
@@ -499,7 +500,7 @@
 		var conn;
 		var last_received_time = 0;
 		var call;
-		
+		var original_title = "Watch videos together";
 		//youtube variables
 			var player;
      		var time; 
@@ -590,10 +591,13 @@
 			if(unread_messages == 0 || $(".toggle_chat").css('display') == "block"){
 				unread_messages = 0; //unsure if this is needed
 				$("#unread_badge").text('');
+				document.title = original_title;
 			}
 			else{
 				//unread_messages = unread_messages +1;
 				$("#unread_badge").text(unread_messages);
+				var tab_message = (unread_messages == 1) ? 'message':'messages';
+				document.title = '['+unread_messages+'] '+tab_message+' - SimulChat';
 			}
 		}
 		//get_mic();
@@ -1582,3 +1586,5 @@
   ga('create', 'UA-60494371-1', 'auto');
   ga('send', 'pageview');
 </script>
+
+<script src="//vjs.zencdn.net/4.12/video.js"></script>
