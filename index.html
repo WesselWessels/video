@@ -753,6 +753,12 @@
 	    	}
 	    	return return_string;
 	    }
+	    function get_ping(){
+	    	
+			// var d = new Date();
+			// var n = d.getTime(); 
+			my_send('{"ping":"'+window.performance.now()+'"}');
+	    }
 	    function my_connect(connection){
 	    	conn = connection;
 	    	conn.on('open',function(){
@@ -789,6 +795,14 @@
 		    			ion.sound.play("message_drop");
 		    			unread_messages = unread_messages +1;
 		    			update_badge();
+		    		}
+		    		if(message_json.ping != null){
+		    			my_send('{"pingback":"'+message_json.ping+'"}');
+		    		}
+		    		if(message_json.pingback != null){
+		    // 			var d = new Date();
+						// var n = d.getTime(); 
+						console.log((window.performance.now()- message_json.pingback)/2 + "ms");
 		    		}
 		    		if(message_json.call_status == "hang_up"){
 		    			if(call){
