@@ -196,10 +196,10 @@
 				        <!-- <li ><a href="#section5">IRC Chat<span class="sr-only">(current)</span></a></li> -->
 				    </ul>
 					<div class="nav navbar-nav navbar-right">
-						<a href="#section2"><button type="button" id="server_button" class="btn btn-danger navbar-btn" title="Connection with server"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span></button></a>
-			      		<a href="#section2"><button type="button" id="user_button" class="btn btn-danger navbar-btn" title="Connection with partner"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></button></a>
-			      		<a href="#call_section"><button type="button" id="call_button" class="btn btn-danger navbar-btn" title="Voice call"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span></button></a>
-			      		<a href="#call_section"><button type="button" id="video_call_button" class="btn btn-danger navbar-btn" title="Video call"><span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span></button></a>
+						<a href="#section2"><button type="button" id="server_button" class="btn btn-danger navbar-btn tool_tip" title="Connection with server"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span></button></a>
+			      		<a href="#section2"><button type="button" id="user_button" class="btn btn-danger navbar-btn tool_tip" title="Connection with partner"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></button></a>
+			      		<a href="#call_section"><button type="button" id="call_button" class="btn btn-danger navbar-btn tool_tip" title="Voice call"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span></button></a>
+			      		<a href="#call_section"><button type="button" id="video_call_button" class="btn btn-danger navbar-btn tool_tip" title="Video call"><span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span></button></a>
 			    	</div>
 			    </div><!-- /.navbar-collapse -->
 		  	</div><!-- /.container-fluid -->
@@ -1697,5 +1697,5 @@
 <script src="//vjs.zencdn.net/4.12/video.js"></script>
 <script src="js/jquery-ui.min.js"></script>
 <script>
-	$(document).tooltip();
+	$(".tool_tip").tooltip();
 </script>
