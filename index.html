@@ -16,6 +16,7 @@
  		<script type="text/javascript" src="js/jquery.linkify.min.js"></script>
  		<script type="text/javascript" src="js/ion.sound.min.js"></script>
  		<link href="//vjs.zencdn.net/4.12/video-js.css" rel="stylesheet">
+ 		<link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css">
 		<style type="text/css">
 			video, input {
 			    display: block;
@@ -165,7 +166,7 @@
 			    height:100%
 			    /*-webkit-overflow-scrolling: touch;*/    
 			}
-			.typing_msg{
+			#typing_msg{
 				padding-left: 3em;
 				font-style: italic;
 			}
@@ -237,7 +238,7 @@
 				<div class="col-md-4">
 					<div class="form-horizontal">
 						<div class="form-group">
-						    <label for="my_id" class="col-md-4 control-label">Your ID is: </label>
+						    <label for="my_id" class="col-md-4 control-label"><!-- <span title="This is your ID for this session" class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> --> Your ID is: </label>
 						    <div class="col-md-8">
 						   		<input type="text" class="form-control" id="my_id" readonly>
 						   	</div>
@@ -257,6 +258,11 @@
 				<div class="col-md-4"></div>
 			</div>
 		</div>	
+		<div style="text-align:center;">
+			<h2>Connection Status:</h2>
+			<h3 id="connect_notify">Not Connected</h3>
+
+		</div>
 		<div style="text-align:center;">			
 			<h1>No sign-up needed</h1>
 			<div class="container">
@@ -476,7 +482,7 @@
 		<!-- shoutbox -->
 			<!-- CREDIT: http://www.sanwebe.com/2013/04/creating-shout-box-facebook-style -->
 			<div class="shout_box">
-				<div class="header">Text Chat <span class="badge" id="unread_badge"></span><div class="close_btn">&nbsp;</div></div>
+				<div class="header">Text Chat <span class="badge" id="unread_badge"></span><span id="typing_msg">typing</span><div class="close_btn">&nbsp;</div></div>
 			  	<div class="toggle_chat" style="display: none;">
 				  	<div class="message_box"></div>
 				    <div class="user_info">
@@ -520,8 +526,12 @@
 		var stat_partner_size = "-";
 
 		var window_focus;
-
+		var connect_timeout;
 		var previous_sender = "none";
+
+		var typing_timeout;
+
+		var last_typed_time = 0;
 
 		var regex = /(https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w\/_\.]*(\?\S+)?)?)?)/ig;
 
@@ -531,6 +541,19 @@
 		
 		var file;
 		navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+
+		function is_typing(){
+			clearInterval(typing_timeout);
+
+			$("#typing_msg").show();
+			typing_timeout = setTimeout(function(){
+				$("#typing_msg").hide();
+			}, 10000);
+		}
+		function not_typing(){
+			clearInterval(typing_timeout);
+			$("#typing_msg").hide();
+		}
 		function my_send(data){
 			if(conn != null && conn.open == true){
 				conn.send(data);
@@ -760,17 +783,34 @@
 	    }
 	    function my_connect(connection){
 	    	conn = connection;
+	    	connect_timeout = setTimeout(function(){
+	    		$("#connect").show();
+	    		$("#disconnect").hide();
+	    		$.prompt("The connection could not be established. Please try again. If it fails a few times, please make sure your browser is up to date. Note that some networks do not allow these type of connections.", {
+						title: "Could not connect",
+						buttons: { "OK": true}
+					});
+	    		$("#connect_notify").html('Try again');
+	    	}, 10000);
+	    	$("#connect_notify").html('<span style="color:orange;">Trying to connect</span>');
 	    	conn.on('open',function(){
+	    		clearTimeout(connect_timeout);
+	    		my_scroll("#section2");
 	    		$("#connected_id").text(conn.peer);
+	    		$("#connect_notify").html('<span style="color:green;">Connected</span>');
 	    		stat_partner_id = conn.peer;
 	    		updatePartnerStatus();
 	    		change_status_button("user_button", "green");
 	    		console.log("Connected");
 	    		$("#connect").hide();
+	    		$("#disconnect").show();
 	    		$("#disconnect_div").show();
 	    		
 		    	conn.on('data', function(data){
 		    		var message_json = jQuery.parseJSON(data);
+		    		if(message_json.typing == "true"){
+		    			is_typing();
+		    		}
 		    		if(message_json.textMessage == "true"){
 		    			var received_message = strip(decodeURIComponent(message_json.message));
 		    			
@@ -793,6 +833,7 @@
 		    			console.log(received_message);
 		    			ion.sound.play("message_drop");
 		    			unread_messages = unread_messages +1;
+		    			not_typing();
 		    			update_badge();
 		    		}
 		    		if(message_json.ping != null){
@@ -932,6 +973,8 @@
 	   		});
 	   		conn.on('close', function(){
 	   			console.log("Disconnected");
+	   			$("#connect_notify").html('<span style="color:red;">Disconnected</span>');
+	   			my_scroll("#section2");
 	    		change_status_button("user_button", "red");
 	   			if(call){
 	   				call.close();
@@ -1260,6 +1303,7 @@
 		   return tmp.textContent || tmp.innerText || "";
 		}
 		function connect_click(){
+			$("#connect").hide();
 	    	console.log($("#connect_id").val());
 	    	conn = peer.connect($("#connect_id").val().trim());
 	    	my_connect(conn);
@@ -1290,6 +1334,7 @@
 			//var previous_partner_seektime = 0;
 			$("#my_video").width(video_width);
 			$("#my_video").height(video_height);
+			$("#typing_msg").hide();
 			$("#the_player").hover(function(){
 	       		// $("#the_player").css("background-color", "yellow");
 	       		//console.log("inside");
@@ -1489,6 +1534,7 @@
 					if(conn != null && conn.open == true){
 						if(imessage.length > 0){
 							my_send(to_send);
+							last_typed_time = 0;
 							//imessage = imessage.replace(regex, "<a href='$1' target='_blank'>$1</a>");
 							var data;
 							if(previous_sender != "me"){
@@ -1518,6 +1564,12 @@
 						//keep scrolled to bottom of chat!
 						var scrolltoh = $('.message_box')[0].scrollHeight;
 						$('.message_box').scrollTop(scrolltoh);
+					}
+				}
+				else{
+					if((window.performance.now() - last_typed_time) > 5000){
+						my_send('{"typing":"true"}');
+						last_typed_time = window.performance.now();
 					}
 				}
 			});
@@ -1614,3 +1666,7 @@
 </script>
 
 <script src="//vjs.zencdn.net/4.12/video.js"></script>
+<script src="js/jquery-ui.min.js"></script>
+<script>
+	$(document).tooltip();
+</script>
