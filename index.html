@@ -535,6 +535,8 @@
 
 		var regex = /(https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w\/_\.]*(\?\S+)?)?)?)/ig;
 
+		var my_prompt = null;
+
 		var unread_messages = 0;
 		updateMyStatus();
 		updatePartnerStatus();
@@ -665,14 +667,20 @@
 		      	if(window.localStream == null || window.localStream.getAudioTracks().length == 0){
 		      		get_mic();
 		      		my_send('{"call_status": "mic_inactive"}');
-		      		$.prompt("There is an incoming voice call from your partner, but your microphone is not activated. Please activate your microphone.", {
+		      		if(my_prompt != null){
+		      			my_prompt.close();
+		      		}
+		      		my_prompt = new Impromptu("There is an incoming voice call from your partner, but your microphone is not activated. Please activate your microphone.", {
 						title: "Activate your microphone",
 						buttons: { "OK": true}
 						//timeout: 20000,
 					});
 		      	}
 		      	else{
-		      		$.prompt("There is an incoming voice call from your partner.", {
+		      		if(my_prompt != null){
+		      			my_prompt.close();
+		      		}
+		      		my_prompt = new Impromptu("There is an incoming voice call from your partner.", {
 						title: "Incoming call",
 						buttons: { "Answer": true, "Not now": false },
 						//timeout: 20000,
@@ -710,14 +718,20 @@
 		      	if(window.localStream == null || window.localStream.getVideoTracks().length == 0){
 		      		get_cam();
 		      		my_send('{"call_status": "cam_inactive"}');
-		      		$.prompt("There is an incoming video call from your partner, but your camera is not activated. Please activate your camera.", {
+		      		if(my_prompt != null){
+		      			my_prompt.close();
+		      		}
+		      		my_prompt = new Impromptu("There is an incoming video call from your partner, but your camera is not activated. Please activate your camera.", {
 						title: "Activate your Camera",
 						buttons: { "OK": true}
 						//timeout: 20000,
 					});
 		      	}
 		      	else{
-		      		$.prompt("There is an incoming video call from your partner.", {
+		      		if(my_prompt != null){
+		      			my_prompt.close();
+		      		}
+		      		my_prompt = new Impromptu("There is an incoming video call from your partner.", {
 						title: "Incoming video call",
 						buttons: { "Answer": true, "Not now": false },
 						//timeout: 20000,
@@ -786,7 +800,10 @@
 	    	connect_timeout = setTimeout(function(){
 	    		$("#connect").show();
 	    		$("#disconnect").hide();
-	    		$.prompt("The connection could not be established. Please try again. If it fails a few times, please make sure your browser is up to date. Note that some networks do not allow these type of connections.", {
+	    		if(my_prompt != null){
+		      		my_prompt.close();
+		      	}	
+		      		my_prompt = new Impromptu("The connection could not be established. Please try again. If it fails a few times, please make sure your browser is up to date. Note that some networks do not allow these type of connections.", {
 						title: "Could not connect",
 						buttons: { "OK": true}
 					});
@@ -864,7 +881,10 @@
 	   					}
 		    			$("#hang_up").hide();
 		    			$("#voice_call").show();
-		    			$.prompt("Your partner's microphone is not activated. Please try again.", {
+		    			if(my_prompt != null){
+		      				my_prompt.close();
+		      			}
+		      			my_prompt = new Impromptu("Your partner's microphone is not activated. Please try again.", {
 							title: "Partner microphone inactive",
 							buttons: { "OK": true}
 						});
@@ -875,7 +895,10 @@
 	   					}
 		    			$("#hang_up_video").hide();
 		    			$("#video_call").show();
-		    			$.prompt("Your partner's camera is not activated. Please try again.", {
+		    			if(my_prompt != null){
+		      				my_prompt.close();
+		      			}
+		      			my_prompt = new Impromptu("Your partner's camera is not activated. Please try again.", {
 							title: "Partner camera inactive",
 							buttons: { "OK": true}
 						});
@@ -1417,7 +1440,10 @@
 				}
 				else{
 					get_mic();
-					$.prompt("Your browser is asking you to activate your microphone. The popup should be somewhere on the top or bottom of your screen", {
+					if(my_prompt != null){
+		      			my_prompt.close();
+		      		}
+		      		my_prompt = new Impromptu("Your browser is asking you to activate your microphone. The popup should be somewhere on the top or bottom of your screen", {
 						title: "Activate Your Microphone and try again.",
 						buttons: { "OK": true}
 					});
@@ -1454,7 +1480,10 @@
 				}
 				else{
 					get_cam();
-					$.prompt("Your browser is asking you to activate your camera. The popup should be somewhere on the top or bottom of your screen", {
+					if(my_prompt != null){
+		      			my_prompt.close();
+		      		}
+		      		my_prompt = new Impromptu("Your browser is asking you to activate your camera. The popup should be somewhere on the top or bottom of your screen", {
 						title: "Activate Your Camera and try again.",
 						buttons: { "OK": true}
 					});
