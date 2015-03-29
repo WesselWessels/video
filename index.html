@@ -6,6 +6,7 @@
 		<title>Watch videos together</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 		<meta name="description" content="SimulChat allows you and a friend to watch movies together while talking. It keeps the movie in sync. Perfect for long distance relationships and family that live far.">
+		<meta name="keywords" content="watch movies together,watch videos together,webrtc,video call,voice call,sync video">
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 		<link rel="stylesheet" href="css/bootstrap.css">
 		<link href="css/styles.css" rel="stylesheet">
@@ -799,16 +800,19 @@
 	    function my_connect(connection){
 	    	conn = connection;
 	    	connect_timeout = setTimeout(function(){
-	    		$("#connect").show();
-	    		$("#disconnect").hide();
+	    		
 	    		if(my_prompt != null){
 		      		my_prompt.close();
 		      	}	
+		      	if(conn.open == false){
+		      		$("#connect").show();
+	    			$("#disconnect").hide();
 		      		my_prompt = new Impromptu("The connection could not be established. Please try again. If it fails a few times, please make sure your browser is up to date. Note that some networks do not allow these type of connections.", {
 						title: "Could not connect",
 						buttons: { "OK": true}
 					});
-	    		$("#connect_notify").html('Try again');
+		    		$("#connect_notify").html('Try again');
+	    		}
 	    	}, 10000);
 	    	$("#connect_notify").html('<span style="color:orange;">Trying to connect</span>');
 	    	conn.on('open',function(){
@@ -1010,7 +1014,6 @@
 	   			console.log(err);
 	   		});
 	    }
-	    
 
 	    function updateMyStatus(){
 	    	$("#stat_my_id").text(stat_my_id);
