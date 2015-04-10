@@ -215,7 +215,7 @@
 		  	</div><!-- /.container-fluid -->
 		</nav>
 		<div id="floating_video">
-			<video id="their-video-smaller" width="180" height="120" autoplay></video>
+			<video id="their-video-smaller" width="180" height="120" autoplay muted></video>
 		</div>
 		<section class="container-fluid" id="section1">
 		<div class="container">
@@ -320,6 +320,22 @@
 				<div class="row">
 					<div class="col-md-8">
 						<video id="their-video" width="720" height="480" autoplay></video>
+						<br>
+						<div class="row">
+							<div class="col-md-2"></div>
+							<div class="col-md-8">
+								<div class="row">
+									<div class="col-md-1"><span class="glyphicon glyphicon-volume-down" aria-hidden="true"></span></div>
+									<div class="col-md-10">
+
+										<input type="range" id="slider" value="100"></input>
+										<h3>Partner Volume</h3>
+									</div>
+									<div class="col-md-1"><span class="glyphicon glyphicon-volume-up" aria-hidden="true"></span></div>
+								</div>
+							</div>
+							<div class="col-md-2"></div>
+						</div>
 					</div>
 					<div class="col-md-4" id="my-video-div">
 						<video id="my-video" muted="true" width="180" height="120" autoplay></video>
@@ -365,6 +381,7 @@
 				<input type="file" accept="video/mp4,video/webm,video/ogg,audio/*" id="video_file"/>
 				<video class="video-js vjs-default-skin" id="my_video" width="720" height="480" controls >
 				</video>
+				
 			</div>	
         	<div class="col-md-3">
         		<table class="table table-bordered" id="partner_status_table" style="word-wrap:break-word;">
@@ -480,7 +497,7 @@
           	</div> 
         </div>  
 		<div id="voice">
-			<audio controls autoplay></audio>
+			<audio id="their_voice" controls autoplay></audio>
 		</div>
 		</section>
 		<!-- <section class="container-fluid" id="section5">
@@ -814,6 +831,11 @@
 			// var d = new Date();
 			// var n = d.getTime(); 
 			my_send('{"ping":"'+window.performance.now()+'"}');
+	    }
+	    function change_volume(volume){
+	    	$("#their-video").prop("volume", volume);
+	    	$("#their_voice").prop("volume", volume);
+
 	    }
 	    function my_connect(connection){
 	    	conn = connection;
@@ -1406,6 +1428,13 @@
 			}).blur(function() {
 			    window_focus = false;
 			});
+
+			$("#slider").change(function(){
+				console.log($("#slider").val()/100);
+				change_volume($("#slider").val()/100);
+
+			});
+
 			$("#load_vid").click(function(e){
 		      	e.preventDefault();
 		        var vid_id = getQueryVariable($("#youtube_link").val(), 'v');
@@ -1672,6 +1701,7 @@
 			  	connect_click();
 			});
 		});
+		
 		// Called automatically with the response of the YouTube API request.
 		function onSearchResponse(response) {
 		    //$('#results').empty();
