@@ -680,6 +680,7 @@
 					username: 'simulchat@gmail.com'
 				}// Pass in optional STUN and TURN server for maximum network compatibility
 	    ]}});
+		//var peer = new Peer(random_id, { host: 'localhost', port: 9000, path: '/', room: 'asdf'});
 	    peer.on('open', function(){
 	    	console.log(peer.id);
 	    	change_status_button("server_button","green");
@@ -687,6 +688,9 @@
 	    	stat_my_id = peer.id;
 	    	updateMyStatus();
 	    	//$("#stat_my_id").text(peer.id);
+	    });
+	    peer.on('error', function(error){
+	    	console.log("Cannot connect to peerserver");
 	    });
 	    peer.on('connection',function(conn){	
 	    	console.log(conn.peer);
@@ -867,6 +871,7 @@
 	    		$("#connect").hide();
 	    		$("#disconnect").show();
 	    		$("#disconnect_div").show();
+	    		ga('send', 'event', 'Connection', 'Connect');
 	    		
 		    	conn.on('data', function(data){
 		    		var message_json = jQuery.parseJSON(data);
