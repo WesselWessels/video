@@ -17,6 +17,7 @@
  		<script type="text/javascript" src="http://cdn.peerjs.com/0.3/peer.js"></script>
  		<script type="text/javascript" src="js/jquery.linkify.min.js"></script>
  		<script type="text/javascript" src="js/ion.sound.min.js"></script>
+ 		<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
  		<link href="//vjs.zencdn.net/4.12/video-js.css" rel="stylesheet">
  		<link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css">
 		<style type="text/css">
@@ -110,7 +111,7 @@
 				color:#DB524B;
 			}
 			.user_info input {
-				width: 98%; height: 25px; border: 1px solid #CCC; border-top: none; padding: 3px 0px 0px 3px;
+				width: 100%; height: 25px; border: 1px solid #CCC; border-top: none; padding: 3px 0px 0px 3px;
 				font: 11px 'lucida grande', tahoma, verdana, arial, sans-serif;
 			}
 			.shout_msg .username{
@@ -175,6 +176,20 @@
 			#loading_info{
 				position: absolute;
 				top: 50%;
+			}
+			#online_people_list{
+				color: #168ccc;
+				height: 200px;
+				overflow: auto;
+			}
+			#public_chat_area{
+				color: #000000;
+			}
+			#public_chat_text{
+				background: #FFFFFF;
+				height: 200px;
+				overflow: auto;
+				
 			}
 		</style>
 	</head>
@@ -248,6 +263,48 @@
 					</div>
 				</div>
 				<div class="col-md-3"></div>
+			</div>
+		</div>
+		<div class="container">
+			<div style="text-align:center;">
+				<h3>Public Chat</h3>
+			</div>
+			<div class="row">
+				<div class="col-md-3">
+					<div id="online_people">
+						<h5>People online</h5>
+						<ul class="list-group" id="online_people_list">
+							
+						</ul>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-horizontal" id="join_public_chat">
+						<div class="form-group">
+						    <label for="public_name" class="col-md-3 control-label">Your name: </label>
+						    <div class="col-md-6">
+						   		<input type="text" class="form-control" id="public_name" maxlength="20">
+						   	</div>
+						   	<div class="col-md-3">
+						   		<button class="btn btn-success" id="join_chat">Join Chat</button>
+						   	</div>
+					 	</div>
+					 	<div style="text-align:center;">
+					 		<span id="public_chat_error"></span>
+					 	</div>
+					 </div>
+					 
+					 <div id="public_chat_area">
+					 	<div id="public_chat_text">
+					 	</div>
+					 	<input name="public_message" id="public_message" type="text" placeholder="Type Message Here">
+					 	<button class="btn btn-danger" id="leave_chat">Leave chat</button>
+					 </div>
+				</div>
+				<div class="col-md-3">
+					<h3>Disclaimer</h3>
+					Public Chat is still under development. Be aware that everything you type here is public. More features coming soon.
+				</div>
 			</div>
 		</div>
 		</section>
@@ -554,6 +611,7 @@
 		var last_received_time = 0;
 		var call;
 		var original_title = "Watch videos together";
+		var socket;
 		//youtube variables
 			var player;
      		var time; 
@@ -685,15 +743,15 @@
 		var words = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","s","t","u","v","w","x","z","aardvark","absurd","adrift","adult","ahead","aimless","allow","alone","ammo","ancient","apple","artist","atlas","baboon","backward","banjo","beaming","bedlamp","beehive","beeswax","blackjack","blowtorch","bookshelf","briefcase","button","cement","choking","chopper","classic","cleanup","cobra","concert","adviser","article","cranky","crucial","eating","erase","escape","fracture","freedom","glitter","goggles","goldfish","indoors","indulge","inverse","island","jawbone","keyboard","kiwi","music","newborn","optic","prefer","pupil","puppy","python","rematch","revenge","reward","robust","select","shadow","solo","stairway","standard","stapler","sugar","tiger","tonic","tracker","tunnel","vapor","wallet","the","name","very","and","just","form","much","great","think","you","say","that","help","low","was","line","for","before","turn","cause","with","same","mean","differ","his","move","they","right","boy","old","one","too","have","does","this","tell","from","sentence","set","had","want","hot","air","but","well","some","also","what","play","there","small","end","can","put","out","home","other","read","were","hand","all","port","your","large","when","spell","add","use","even","word","land","how","here","said","must","big","each","high","she","such","which","follow","act","their","why","time","ask","men","will","change","way","went","about","light","many","kind","then","off","them","need","would","house","write","picture","like","try","these","again","her","animal","long","point","make","mother","thing","world","see","near","him","build","two","self","has","earth","look","father","more","head","day","stand","could","own","page","come","should","did","country","found","sound","answer","school","most","grow","number","study","who","still","over","learn","know","plant","water","cover","than","food","call","sun","first","people","thought","may","let","down","keep","side","eye","been","never","now","last","find","door","any","between","new","city","work","tree","part","cross","take","since","get","hard","place","start","made","might","live","story","where","saw","after","far","back","sea","little","draw","only","left","round","late","man","run","year","came","while","show","press","every","close","good","night","real","give","life","our","few","under","stop","open","ten","seem","simple","together","several","next","vowel","white","toward","children","war","begin","lay","got","against","walk","pattern","example","slow","ease","center","paper","love","often","person","always","money","music","serve","those","appear","both","road","mark","map","book","science","letter","rule","until","govern","mile","pull","river","cold","car","notice","feet","voice","care","fall","second","power","group","town","carry","fine","took","certain","rain","fly","eat","unit","room","lead","friend","cry","began","dark","idea","machine","fish","note","mountain","wait","north","plan","once","figure","base","star","hear","box","horse","noun","cut","field","sure","rest","watch","correct","color","able","face","pound","wood","done","main","beauty","enough","drive","plain","stood","girl","contain","usual","front","young","teach","ready","week","above","final","ever","gave","red","green","list","though","quick","feel","develop","talk","sleep","bird","warm","soon","free","body","minute","dog","strong","family","special","direct","mind","pose","behind","leave","clear","song","tail","measure","produce","state","fact","product","street","black","inch","short","lot","numeral","nothing","class","course","wind","stay","question","wheel","happen","full","complete","force","ship","blue","area","object","half","decide","rock","surface","order","deep","fire","moon","south","island","problem","foot","piece","yet","told","busy","knew","test","pass","record","farm","boat","top","common","whole","gold","king","possible","size","plane","heard","age","best","dry","hour","wonder","better","laugh","true.","thousand","during","ago","hundred","ran","check","remember","game","step","shape","early","yes","hold","hot","west","miss","ground","brought","interest","heat","reach","snow","fast","bed","bring","sing","sit","listen","perhaps","fill","table","east","travel","less","language","morning","among"];
 	    //alert(words[Math.floor(Math.random()*words.length)]);
 	    var random_id = words[Math.floor(Math.random()*words.length)]+"-"+words[Math.floor(Math.random()*words.length)]+"-"+Math.floor(Math.random()*980+10);
-    // 	var peer = new Peer(random_id,{ key: 'yqyt65uodybbuik9', debug: 3, config: {'iceServers': [
-	   //    { url: 'stun:stun.l.google.com:19302' },
-				// {
-				// 	url: 'turn:numb.viagenie.ca',
-				// 	credential: 'simulchat',
-				// 	username: 'simulchat@gmail.com'
-				// }// Pass in optional STUN and TURN server for maximum network compatibility
-	   //  ]}});
-		var peer = new Peer(random_id, { host: 'chat.simulchat.com', port: 9000, path: '/myapp'});
+    	var peer = new Peer(random_id,{ key: 'yqyt65uodybbuik9', debug: 3, config: {'iceServers': [
+	      { url: 'stun:stun.l.google.com:19302' },
+				{
+					url: 'turn:numb.viagenie.ca',
+					credential: 'simulchat',
+					username: 'simulchat@gmail.com'
+				}// Pass in optional STUN and TURN server for maximum network compatibility
+	    ]}});
+		//var peer = new Peer(random_id, { host: 'chat.simulchat.com', port: 9000, path: '/myapp'});
 	    peer.on('open', function(){
 	    	console.log(peer.id);
 	    	change_status_button("server_button","green");
@@ -1492,6 +1550,8 @@
 			$("#my_video").height(video_height);
 			$("#typing_msg").hide();
 			$("#loading_info").hide();
+			$("#online_people").hide();
+			$("#public_chat_area").hide();
 			$("#the_player").hover(function(){
 	       		// $("#the_player").css("background-color", "yellow");
 	       		//console.log("inside");
@@ -1519,6 +1579,108 @@
 			    window_focus = false;
 			});
 
+			$('#public_name').keyup(function(e){
+			    if(e.keyCode == 13)
+			    {
+			        $(this).trigger("joinchat");
+			    }
+			});	
+			$('#public_name').bind("joinchat",function(e){
+				join_chat();
+			});
+			function join_chat(){
+				var pub_name = $("#public_name").val();
+				if(pub_name.length > 0){
+					$("#public_chat_error").empty();
+					$("#public_message").focus();
+					$("#join_public_chat").hide();
+					$("#online_people").show();
+					//$("#online_people_list").append('<li class="list-group-item">'+pub_name+'</li>');
+					$("#public_chat_area").show();
+				
+					socket =  io.connect('chat.simulchat.com:3000',{'forceNew':true });
+					socket.on('connect', function(err){
+						socket.emit('set_name', pub_name);
+						socket.emit('create', 'Lobby');
+						console.log("connected");
+						socket.on('chat message', function(msg){
+					    	var d= new Date();
+							var msg_time = d.toLocaleTimeString();
+							var new_message = '<div class="shout_msg"><time>'+msg_time+'</time><span class="message">'+strip(msg)+'</span></div>';
+					   		$(new_message).linkify().hide().appendTo('#public_chat_text').fadeIn();
+					   		var scrolltoh = $('#public_chat_text')[0].scrollHeight;
+							$('#public_chat_text').scrollTop(scrolltoh);
+					    });
+					    socket.on('in_room', function(in_room){
+
+					    	$("#online_people_list").empty();
+					    	for(var i=0;i<in_room.length; i++){
+					    		console.log(in_room);
+					    		$("#online_people_list").append('<li class="list-group-item" id="'+in_room[i].id+'">'+in_room[i].name+'</li>');
+					    	}
+					    });
+					    socket.on('new_user', function(new_user){
+					    	console.log(new_user);
+					    	$("#online_people_list").append('<li class="list-group-item" id="'+new_user.id+'">'+new_user.name+'</li>');
+					    });
+					    socket.on('user_dc', function(user_dc){
+					    	console.log(user_dc);
+					    	$("#"+user_dc.id).remove();
+					    });
+					    socket.on('disconnect', function(){
+					    	$("#join_public_chat").show();
+							$("#online_people").hide();
+							$("#public_chat_area").hide();
+							$("#online_people_list").empty();
+							$("#public_chat_error").append("Disconnected from chat<br>");
+					    });
+					    socket.on('new_name', function(new_name){
+					    	console.log(new_name);
+					    });
+					    socket.on('name_taken', function(){
+					    	$("#public_chat_error").html("Name already taken<br>");
+					    	console.log("name taken");
+					    });
+					    socket.on('reconnect', function(){
+					    	socket.disconnect();
+					    });
+				    });
+				}
+				else{
+					$("#public_chat_error").text("Name must not be blank");
+				}
+			}
+			$("#join_chat").click(function(e){
+				e.preventDefault();
+				join_chat();
+				//console.log($("#public_name").val());
+			});
+			$("#leave_chat").click(function(e){
+				e.preventDefault();
+				$("#join_public_chat").show();
+				$("#online_people").hide();
+				$("#public_chat_area").hide();
+				$("#online_people_list").empty();
+				socket.disconnect();
+				//console.log($("#public_name").val());
+			});
+			$("#public_message").keypress(function(evt){
+				//e.preventDefault();
+				if(evt.which == 13) {
+					var d= new Date();
+					var msg_time = d.toLocaleTimeString();
+					var imessage = strip($("#public_message").val());
+					//imessage = imessage.replace(regex, "<a href='$1' target='_blank'>$1</a>");
+					var data = '<div class="shout_msg me_shout_msg"><time>'+msg_time+'</time><span class="username my_username">You</span><span class="message">'+imessage+'</span></div>';
+					
+					//append data into messagebox with jQuery fade effect!
+					$(data).linkify().hide().appendTo('#public_chat_text').fadeIn();
+					socket.emit('chat message', imessage);
+					var scrolltoh = $('#public_chat_text')[0].scrollHeight;
+					$('#public_chat_text').scrollTop(scrolltoh);
+					$("#public_message").val('');
+				}
+			});
 			$("#slider").change(function(){
 				console.log($("#slider").val()/100);
 				change_volume($("#slider").val()/100);
