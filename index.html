@@ -7,7 +7,8 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 		<meta name="description" content="SimulChat allows you and a friend to watch movies together while talking. It keeps the movie in sync. Perfect for long distance relationships and family that live far.">
 		<meta name="keywords" content="watch movies together,watch videos together,webrtc,video call,voice call,sync video">
-		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+		<!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script> -->
+		<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
 		<link rel="stylesheet" href="css/bootstrap.css">
 		<link href="css/styles.css" rel="stylesheet">
 		<script type="text/javascript" src="js/jquery-impromptu.js"></script>
@@ -35,7 +36,7 @@
 			    background-color: red;
 			    color: white;
 			}
-			.a_search_result{
+			.a_search_result, .playlist_item{
             	padding-bottom: 5px;
           	}
           	.link_button{
@@ -139,7 +140,7 @@
 			    height:100%
 			    /*-webkit-overflow-scrolling: touch;*/    
 			}
-			.related_box{
+			.related_box, .playlist_box{
 			    margin: 0;
 			    padding: 0;
 			    height: 390px;
@@ -147,14 +148,14 @@
 			    display: block; 
 			    /* border:solid #000 1px */
 			}
-			.related_items{
+			.related_items, .playlist_items{
 			    padding:0;
 			    overflow: scroll; 
 			    overflow-x:hidden;
 			    height:100%
 			    /*-webkit-overflow-scrolling: touch;*/    
 			}
-			.results_box{
+			.results_box, .playlist_box{
 			    margin: 0;
 			    padding: 0;
 			    height: 390px;
@@ -196,13 +197,7 @@
 
 	<body>
 		<div id="fb-root"></div>
-		<script>(function(d, s, id) {
-		  var js, fjs = d.getElementsByTagName(s)[0];
-		  if (d.getElementById(id)) return;
-		  js = d.createElement(s); js.id = id;
-		  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.3";
-		  fjs.parentNode.insertBefore(js, fjs);
-		}(document, 'script', 'facebook-jssdk'));</script>
+		
 		<nav class="navbar navbar-trans navbar-fixed-top" role="navigation">
 		  	<div class="container">
 			    <!-- Brand and toggle get grouped for better mobile display -->
@@ -492,11 +487,10 @@
 		<div class="container-fluid" >
 	      <div class="row">
 	        <div class="col-md-3" style="margin:0;padding:0;">
-	        	<div class="youtube_history">
-	        		<div class="content_bla">
-
+	       		<h3>Playlist</h3>
+	        	<div class="playlist_box">
+	        		<div id="playlist_videos" class="playlist_items">
 	        		</div>
-
 	        	</div>
 	        </div>
 
@@ -619,9 +613,10 @@
      		var partner_previous_state = -2;
      		var restart_after_buffer;
      		var previous_state;
-     		var yt_me_ready = false;
-     		var yt_partner_ready = false;
+     		var yt_me_ready = true;
+     		var yt_partner_ready = true;
      		var yt_ready_timeout;
+     		var title_timeout;
 		//end of youtube variables
 
 		var stat_my_id = "-";
@@ -1095,52 +1090,63 @@
 		    					$("#loading_info").hide();
 		    				}
 		    			}
+		    			if(user_event == 'load_playlist'){
+		    				add_to_playlist(message_json.video_id,message_json.video_title,'Partner');
+		    			}
 		    			if(user_event == 'new_video'){
 		    				player.loadVideoById(message_json.new_vid_id);
+		    				remove_from_playlist(message_json.new_vid_id);
 		    				get_related(message_json.new_vid_id);
+		    				clearInterval(title_timeout);
+		    				clearInterval(yt_ready_timeout);
 				          	yt_me_ready = false;
 				          	yt_partner_ready = false;
+
 				          	//player.pauseVideo();
 				          	//player.playVideo();
 				          	player.seekTo(0);
 				          	$("#player_only").css('visibility', 'hidden');
 				          	$("#loading_info").show();
-				          	var title_timeout =  setInterval(function(){
+				          	title_timeout =  setInterval(function(){
 				          		console.log("title: "+player.getVideoData().title);
 				          		if(player.getPlayerState() != -1){
 				          			$("#youtube_title").text(player.getVideoData().title);
-				          			clearInterval(title_timeout);
+				          			
 				          			player.pauseVideo();
 				          			player.seekTo(0);
-				          			yt_ready_timeout = setInterval(function(){
-				          				if(yt_me_ready == true && yt_partner_ready == true){
-				          					clearInterval(yt_ready_timeout);
-				          					$("#youtube_title").text(player.getVideoData().title);
-				          					my_send('{"user_action":"youtube", "user_event":"ready"}');
-				          					player.playVideo();
-				          					$("#player_only").css('visibility', 'visible');
-				          					$("#loading_info").hide();
-				          				}
-				          				else if(yt_me_ready == true && yt_partner_ready == false){
-				          					clearInterval(yt_ready_timeout);
-				          					my_send('{"user_action":"youtube", "user_event":"ready"}');
-				          				}
-				          				else{
-				          					if(player.getVideoLoadedFraction()*player.getDuration() > 10){ //amount of seconds loaded
-				          						yt_me_ready = true;
-				          					}
-				          					else{
-					      						player.playVideo();
-					      						player.pauseVideo();
-					      					}
-				          				}
-				          			},1000);
+				          			clearInterval(title_timeout);
 				          		}
 				          		else{
 				          			player.seekTo(0);
 				          			player.playVideo();
 				          		}
 				          	}, 1000);
+				          	yt_ready_timeout = setInterval(function(){
+		          				if(yt_me_ready == true && yt_partner_ready == true){
+		          					clearInterval(yt_ready_timeout);
+		          					$("#youtube_title").text(player.getVideoData().title);
+		          					my_send('{"user_action":"youtube", "user_event":"ready"}');
+		          					console.log('ready');
+		          					player.playVideo();
+		          					$("#player_only").css('visibility', 'visible');
+		          					$("#loading_info").hide();
+		          				}
+		          				else if(yt_me_ready == true && yt_partner_ready == false){
+		          					clearInterval(yt_ready_timeout);
+		          					$("#youtube_title").text(player.getVideoData().title);
+		          					my_send('{"user_action":"youtube", "user_event":"ready"}');
+		          					console.log('ready');
+		          				}
+		          				else{
+		          					if(player.getVideoLoadedFraction()*player.getDuration() > 10){ //amount of seconds loaded
+		          						yt_me_ready = true;
+		          					}
+		          					else{
+			      						player.playVideo();
+			      						player.pauseVideo();
+			      					}
+		          				}
+		          			},1000);
 
 		    			}	
 		    			partner_previous_state = user_event;
@@ -1361,47 +1367,54 @@
       	function load_video_by_id(vid_id){
       	  	player.loadVideoById(vid_id);
           	player.seekTo(0);
+          	clearInterval(title_timeout);
+		    clearInterval(yt_ready_timeout);
           	yt_me_ready = false;
 			yt_partner_ready = false;
 			if(conn != null && conn.open == true){
 				$("#player_only").css('visibility', 'hidden');
 				$("#loading_info").show();
-
-	          	var title_timeout =  setInterval(function(){
+				clearInterval(title_timeout);
+	          	title_timeout =  setInterval(function(){
 	          		console.log("title: "+player.getVideoData().title);
 	          		if(player.getPlayerState() != -1){
 	          			$("#youtube_title").text(player.getVideoData().title);
 	          			clearInterval(title_timeout);
 	          			player.seekTo(0);
 	          			player.pauseVideo();
-	          			yt_ready_timeout = setInterval(function(){
-		      				if(yt_me_ready == true && yt_partner_ready == true){
-		      					clearInterval(yt_ready_timeout);
-		      					my_send('{"user_action":"youtube", "user_event":"ready"}');
-		      					$("#player_only").css('visibility', 'visible');
-		      					$("#loading_info").hide();
-		      					player.playVideo();
-		      				}
-		      				else if(yt_me_ready == true && yt_partner_ready == false){
-		      					clearInterval(yt_ready_timeout);
-		      					my_send('{"user_action":"youtube", "user_event":"ready"}');
-		      				}
-		      				else{
-		      					if(player.getVideoLoadedFraction()*player.getDuration() > 10){ //amount of seconds loaded
-		      						yt_me_ready = true;
-		      					}
-		      					else{
-		      						player.playVideo();
-		      						player.pauseVideo();
-		      					}
-		      				}
-		      			},1000);
+	          			
 	          		}
 	          		else{
 	          			player.seekTo(0);
 	          			player.playVideo();
 	          		}
 	          	}, 1000);
+	          	yt_ready_timeout = setInterval(function(){
+      				if(yt_me_ready == true && yt_partner_ready == true){
+      					clearInterval(yt_ready_timeout);
+      					$("#youtube_title").text(player.getVideoData().title);
+      					my_send('{"user_action":"youtube", "user_event":"ready"}');
+      					console.log('ready');
+      					$("#player_only").css('visibility', 'visible');
+      					$("#loading_info").hide();
+      					player.playVideo();
+      				}
+      				else if(yt_me_ready == true && yt_partner_ready == false){
+      					clearInterval(yt_ready_timeout);
+      					$("#youtube_title").text(player.getVideoData().title);
+      					my_send('{"user_action":"youtube", "user_event":"ready"}');
+      					console.log('ready');
+      				}
+      				else{
+      					if(player.getVideoLoadedFraction()*player.getDuration() > 10){ //amount of seconds loaded
+      						yt_me_ready = true;
+      					}
+      					else{
+      						player.playVideo();
+      						player.pauseVideo();
+      					}
+      				}
+      			},1000);
 	          	get_related(vid_id);
 	          	my_send('{"user_action":"youtube", "user_event": "new_video", "new_vid_id": "'+vid_id+'"}');
 			}
@@ -1458,12 +1471,27 @@
 	       		my_send('{"user_action":"youtube", "user_event": "'+event.data+'", "youtube_time": "'+player.getCurrentTime()+'"}');
 	    	}
 	       	if(event.data == YT.PlayerState.BUFFERING && previous_state == YT.PlayerState.PLAYING){
-       		 	restart_after_buffer = setTimeout(function(){ player.playVideo();
-       		 		console.log("restarted");
+       		 	clearTimeout(restart_after_buffer);
+       		 	restart_after_buffer = setTimeout(function(){ 
+       		 		if(yt_ready_timeout == true && yt_partner_ready==true){
+	       		 		player.playVideo();
+	       		 		console.log("restarted");
+       		 		}
        		 	}, 2000);
 	       	}
 	       	if(event.data == YT.PlayerState.PAUSED && previous_state == YT.PlayerState.BUFFERING){	
        			clearTimeout(restart_after_buffer);
+       		}
+       		if(event.data == 0){
+       			var user = $("#playlist_videos").find('.playlist_item').attr('user-value');
+       			if(user == 'Me'){
+       				var vid_id = $("#playlist_videos").find('.playlist_item').attr('video-id');
+       				load_video_by_id(vid_id);
+       				//my_send('{"user_action":"youtube", "user_event": "new_video", "new_vid_id": "'+vid_id+'"}');
+       				$("#playlist_videos").find('.playlist_item')[0].remove();
+       			}
+       			
+       			console.log(user);
        		}
 	       	previous_state = event.data;
         	console.log(event.data);
@@ -1522,6 +1550,21 @@
 	    	conn = peer.connect($("#connect_id").val().trim());
 	    	my_connect(conn);
 	    }
+
+	    function add_to_playlist(video_id, title, user){
+	    	if($("#playlist_videos").find('.playlist_'+video_id).length == 0)
+	    	{
+				$("#playlist_videos").append('<div class="container-fluid"><div class="row playlist_item playlist_'+video_id+'" user-value="'+user+'" video-id="'+video_id+'"><a href="#" class="playlist_item_clicked" video-id="'+video_id+'" ><div class="col-md-6"><img src="https://i.ytimg.com/vi/'+video_id+'/default.jpg"></div><div class="col-md-6"><h6>'+ title +'</h6></div>Added by: '+user+'</a></div></div>');
+				
+				//var user = user;
+				if(user=='Me'){
+					 my_send('{"user_action":"youtube", "user_event": "load_playlist", "video_id": "'+video_id+'", "video_title":"'+title+'"}');
+				}
+			}
+		}
+		function remove_from_playlist(video_id){
+			$("#playlist_videos").find('.playlist_'+video_id).remove();
+		}
 	    /////////////////////////////////////////////////
 	    // DOCUMENT READY	
 	    /////////////////////////////////////////////////
@@ -1905,18 +1948,44 @@
 					}
 				}
 			});
-			$("#the_results").on('click', '.a_search_result', function(e){
+			$("#the_results").on('click', '.a_clicked_result', function(e){
 			  	e.preventDefault();
 			  	load_video_by_id($(this).attr('video-id'));
 			  	my_scroll("#youtube_heading");
 			  	console.log("clicked");
 			});
-			$("#related_videos").on('click', '.a_search_result', function(e){
+			$("#the_results").on('click', '.a_search_result .playlist', function(e){
+			  	e.preventDefault();
+			  	// load_video_by_id($(this).attr('video-id'));
+			  	// my_scroll("#youtube_heading");
+			  	console.log("clicked on button "+$(this).attr('video-id') + " "+ $(this).attr('video-title'));
+			  	add_to_playlist($(this).attr('video-id'),$(this).attr('video-title'),'Me');
+			  	$(this).text('Added to Playlist');
+			});
+			$("#related_videos").on('click', '.playlist', function(e){
+			  	e.preventDefault();
+			  	// load_video_by_id($(this).attr('video-id'));
+			  	// my_scroll("#youtube_heading");
+			  	console.log("clicked on button "+$(this).attr('video-id') + " "+ $(this).attr('video-title'));
+			  	add_to_playlist($(this).attr('video-id'),$(this).attr('video-title'),'Me');
+			  	$(this).text('Added to Playlist');
+			});
+			$("#related_videos").on('click', '.a_clicked_result', function(e){
 			  	e.preventDefault();
 			  	load_video_by_id($(this).attr('video-id'));
 			  	my_scroll("#youtube_heading");
 			  	console.log("clicked");
 			});
+			//////
+			$("#playlist_videos").on('click', '.playlist_item_clicked', function(e){
+			  	e.preventDefault();
+			  	load_video_by_id($(this).attr('video-id'));
+			  	remove_from_playlist($(this).attr('video-id'));
+			  	my_scroll("#youtube_heading");
+			  	console.log("clicked");
+			});
+
+			////
 			$('#search_value').keyup(function(e){
 			    if(e.keyCode == 13)
 			    {
@@ -1962,7 +2031,7 @@
             for(var i = 0; i < response.items.length; i++){
               	if(response.items[i].id.kind == "youtube#video"){
                 	//console.log(response.items[i].id.videoId + " " + response.items[i].snippet.title + " " + response.items[i].snippet.thumbnails.default.url);
-                	$("#the_results").append('<div class="row a_search_result" video-id="'+response.items[i].id.videoId+'"><a href="#"><div class="col-md-3"><img src="'+response.items[i].snippet.thumbnails.default.url+'"></div><div class="col-md-9"><h4>'+ response.items[i].snippet.title +'</h4><p>'+response.items[i].snippet.channelTitle+'</p></div></a></div>');
+                	$("#the_results").append('<div class="row a_search_result"><a href="#" class="a_clicked_result" video-id="'+response.items[i].id.videoId+'"><div class="col-md-3"><img src="'+response.items[i].snippet.thumbnails.default.url+'"></div><div class="col-md-9"><h4>'+ response.items[i].snippet.title +'</h4><p>'+response.items[i].snippet.channelTitle+'</p></a><button class="playlist btn btn-xs" video-id="'+response.items[i].id.videoId+'" video-title="'+response.items[i].snippet.title+'" >Playlist</button></div></div>');
                 	num_of_videos = num_of_videos+1;
              	}
              	// if(num_of_videos == 5){
@@ -1977,7 +2046,7 @@
             for(var i = 0; i < response.items.length; i++){
               	if(response.items[i].id.kind == "youtube#video"){
                 	//console.log(response.items[i].id.videoId + " " + response.items[i].snippet.title + " " + response.items[i].snippet.thumbnails.default.url);
-                	$("#related_videos").append('<div class="container-fluid"><div class="row a_search_result" video-id="'+response.items[i].id.videoId+'"><a href="#"><div class="col-md-6"><img src="'+response.items[i].snippet.thumbnails.default.url+'"></div><div class="col-md-6"><h6>'+ response.items[i].snippet.title +'</h6><p>'+response.items[i].snippet.channelTitle+'</p></div></a></div></div>');
+                	$("#related_videos").append('<div class="container-fluid"><div class="row a_search_result" video-id="'+response.items[i].id.videoId+'"><a href="#" class="a_clicked_result" video-id="'+response.items[i].id.videoId+'"><div class="col-md-6"><img src="'+response.items[i].snippet.thumbnails.default.url+'"></div><div class="col-md-6"><h6>'+ response.items[i].snippet.title +'</h6><p>'+response.items[i].snippet.channelTitle+'</p></a><button class="playlist btn btn-xs" video-id="'+response.items[i].id.videoId+'" video-title="'+response.items[i].snippet.title+'" >Playlist</button></div></div></div>');
                 	num_of_videos = num_of_videos+1;
              	}
              	if(num_of_videos == 17){
@@ -2002,4 +2071,12 @@
 <script src="js/jquery-ui.min.js"></script>
 <script>
 	$(".tool_tip").tooltip();
+</script>
+<script>(function(d, s, id) {
+		  var js, fjs = d.getElementsByTagName(s)[0];
+		  if (d.getElementById(id)) return;
+		  js = d.createElement(s); js.id = id;
+		  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.3";
+		  fjs.parentNode.insertBefore(js, fjs);
+		}(document, 'script', 'facebook-jssdk'));
 </script>
