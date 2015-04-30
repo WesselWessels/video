@@ -907,6 +907,7 @@
      		var title_timeout;
 
      		var last_received_pause = 0;
+     		var user_event;
 		//end of youtube variables
 
 		//var path;
@@ -1380,7 +1381,7 @@
 			    		}
 			    		if(message_json.user_action =='youtube')
 			    		{
-			    			var user_event = message_json.user_event;
+			    			user_event = message_json.user_event;
 			    			if(user_event == YT.PlayerState.PAUSED){
 			    				if(player.getPlayerState() != YT.PlayerState.PAUSED )
 			    				{
@@ -1848,7 +1849,7 @@
 	    function onPlayerStateChange(event) {  
 	    	if(yt_me_ready == true){
 	    		//last_received_pause = window.performance.now();
-	    		if( (window.performance.now() -last_received_pause)>100 || event.data == YT.PlayerState.PLAYING){
+	    		if( (window.performance.now() -last_received_pause)>100 || event.data == YT.PlayerState.PLAYING || user_event == YT.PlayerState.PLAYING){
 	    			my_send('{"user_action":"youtube", "user_event": "'+event.data+'", "youtube_time": "'+player.getCurrentTime()+'"}');
 	    		}
 	       		
