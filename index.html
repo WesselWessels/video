@@ -194,8 +194,8 @@
 				
 			}
 			canvas[resize] {
-			    width: 80%;
-			    height: 80%;
+			    width: 100%;
+			    height: 100%;
 			}
 			canvas{
 				border: 1px solid black;
@@ -228,7 +228,7 @@
 				        <li ><a href="#call_section">Video Call</a></li>
 				        <li ><a href="#section3">Watch Video</a></li>
 				        <li ><a href="#section4">Watch YouTube</a></li>
-				        <li ><a href="#draw">Draw</a></li>
+				        <li ><a href="#draw_heading">Draw</a></li>
 				        <li ><a href="#share_img">Fileshare</a></li>
 				        <!-- <li ><a href="#section5">IRC Chat<span class="sr-only">(current)</span></a></li> -->
 				    </ul>
@@ -707,12 +707,23 @@
         }
     </script>
     		<div style="text-align:center;">			
-				<h1>Draw Together</h1>
+				<h1 id="draw_heading">Draw Together</h1>
 			</div>
-			<div "text-align: center;">	
-				<canvas id="canvas" resize></canvas>
-				<button class="btn btn-danger" id="clear_paper">Clear</button>
-				<button class="btn btn-success" id="save_paper">Save</button>
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-md-1"></div>
+					<div class="col-md-10">
+						<canvas id="canvas" resize></canvas>
+					</div>
+					<div class="col-md-1">
+						<button class="btn btn-danger" id="clear_paper">Clear</button>
+						<button class="btn btn-success" id="save_paper">Save</button>
+					</div>
+
+				</div>
+
+				
+				
 			</div>
 		</section>
 		<section id="share_img">
@@ -1161,6 +1172,7 @@
 							      	change_status_button("video_call_button","red");
 							  	  	$("#end_video_call").hide();
 								    $("#video_call").show();
+								    $("#floating_video").hide();
 				  	  			});
 							}
 							else{
@@ -2243,7 +2255,7 @@
 			$("#call_section").hover(function(){
 				$("#floating_video").hide();
 			},function(){
-				if(call != null && call.open == true){
+				if(call != null && call.open == true && call.metadata == "video"){
 					$("#floating_video").show();
 				}
 			});
