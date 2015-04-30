@@ -96,6 +96,10 @@ a.list-group-item.active,[class*='-info'] {
     background-color: #1B9CE0;
     color:#ddd;
 }
+#share_img {
+    background-color: #1B9CE0;
+    color:#ddd;
+}
 footer {
 	background-color:#494949;
     color:#ddd;
