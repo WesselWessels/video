@@ -229,6 +229,7 @@
 				        <li ><a href="#section3">Watch Video</a></li>
 				        <li ><a href="#section4">Watch YouTube</a></li>
 				        <li ><a href="#draw">Draw</a></li>
+				        <li ><a href="#share_img">Fileshare</a></li>
 				        <!-- <li ><a href="#section5">IRC Chat<span class="sr-only">(current)</span></a></li> -->
 				    </ul>
 					<div class="nav navbar-nav navbar-right">
@@ -714,6 +715,71 @@
 				<button class="btn btn-success" id="save_paper">Save</button>
 			</div>
 		</section>
+		<section id="share_img">
+			<div style="text-align:center;">			
+				<h1>Share Images and Files</h1>
+			</div>
+				<div class="container-fluid" >
+					<div class="row">
+						<div class="col-md-4"></div>
+						<div class="col-md-4">
+							<div class="form-horizontal">
+								<div class="form-group">
+								    <label for="share" class="col-md-4 control-label">Select File:</label>
+								    <div class="col-md-8">
+								   		<input id="share" class="form-control" type='file' onchange='openFile(event)'>
+								   	</div>
+							 	</div>
+							</div>
+						</div>
+						<div class="col-md-4"></div>
+					</div>
+				</div>	
+				<div style="text-align:center;">	
+					<div id="progress">
+						Received <span id="downloaded"></span> of <span id="file_size"></span> bytes
+					</div>
+					<div id="progress_sent">
+						Sent <span id="sent"></span> of <span id="file_size_sent"></span> bytes
+					</div>
+				</div>
+			
+			<div class="container">
+				<div class="row">
+					<div class="col-md-3">
+						<div style="text-align:center;">	
+							<h3>Important</h3>
+						</div>
+						The filesharing feature is still experimental. Sending large files (over 200Mb)
+						might crash your partner's browser. When trying to send large files, it seems that Firefox works best.
+						Do not send files that you do not own the rights to.
+					</div>
+					<div class="col-md-6">
+						<div style="text-align:center;">	
+							<h3>Files Received</h3>
+						</div>
+						<table class="table table-bordered">
+							<thead>
+								<td>Preview</td>
+								<td>Name</td>
+								<td>Download</td>
+							</thead>
+							<tbody id="download_table">
+								
+							</tbody>
+						</table>
+					</div>
+					<div class="col-md-3">
+						<h3>Files Sent</h3>
+						<ul id="sent_files">
+
+						</ul>
+					</div>
+
+				</div>
+
+			</div>
+		</section>
 		<!-- <section class="container-fluid" id="section5">
 		<div style="text-align:center;">			
 			<h1>Find Partner and exchange ID's</h1>
@@ -753,8 +819,65 @@
 			alert("This website will only work in Chrome, Firefox and Opera");
 			//$('html').empty();
 		}
+		var arrayBuffer;
+		var buffer_array;
+		var buffer_blob;
+		var buffer_url;
+		var chunk_size = 1024*16;
+		var byte_index;
+		var start;
+		var the_file;// = new Uint8Array(input.files[0].size);
+		var partner_file;
+		var partner_byte_index;
+		var partner_file_type;
+	   	var partner_file_name;
+	   	var partner_file_array;
+		
+		var openFile = function(event) {
+		    start = 0
+		  	byte_index = 0
+		    var input = event.target;
+		    the_file = new Uint8Array(input.files[0].size);
+		    $("#file_size_sent").text(input.files[0].size);
+		    $("#progress_sent").show();
+		    //console.log("size: "+input.files[0].size);
+		    console.log(input.files[0]);
+		    var incrementer = 0;
+		    var reader = new FileReader();
+		    //data_temp = "";
+		    my_data_send({new_file:true, new_size:input.files[0].size, new_type: input.files[0].type, new_name:input.files[0].name});
+		    reader.onload = function(){
+		      arrayBuffer = reader.result;
+		      buffer_array = new Uint8Array(arrayBuffer);
+		      my_data_send({new_pieces: buffer_array});
+		      start = start + chunk_size;
+		      // for(var i = 0; i < buffer_array.length; i++){
+		      // 	the_file[byte_index++] = buffer_array[i];
+		      // }
+		      if(start >= input.files[0].size){
+		      	 // buffer_blob = new Blob([the_file]);
+		        //  buffer_url = window.URL.createObjectURL(buffer_blob);
+		         my_data_send({done: true});
+		         $("#sent_files").prepend('<li>'+input.files[0].name+'</li>');
+		         $("#sent").text( '100.00%');
+		         // $("#share_img").append('<a href="'+buffer_url+'" target="_blank" download="file.jpg">Link</a>');
+		         // $("#share_img").append('<img src="'+buffer_url+'" target="_blank" download="file.jpg"/>');
+		      }
+		    
+		      else{
+
+		    	$("#sent").text(((start/input.files[0].size)*100).toFixed(2) +'%');
+		      	reader.readAsArrayBuffer(input.files[0].slice(start, start+chunk_size));
+
+		      }
+		      //console.log(arrayBuffer);
+		      
+		    };
+		    reader.readAsArrayBuffer(input.files[0].slice(0, chunk_size));
+		  };
 		var videoNode;
 		var conn;
+		var data_conn;
 		var last_received_time = 0;
 		var call;
 		var original_title = "Watch videos together";
@@ -773,6 +896,9 @@
 		//end of youtube variables
 
 		//var path;
+
+		var data_temp = "";
+		var data_length = 0;
 
 		var stat_my_id = "-";
 		var stat_my_mic = "-";
@@ -821,6 +947,15 @@
 			}
 			else{
 				console.log("not connected");
+			}
+		}
+		function my_data_send(data){
+			if(data_conn != null && data_conn.open == true){
+				data_conn.send(data);
+				//console.log("Sent DATA: "+ data);
+			}
+			else{
+				//console.log("data not connected");
 			}
 		}
 		function my_scroll(id){
@@ -1069,281 +1204,334 @@
 
 	    }
 	    function my_connect(connection){
-	    	conn = connection;
-	    	connect_timeout = setTimeout(function(){
-	    		
-	    		if(my_prompt != null){
-		      		my_prompt.close();
-		      	}	
-		      	if(conn.open == false){
-		      		$("#connect").show();
-	    			$("#disconnect").hide();
-		      		my_prompt = new Impromptu("The connection could not be established. Please try again. If it fails a few times, please make sure your browser is up to date. Note that some networks do not allow these type of connections.", {
-						title: "Could not connect",
-						buttons: { "OK": true}
-					});
-		    		$("#connect_notify").html('Try again');
-	    		}
-	    	}, 10000);
-	    	$("#connect_notify").html('<span style="color:orange;">Trying to connect</span>');
-	    	conn.on('open',function(){
-	    		clearTimeout(connect_timeout);
-	    		my_scroll("#section2");
-	    		$("#connected_id").text(conn.peer);
-	    		$("#connect_notify").html('<span style="color:green;">Connected</span>');
-	    		stat_partner_id = conn.peer;
-	    		updatePartnerStatus();
-	    		change_status_button("user_button", "green");
-	    		console.log("Connected");
-	    		$("#connect").hide();
-	    		$("#disconnect").show();
-	    		$("#disconnect_div").show();
-	    		ga('send', 'event', 'Connection', 'Connect');
-	    		
-		    	conn.on('data', function(data){
-		    		var message_json = jQuery.parseJSON(data);
-		    		if(message_json.typing == "true"){
-		    			is_typing();
-		    		}
-		    		if(message_json.new_line == "true"){
-		    			new_line();
-		    		}
-		    		if(message_json.clear_paper == "true"){
-		    			my_clear();
-		    		}
-		    		if(message_json[0] == "Point"){
-		    			var a_new_point = {x: message_json[1], y: message_json[2]};
-		    			new_point(a_new_point);
-		    		}
-		    		if(message_json[0] == 'Path'){
-		    			my_draw(message_json);
-		    		}
-		    		if(message_json.textMessage == "true"){
-		    			var received_message = strip(decodeURIComponent(message_json.message));
-		    			
-		    			var d= new Date();
-						var msg_time = d.toLocaleTimeString();
-						var new_message;
-						if(previous_sender!="partner"){
-						 	new_message = '<div class="shout_msg"><time>'+msg_time+'</time><span class="username">Partner</span><span class="message">'+received_message+'</span></div>';
-						 	previous_sender = "partner";
-						}
-						else{
-							new_message = '<div class="shout_msg"><time>'+msg_time+'</time><span class="message">'+received_message+'</span></div>';
-						}
-						//append data into messagebox with jQuery fade effect!
-						$(new_message).linkify().hide().appendTo('.message_box').fadeIn();
-		
-						//keep scrolled to bottom of chat!
-						var scrolltoh = $('.message_box')[0].scrollHeight;
-						$('.message_box').scrollTop(scrolltoh);
-		    			console.log(received_message);
-		    			ion.sound.play("message_drop");
-		    			unread_messages = unread_messages +1;
-		    			not_typing();
-		    			update_badge();
-		    		}
-		    		if(message_json.ping != null){
-		    			my_send('{"pingback":"'+message_json.ping+'"}');
-		    		}
-		    		if(message_json.pingback != null){
-		    // 			var d = new Date();
-						// var n = d.getTime(); 
-						console.log((window.performance.now()- message_json.pingback)/2 + "ms");
-		    		}
-		    		if(message_json.call_status == "hang_up"){
-		    			if(call){
-	   						call.close();
-	   					}
-		    			$("#hang_up").hide();
-		    			$("#voice_call").show();
-		    		}
-		    		if(message_json.call_status == "hang_up_video"){
-		    			if(call){
-	   						call.close();
-	   					}
-		    			$("#hang_up_video").hide();
-		    			$("#video_call").show();
-		    		}
-		    		if(message_json.call_status == "mic_inactive"){
-		    			if(call){
-	   						call.close();
-	   					}
-		    			$("#hang_up").hide();
-		    			$("#voice_call").show();
-		    			if(my_prompt != null){
-		      				my_prompt.close();
-		      			}
-		      			my_prompt = new Impromptu("Your partner's microphone is not activated. Please try again.", {
-							title: "Partner microphone inactive",
+	    	if(connection.metadata == 'connection'){
+		    	conn = connection;
+		    	connect_timeout = setTimeout(function(){
+		    		
+		    		if(my_prompt != null){
+			      		my_prompt.close();
+			      	}	
+			      	if(conn.open == false){
+			      		$("#connect").show();
+		    			$("#disconnect").hide();
+			      		my_prompt = new Impromptu("The connection could not be established. Please try again. If it fails a few times, please make sure your browser is up to date. Note that some networks do not allow these type of connections.", {
+							title: "Could not connect",
 							buttons: { "OK": true}
 						});
+			    		$("#connect_notify").html('Try again');
 		    		}
-		    		if(message_json.call_status == "cam_inactive"){
-		    			if(call){
-	   						call.close();
-	   					}
-		    			$("#hang_up_video").hide();
-		    			$("#video_call").show();
-		    			if(my_prompt != null){
-		      				my_prompt.close();
-		      			}
-		      			my_prompt = new Impromptu("Your partner's camera is not activated. Please try again.", {
-							title: "Partner camera inactive",
-							buttons: { "OK": true}
-						});
-		    		}
-		    		if(message_json.action_change == "paused" && !videoNode.paused){
-		    			videoNode.currentTime = message_json.time_of_movie;
-		    			videoNode.pause();
-		    		}
-		    		if(message_json.action_change == "play" && videoNode.paused){
-		    			//videoNode.currentTime = message_json.time_of_movie;
-		    			if(Math.abs(videoNode.currentTime - message_json.time_of_movie) > 1){
-		    					videoNode.currentTime = message_json.time_of_movie;
-		    			}
-		    			videoNode.play();
-		    		}
-		    		if(message_json.action_change == "seek"){
-		    			if(last_received_time != message_json.time_of_movie){
-		    				last_received_time = message_json.time_of_movie;
-		    				if(Math.abs(videoNode.currentTime - message_json.time_of_movie) > 1){
-		    					videoNode.currentTime = message_json.time_of_movie;
-		    				}
-		    			}
-		    		}
-		    		if(message_json.stat_mic != null)
-		    		{
-		    			stat_partner_mic = message_json.stat_mic;
-		    		}
-		    		if(message_json.stat_video != null)
-		    		{
-		    			stat_partner_video = message_json.stat_video;
-		    		}
-		    		if(message_json.stat_size != null)
-		    		{
-		    			stat_partner_size = message_json.stat_size;
-		    		}
-		    		if(message_json.user_action =='youtube')
-		    		{
-		    			var user_event = message_json.user_event;
-		    			if(user_event == YT.PlayerState.PAUSED){
-		    				if(player.getPlayerState() != YT.PlayerState.PAUSED )
-		    				{
-		    					player.seekTo(message_json.youtube_time);
-		    					player.pauseVideo();
-		    				}
-		    			}
-		    			if(user_event == YT.PlayerState.BUFFERING){
-		    				partner_is_buffering = true;
-		    				if(player.getPlayerState() != YT.PlayerState.PAUSED)
-		    				{
-		    					player.seekTo(message_json.youtube_time);
-		    					player.pauseVideo();
-		    				}
-		    			}
-		    			if(user_event == YT.PlayerState.PLAYING){
-		    				partner_is_buffering = false;
-		    				if(player.getPlayerState() != YT.PlayerState.PLAYING && yt_me_ready == true)
-		    				{
-		    					player.seekTo(message_json.youtube_time);
-		    					player.playVideo();
-		    				}
-		    			}	
-		    			if(user_event == 'seeked'){
-		    				if(Math.abs(player.getCurrentTime() - message_json.youtube_time) > 1)
-		    				{
-		    					player.seekTo(message_json.youtube_time);
-		    					time = message_json.youtube_time;
-		    				}
-		    			}
-		    			if(user_event == 'ready'){
-		    				yt_partner_ready = true;
-		    				if(yt_me_ready == true){
-		    					$("#player_only").css('visibility', 'visible');
-		    					$("#loading_info").hide();
-		    				}
-		    			}
-		    			if(user_event == 'load_playlist'){
-		    				add_to_playlist(message_json.video_id,message_json.video_title,'Partner');
-		    			}
-		    			if(user_event == 'new_video'){
-		    				player.loadVideoById(message_json.new_vid_id);
-		    				remove_from_playlist(message_json.new_vid_id);
-		    				get_related(message_json.new_vid_id);
-		    				clearInterval(title_timeout);
-		    				clearInterval(yt_ready_timeout);
-				          	yt_me_ready = false;
-				          	yt_partner_ready = false;
-
-				          	//player.pauseVideo();
-				          	//player.playVideo();
-				          	player.seekTo(0);
-				          	$("#player_only").css('visibility', 'hidden');
-				          	$("#loading_info").show();
-				          	title_timeout =  setInterval(function(){
-				          		console.log("title: "+player.getVideoData().title);
-				          		if(player.getPlayerState() != -1){
-				          			$("#youtube_title").text(player.getVideoData().title);
-				          			
-				          			player.pauseVideo();
-				          			player.seekTo(0);
-				          			clearInterval(title_timeout);
-				          		}
-				          		else{
-				          			player.seekTo(0);
-				          			player.playVideo();
-				          		}
-				          	}, 1000);
-				          	yt_ready_timeout = setInterval(function(){
-		          				if(yt_me_ready == true && yt_partner_ready == true){
-		          					clearInterval(yt_ready_timeout);
-		          					$("#youtube_title").text(player.getVideoData().title);
-		          					my_send('{"user_action":"youtube", "user_event":"ready"}');
-		          					console.log('ready');
-		          					player.playVideo();
-		          					$("#player_only").css('visibility', 'visible');
-		          					$("#loading_info").hide();
-		          				}
-		          				else if(yt_me_ready == true && yt_partner_ready == false){
-		          					clearInterval(yt_ready_timeout);
-		          					$("#youtube_title").text(player.getVideoData().title);
-		          					my_send('{"user_action":"youtube", "user_event":"ready"}');
-		          					console.log('ready');
-		          				}
-		          				else{
-		          					if(player.getVideoLoadedFraction()*player.getDuration() > 10){ //amount of seconds loaded
-		          						yt_me_ready = true;
-		          					}
-		          					else{
-			      						player.playVideo();
-			      						player.pauseVideo();
-			      					}
-		          				}
-		          			},1000);
-
-		    			}	
-		    			partner_previous_state = user_event;
-		    		}
+		    	}, 10000);
+		    	$("#connect_notify").html('<span style="color:orange;">Trying to connect</span>');
+		    	conn.on('open',function(){
+		    		clearTimeout(connect_timeout);
+		    		my_scroll("#section2");
+		    		$("#connected_id").text(conn.peer);
+		    		$("#connect_notify").html('<span style="color:green;">Connected</span>');
+		    		stat_partner_id = conn.peer;
 		    		updatePartnerStatus();
-		    		console.log('Received ' + data);
-	    		});	
-	   		});
-	   		conn.on('close', function(){
-	   			console.log("Disconnected");
-	   			$("#connect_notify").html('<span style="color:red;">Disconnected</span>');
-	   			my_scroll("#section2");
-	    		change_status_button("user_button", "red");
-	   			if(call){
-	   				call.close();
-	   			}
-	   			$("#connect").show();
-	    		$("#disconnect_div").hide();
-	    		player.pauseVideo();
-	   		});
-	   		conn.on('error', function(err){
-	   			console.log(err);
-	   		});
+		    		change_status_button("user_button", "green");
+		    		console.log("Connected");
+		    		$("#connect").hide();
+		    		$("#disconnect").show();
+		    		$("#disconnect_div").show();
+		    		ga('send', 'event', 'Connection', 'Connect');
+		    		
+			    	conn.on('data', function(data){
+			    		var message_json = jQuery.parseJSON(data);
+			    		if(message_json.typing == "true"){
+			    			is_typing();
+			    		}
+			    		if(message_json.new_line == "true"){
+			    			new_line();
+			    		}
+			    		if(message_json.clear_paper == "true"){
+			    			my_clear();
+			    		}
+			    		if(message_json[0] == "Point"){
+			    			var a_new_point = {x: message_json[1], y: message_json[2]};
+			    			new_point(a_new_point);
+			    		}
+			    		if(message_json[0] == 'Path'){
+			    			my_draw(message_json);
+			    		}
+			    		if(message_json.textMessage == "true"){
+			    			var received_message = strip(decodeURIComponent(message_json.message));
+			    			
+			    			var d= new Date();
+							var msg_time = d.toLocaleTimeString();
+							var new_message;
+							if(previous_sender!="partner"){
+							 	new_message = '<div class="shout_msg"><time>'+msg_time+'</time><span class="username">Partner</span><span class="message">'+received_message+'</span></div>';
+							 	previous_sender = "partner";
+							}
+							else{
+								new_message = '<div class="shout_msg"><time>'+msg_time+'</time><span class="message">'+received_message+'</span></div>';
+							}
+							//append data into messagebox with jQuery fade effect!
+							$(new_message).linkify().hide().appendTo('.message_box').fadeIn();
+			
+							//keep scrolled to bottom of chat!
+							var scrolltoh = $('.message_box')[0].scrollHeight;
+							$('.message_box').scrollTop(scrolltoh);
+			    			console.log(received_message);
+			    			ion.sound.play("message_drop");
+			    			unread_messages = unread_messages +1;
+			    			not_typing();
+			    			update_badge();
+			    		}
+			    		if(message_json.ping != null){
+			    			my_send('{"pingback":"'+message_json.ping+'"}');
+			    		}
+			    		if(message_json.pingback != null){
+			    // 			var d = new Date();
+							// var n = d.getTime(); 
+							console.log((window.performance.now()- message_json.pingback)/2 + "ms");
+			    		}
+			    		if(message_json.call_status == "hang_up"){
+			    			if(call){
+		   						call.close();
+		   					}
+			    			$("#hang_up").hide();
+			    			$("#voice_call").show();
+			    		}
+			    		if(message_json.call_status == "hang_up_video"){
+			    			if(call){
+		   						call.close();
+		   					}
+			    			$("#hang_up_video").hide();
+			    			$("#video_call").show();
+			    		}
+			    		if(message_json.call_status == "mic_inactive"){
+			    			if(call){
+		   						call.close();
+		   					}
+			    			$("#hang_up").hide();
+			    			$("#voice_call").show();
+			    			if(my_prompt != null){
+			      				my_prompt.close();
+			      			}
+			      			my_prompt = new Impromptu("Your partner's microphone is not activated. Please try again.", {
+								title: "Partner microphone inactive",
+								buttons: { "OK": true}
+							});
+			    		}
+			    		if(message_json.call_status == "cam_inactive"){
+			    			if(call){
+		   						call.close();
+		   					}
+			    			$("#hang_up_video").hide();
+			    			$("#video_call").show();
+			    			if(my_prompt != null){
+			      				my_prompt.close();
+			      			}
+			      			my_prompt = new Impromptu("Your partner's camera is not activated. Please try again.", {
+								title: "Partner camera inactive",
+								buttons: { "OK": true}
+							});
+			    		}
+			    		if(message_json.action_change == "paused" && !videoNode.paused){
+			    			videoNode.currentTime = message_json.time_of_movie;
+			    			videoNode.pause();
+			    		}
+			    		if(message_json.action_change == "play" && videoNode.paused){
+			    			//videoNode.currentTime = message_json.time_of_movie;
+			    			if(Math.abs(videoNode.currentTime - message_json.time_of_movie) > 1){
+			    					videoNode.currentTime = message_json.time_of_movie;
+			    			}
+			    			videoNode.play();
+			    		}
+			    		if(message_json.action_change == "seek"){
+			    			if(last_received_time != message_json.time_of_movie){
+			    				last_received_time = message_json.time_of_movie;
+			    				if(Math.abs(videoNode.currentTime - message_json.time_of_movie) > 1){
+			    					videoNode.currentTime = message_json.time_of_movie;
+			    				}
+			    			}
+			    		}
+			    		if(message_json.stat_mic != null)
+			    		{
+			    			stat_partner_mic = message_json.stat_mic;
+			    			updatePartnerStatus();
+			    		}
+			    		if(message_json.stat_video != null)
+			    		{
+			    			stat_partner_video = message_json.stat_video;
+			    			updatePartnerStatus();
+			    		}
+			    		if(message_json.stat_size != null)
+			    		{
+			    			stat_partner_size = message_json.stat_size;
+			    			updatePartnerStatus();
+			    		}
+			    		if(message_json.user_action =='youtube')
+			    		{
+			    			var user_event = message_json.user_event;
+			    			if(user_event == YT.PlayerState.PAUSED){
+			    				if(player.getPlayerState() != YT.PlayerState.PAUSED )
+			    				{
+			    					player.seekTo(message_json.youtube_time);
+			    					player.pauseVideo();
+			    				}
+			    			}
+			    			if(user_event == YT.PlayerState.BUFFERING){
+			    				partner_is_buffering = true;
+			    				if(player.getPlayerState() != YT.PlayerState.PAUSED)
+			    				{
+			    					player.seekTo(message_json.youtube_time);
+			    					player.pauseVideo();
+			    				}
+			    			}
+			    			if(user_event == YT.PlayerState.PLAYING){
+			    				partner_is_buffering = false;
+			    				if(player.getPlayerState() != YT.PlayerState.PLAYING && yt_me_ready == true)
+			    				{
+			    					player.seekTo(message_json.youtube_time);
+			    					player.playVideo();
+			    				}
+			    			}	
+			    			if(user_event == 'seeked'){
+			    				if(Math.abs(player.getCurrentTime() - message_json.youtube_time) > 1)
+			    				{
+			    					player.seekTo(message_json.youtube_time);
+			    					time = message_json.youtube_time;
+			    				}
+			    			}
+			    			if(user_event == 'ready'){
+			    				yt_partner_ready = true;
+			    				if(yt_me_ready == true){
+			    					$("#player_only").css('visibility', 'visible');
+			    					$("#loading_info").hide();
+			    				}
+			    			}
+			    			if(user_event == 'load_playlist'){
+			    				add_to_playlist(message_json.video_id,message_json.video_title,'Partner');
+			    			}
+			    			if(user_event == 'new_video'){
+			    				player.loadVideoById(message_json.new_vid_id);
+			    				remove_from_playlist(message_json.new_vid_id);
+			    				get_related(message_json.new_vid_id);
+			    				clearInterval(title_timeout);
+			    				clearInterval(yt_ready_timeout);
+					          	yt_me_ready = false;
+					          	yt_partner_ready = false;
+
+					          	//player.pauseVideo();
+					          	//player.playVideo();
+					          	player.seekTo(0);
+					          	$("#player_only").css('visibility', 'hidden');
+					          	$("#loading_info").show();
+					          	title_timeout =  setInterval(function(){
+					          		console.log("title: "+player.getVideoData().title);
+					          		if(player.getPlayerState() != -1){
+					          			$("#youtube_title").text(player.getVideoData().title);
+					          			
+					          			player.pauseVideo();
+					          			player.seekTo(0);
+					          			clearInterval(title_timeout);
+					          		}
+					          		else{
+					          			player.seekTo(0);
+					          			player.playVideo();
+					          		}
+					          	}, 1000);
+					          	yt_ready_timeout = setInterval(function(){
+			          				if(yt_me_ready == true && yt_partner_ready == true){
+			          					clearInterval(yt_ready_timeout);
+			          					$("#youtube_title").text(player.getVideoData().title);
+			          					my_send('{"user_action":"youtube", "user_event":"ready"}');
+			          					console.log('ready');
+			          					player.playVideo();
+			          					$("#player_only").css('visibility', 'visible');
+			          					$("#loading_info").hide();
+			          				}
+			          				else if(yt_me_ready == true && yt_partner_ready == false){
+			          					clearInterval(yt_ready_timeout);
+			          					$("#youtube_title").text(player.getVideoData().title);
+			          					my_send('{"user_action":"youtube", "user_event":"ready"}');
+			          					console.log('ready');
+			          				}
+			          				else{
+			          					if(player.getVideoLoadedFraction()*player.getDuration() > 10){ //amount of seconds loaded
+			          						yt_me_ready = true;
+			          					}
+			          					else{
+				      						player.playVideo();
+				      						player.pauseVideo();
+				      					}
+			          				}
+			          			},1000);
+
+			    			}	
+			    			partner_previous_state = user_event;
+			    		}
+			    		
+			    		console.log('Received ' + data);
+		    		});	
+				
+		   		});
+		   		conn.on('close', function(){
+		   			console.log("Disconnected");
+		   			$("#connect_notify").html('<span style="color:red;">Disconnected</span>');
+		   			my_scroll("#section2");
+		    		change_status_button("user_button", "red");
+		   			if(call){
+		   				call.close();
+		   			}
+		   			$("#connect").show();
+		    		$("#disconnect_div").hide();
+		    		player.pauseVideo();
+		   		});
+		   		conn.on('error', function(err){
+		   			console.log(err);
+		   		});
+		   		
+	   		}
+	   		else if(connection.metadata == 'data'){
+	   			data_conn = connection;
+	   			//my_data_send({new_file:true, new_size:input.files[0].size, new_type: input.files[0].type, new_name:input.files[0].name});
+	   			data_conn.on('open', function(){
+	   				console.log("data_conn open");
+	   				data_conn.on('data', function(data){
+	   					if(data.new_file == true){
+	   						partner_file = data.new_size;
+	   						partner_file_type = data.new_type;
+	   						partner_file_name = data.new_name;
+	   						partner_byte_index = 0;
+	   						partner_file_array = new Array();
+	   						$("#file_size").text(data.new_size);
+	   						$("#progress").show();
+	   					}
+	   					if(data.new_pieces != null){
+	   						var temp_buff = new Uint8Array(data.new_pieces);
+	   						// for(var i =0; i<temp_buff.length; i++){
+	   						// 	partner_file[partner_byte_index++] = temp_buff[i];
+	   						// }
+	   						partner_byte_index += temp_buff.length;
+	   						partner_file_array.push(temp_buff);
+	   						$("#downloaded").text(((partner_byte_index/partner_file)*100).toFixed(2) +'%');
+	   					}
+	   					if(data.done == true){
+	   						 var partner_buffer_blob = new Blob(partner_file_array,{type : partner_file_type});
+					          var partner_buffer_url = window.URL.createObjectURL(partner_buffer_blob);
+					         //my_data_send({done: true});
+					         if(partner_file_type.split('/')[0] == 'image'){
+					         	//$("#share_img").append('<a href="'+partner_buffer_url+'"  download="'+partner_file_name+'"><img src="'+partner_buffer_url+'" height="200px" width="300px"/></a>');
+					         	$("#download_table").prepend('<tr><td><img src="'+partner_buffer_url+'" height="150px" width="200px" download="'+partner_file_name+'"/></td><td>'+partner_file_name+'</td><td><a href="'+partner_buffer_url+'"  download="'+partner_file_name+'"><span style="color:#ddd">download</span></a></td></tr>');
+					         }else{
+					         	//$("#share_img").append('<br><a href="'+partner_buffer_url+'"  download="'+partner_file_name+'">'+partner_file_name+'</a><br>');
+					         	$("#download_table").prepend('<tr><td></td><td>'+partner_file_name+'</td><td><a href="'+partner_buffer_url+'"  download="'+partner_file_name+'"><span style="color:#ddd">download</span></a></td></tr>');
+					         }
+					         
+					         //$("#share_img").append('<img src="'+partner_buffer_url+'" target="_blank" download="file.jpg"/>');
+	   						//$("#share_img").append('<img height="300px" width="500px" src="'+data_temp+'" controls/>');
+	   						
+	   					}
+	   					//console.log(data);
+	   				});
+	   			});
+	   			console.log("woohoo");
+	   		}
+	   		console.log("meta: " +connection.metadata);
 	    }
 
 	    function updateMyStatus(){
@@ -1721,8 +1909,10 @@
 		function connect_click(){
 			$("#connect").hide();
 	    	console.log($("#connect_id").val());
-	    	conn = peer.connect($("#connect_id").val().trim());
+	    	conn = peer.connect($("#connect_id").val().trim(),{metadata:"connection"});
 	    	my_connect(conn);
+	    	data_conn = peer.connect($("#connect_id").val().trim(), {metadata:"data", reliable:true});
+		   	my_connect(data_conn);
 	    }
 
 	    function add_to_playlist(video_id, title, user){
@@ -1777,6 +1967,8 @@
 			$("#loading_info").hide();
 			$("#online_people").hide();
 			$("#public_chat_area").hide();
+			$("#progress").hide();
+			$("#progress_sent").hide();
 			$("#the_player").hover(function(){
 	       		// $("#the_player").css("background-color", "yellow");
 	       		//console.log("inside");
