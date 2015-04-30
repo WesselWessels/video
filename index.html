@@ -1848,7 +1848,7 @@
 	    function onPlayerStateChange(event) {  
 	    	if(yt_me_ready == true){
 	    		//last_received_pause = window.performance.now();
-	    		if( (window.performance.now() -last_received_pause)>100){
+	    		if( (window.performance.now() -last_received_pause)>100 || event.data == YT.PlayerState.PLAYING){
 	    			my_send('{"user_action":"youtube", "user_event": "'+event.data+'", "youtube_time": "'+player.getCurrentTime()+'"}');
 	    		}
 	       		
