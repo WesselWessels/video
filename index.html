@@ -125,6 +125,7 @@
 				left: 30px; 
 				width: 180; 
 				height: 120;
+				z-index: 10;
 			}
 			.youtube_history{
 			    margin: 0;
@@ -904,6 +905,8 @@
      		var yt_partner_ready = true;
      		var yt_ready_timeout;
      		var title_timeout;
+
+     		var last_received_pause = 0;
 		//end of youtube variables
 
 		//var path;
@@ -1384,6 +1387,7 @@
 			    					player.seekTo(message_json.youtube_time);
 			    					player.pauseVideo();
 			    				}
+			    				last_received_pause = window.performance.now();
 			    			}
 			    			if(user_event == YT.PlayerState.BUFFERING){
 			    				partner_is_buffering = true;
@@ -1392,6 +1396,7 @@
 			    					player.seekTo(message_json.youtube_time);
 			    					player.pauseVideo();
 			    				}
+			    				last_received_pause = window.performance.now();
 			    			}
 			    			if(user_event == YT.PlayerState.PLAYING){
 			    				partner_is_buffering = false;
@@ -1842,7 +1847,11 @@
 	    var done = false;
 	    function onPlayerStateChange(event) {  
 	    	if(yt_me_ready == true){
-	       		my_send('{"user_action":"youtube", "user_event": "'+event.data+'", "youtube_time": "'+player.getCurrentTime()+'"}');
+	    		//last_received_pause = window.performance.now();
+	    		if( (window.performance.now() -last_received_pause)>100){
+	    			my_send('{"user_action":"youtube", "user_event": "'+event.data+'", "youtube_time": "'+player.getCurrentTime()+'"}');
+	    		}
+	       		
 	    	}
 	       	if(event.data == YT.PlayerState.BUFFERING && previous_state == YT.PlayerState.PLAYING){
        		 	clearTimeout(restart_after_buffer);
