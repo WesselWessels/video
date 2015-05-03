@@ -266,6 +266,7 @@
 				<div class="col-md-6">
 					<button class="btn btn-success btn-lg" id="take_tour"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>Take Tour</button>
 					<a href="#section2" class="btn btn-success btn-lg">Get Started</a>
+					<button class="btn btn-success btn-lg" id="contact">Contact</button>
 					<br><br>
 					<div class="well">
 						<div class="fb-like" data-href="https://facebook.com/simulchat" data-layout="standard" data-action="like" data-show-faces="true" data-share="true"></div>
@@ -2123,6 +2124,18 @@
 			$("#slider").change(function(){
 				console.log($("#slider").val()/100);
 				change_volume($("#slider").val()/100);
+
+			});
+
+			$("#contact").click(function(e){
+				e.preventDefault();
+				if(my_prompt != null){
+      				my_prompt.close();
+      			}
+      			my_prompt = new Impromptu("Please feel free to email simulchat" + "@" +"gmail"+"."+"com for any questions or feedback.", {
+					title: "Contact SimulChat",
+					buttons: { "OK": true}
+				});
 
 			});
 
