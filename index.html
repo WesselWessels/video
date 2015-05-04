@@ -18,7 +18,7 @@
  		<script type="text/javascript" src="http://cdn.peerjs.com/0.3/peer.js"></script>
  		<script type="text/javascript" src="js/jquery.linkify.min.js"></script>
  		<script type="text/javascript" src="js/ion.sound.min.js"></script>
- 		<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+ 		<!--<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script> -->
  		<link href="//vjs.zencdn.net/4.12/video-js.css" rel="stylesheet">
  		<link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css">
  		<script src="js/paper-full.min.js"></script>
@@ -275,7 +275,7 @@
 				<div class="col-md-3"></div>
 			</div>
 		</div>
-		<div class="container">
+		<!--<div class="container">
 			<div style="text-align:center;">
 				<h3>Public Chat</h3>
 			</div>
@@ -316,7 +316,7 @@
 					Public Chat is still under development. Be aware that everything you type here is public. More features coming soon.
 				</div>
 			</div>
-		</div>
+		</div> -->
 		</section>
 		<section class="container-fluid" id="section2">
 		<div style="text-align:center;">			
@@ -2019,108 +2019,108 @@
 			    window_focus = false;
 			});
 
-			$('#public_name').keyup(function(e){
-			    if(e.keyCode == 13)
-			    {
-			        $(this).trigger("joinchat");
-			    }
-			});	
-			$('#public_name').bind("joinchat",function(e){
-				join_chat();
-			});
-			function join_chat(){
-				var pub_name = $("#public_name").val();
-				if(pub_name.length > 0){
-					$("#public_chat_error").empty();
-					$("#public_message").focus();
-					$("#join_public_chat").hide();
-					$("#online_people").show();
-					//$("#online_people_list").append('<li class="list-group-item">'+pub_name+'</li>');
-					$("#public_chat_area").show();
+			// $('#public_name').keyup(function(e){
+			//     if(e.keyCode == 13)
+			//     {
+			//         $(this).trigger("joinchat");
+			//     }
+			// });	
+			// $('#public_name').bind("joinchat",function(e){
+			// 	join_chat();
+			// });
+			// function join_chat(){
+			// 	var pub_name = $("#public_name").val();
+			// 	if(pub_name.length > 0){
+			// 		$("#public_chat_error").empty();
+			// 		$("#public_message").focus();
+			// 		$("#join_public_chat").hide();
+			// 		$("#online_people").show();
+			// 		//$("#online_people_list").append('<li class="list-group-item">'+pub_name+'</li>');
+			// 		$("#public_chat_area").show();
 				
-					socket =  io.connect('chat.simulchat.com:3000',{'forceNew':true });
-					socket.on('connect', function(err){
-						socket.emit('set_name', pub_name);
-						socket.emit('create', 'Lobby');
-						console.log("connected");
-						socket.on('chat message', function(msg){
-					    	var d= new Date();
-							var msg_time = d.toLocaleTimeString();
-							var new_message = '<div class="shout_msg"><time>'+msg_time+'</time><span class="message">'+strip(msg)+'</span></div>';
-					   		$(new_message).linkify().hide().appendTo('#public_chat_text').fadeIn();
-					   		var scrolltoh = $('#public_chat_text')[0].scrollHeight;
-							$('#public_chat_text').scrollTop(scrolltoh);
-					    });
-					    socket.on('in_room', function(in_room){
+			// 		socket =  io.connect('chat.simulchat.com:3000',{'forceNew':true });
+			// 		socket.on('connect', function(err){
+			// 			socket.emit('set_name', pub_name);
+			// 			socket.emit('create', 'Lobby');
+			// 			console.log("connected");
+			// 			socket.on('chat message', function(msg){
+			// 		    	var d= new Date();
+			// 				var msg_time = d.toLocaleTimeString();
+			// 				var new_message = '<div class="shout_msg"><time>'+msg_time+'</time><span class="message">'+strip(msg)+'</span></div>';
+			// 		   		$(new_message).linkify().hide().appendTo('#public_chat_text').fadeIn();
+			// 		   		var scrolltoh = $('#public_chat_text')[0].scrollHeight;
+			// 				$('#public_chat_text').scrollTop(scrolltoh);
+			// 		    });
+			// 		    socket.on('in_room', function(in_room){
 
-					    	$("#online_people_list").empty();
-					    	for(var i=0;i<in_room.length; i++){
-					    		console.log(in_room);
-					    		$("#online_people_list").append('<li class="list-group-item" id="'+in_room[i].id+'">'+in_room[i].name+'</li>');
-					    	}
-					    });
-					    socket.on('new_user', function(new_user){
-					    	console.log(new_user);
-					    	$("#online_people_list").append('<li class="list-group-item" id="'+new_user.id+'">'+new_user.name+'</li>');
-					    });
-					    socket.on('user_dc', function(user_dc){
-					    	console.log(user_dc);
-					    	$("#"+user_dc.id).remove();
-					    });
-					    socket.on('disconnect', function(){
-					    	$("#join_public_chat").show();
-							$("#online_people").hide();
-							$("#public_chat_area").hide();
-							$("#online_people_list").empty();
-							$("#public_chat_error").append("Disconnected from chat<br>");
-					    });
-					    socket.on('new_name', function(new_name){
-					    	console.log(new_name);
-					    });
-					    socket.on('name_taken', function(){
-					    	$("#public_chat_error").html("Name already taken<br>");
-					    	console.log("name taken");
-					    });
-					    socket.on('reconnect', function(){
-					    	socket.disconnect();
-					    });
-				    });
-				}
-				else{
-					$("#public_chat_error").text("Name must not be blank");
-				}
-			}
-			$("#join_chat").click(function(e){
-				e.preventDefault();
-				join_chat();
-				//console.log($("#public_name").val());
-			});
-			$("#leave_chat").click(function(e){
-				e.preventDefault();
-				$("#join_public_chat").show();
-				$("#online_people").hide();
-				$("#public_chat_area").hide();
-				$("#online_people_list").empty();
-				socket.disconnect();
-				//console.log($("#public_name").val());
-			});
-			$("#public_message").keypress(function(evt){
-				//e.preventDefault();
-				if(evt.which == 13) {
-					var d= new Date();
-					var msg_time = d.toLocaleTimeString();
-					var imessage = strip($("#public_message").val());
-					//imessage = imessage.replace(regex, "<a href='$1' target='_blank'>$1</a>");
-					var data = '<div class="shout_msg me_shout_msg"><time>'+msg_time+'</time><span class="username my_username">You</span><span class="message">'+imessage+'</span></div>';
+			// 		    	$("#online_people_list").empty();
+			// 		    	for(var i=0;i<in_room.length; i++){
+			// 		    		console.log(in_room);
+			// 		    		$("#online_people_list").append('<li class="list-group-item" id="'+in_room[i].id+'">'+in_room[i].name+'</li>');
+			// 		    	}
+			// 		    });
+			// 		    socket.on('new_user', function(new_user){
+			// 		    	console.log(new_user);
+			// 		    	$("#online_people_list").append('<li class="list-group-item" id="'+new_user.id+'">'+new_user.name+'</li>');
+			// 		    });
+			// 		    socket.on('user_dc', function(user_dc){
+			// 		    	console.log(user_dc);
+			// 		    	$("#"+user_dc.id).remove();
+			// 		    });
+			// 		    socket.on('disconnect', function(){
+			// 		    	$("#join_public_chat").show();
+			// 				$("#online_people").hide();
+			// 				$("#public_chat_area").hide();
+			// 				$("#online_people_list").empty();
+			// 				$("#public_chat_error").append("Disconnected from chat<br>");
+			// 		    });
+			// 		    socket.on('new_name', function(new_name){
+			// 		    	console.log(new_name);
+			// 		    });
+			// 		    socket.on('name_taken', function(){
+			// 		    	$("#public_chat_error").html("Name already taken<br>");
+			// 		    	console.log("name taken");
+			// 		    });
+			// 		    socket.on('reconnect', function(){
+			// 		    	socket.disconnect();
+			// 		    });
+			// 	    });
+			// 	}
+			// 	else{
+			// 		$("#public_chat_error").text("Name must not be blank");
+			// 	}
+			// }
+			// $("#join_chat").click(function(e){
+			// 	e.preventDefault();
+			// 	join_chat();
+			// 	//console.log($("#public_name").val());
+			// });
+			// $("#leave_chat").click(function(e){
+			// 	e.preventDefault();
+			// 	$("#join_public_chat").show();
+			// 	$("#online_people").hide();
+			// 	$("#public_chat_area").hide();
+			// 	$("#online_people_list").empty();
+			// 	socket.disconnect();
+			// 	//console.log($("#public_name").val());
+			// });
+			// $("#public_message").keypress(function(evt){
+			// 	//e.preventDefault();
+			// 	if(evt.which == 13) {
+			// 		var d= new Date();
+			// 		var msg_time = d.toLocaleTimeString();
+			// 		var imessage = strip($("#public_message").val());
+			// 		//imessage = imessage.replace(regex, "<a href='$1' target='_blank'>$1</a>");
+			// 		var data = '<div class="shout_msg me_shout_msg"><time>'+msg_time+'</time><span class="username my_username">You</span><span class="message">'+imessage+'</span></div>';
 					
-					//append data into messagebox with jQuery fade effect!
-					$(data).linkify().hide().appendTo('#public_chat_text').fadeIn();
-					socket.emit('chat message', imessage);
-					var scrolltoh = $('#public_chat_text')[0].scrollHeight;
-					$('#public_chat_text').scrollTop(scrolltoh);
-					$("#public_message").val('');
-				}
-			});
+			// 		//append data into messagebox with jQuery fade effect!
+			// 		$(data).linkify().hide().appendTo('#public_chat_text').fadeIn();
+			// 		socket.emit('chat message', imessage);
+			// 		var scrolltoh = $('#public_chat_text')[0].scrollHeight;
+			// 		$('#public_chat_text').scrollTop(scrolltoh);
+			// 		$("#public_message").val('');
+			// 	}
+			// });
 			$("#slider").change(function(){
 				console.log($("#slider").val()/100);
 				change_volume($("#slider").val()/100);
