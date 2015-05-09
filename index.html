@@ -51,6 +51,12 @@
 			    -webkit-transform:rotateY(180deg); /* Safari and Chrome */
 			    -moz-transform:rotateY(180deg); /* Firefox */
 			}
+			#my_video{
+				z-index: 1;
+				width: 720px;
+				height: 396px;
+
+			}
 			.shout_box {
 				background:#1B9CE0; width:260px; overflow:hidden;
 				position:fixed; bottom:0; right:10%; z-index:9;
@@ -123,6 +129,14 @@
 				position: fixed;
 				top: 70px; 
 				left: 30px; 
+				width: 180; 
+				height: 120;
+				z-index: 10;
+			}
+			.temp_video{
+				position: fixed;
+				top: 5px; 
+				left: 5px; 
 				width: 180; 
 				height: 120;
 				z-index: 10;
@@ -247,6 +261,10 @@
 				width: 100%;
 			  height: 100%;
 			}
+			/*:fullscreen #section3 #my_video{
+				width: 100%;
+			  height: 100%;
+			}*/
 			:-webkit-full-screen:not(:root) {
 			  width: 100% !important;
 			  float: none !important;
@@ -472,7 +490,7 @@
 			<h1>Watch Videos Together</h1>
 		</div>	
 		<br><br>
-        <div class="container">
+        <!-- <div class="container">
         	<div class="col-md-3">
         		<table class="table table-bordered" id="my_status_table">
         			<thead>
@@ -497,14 +515,26 @@
         				</tr>
         			</tbody>
         		</table>
-        	</div>
-	        <div id="video_div" class="col-md-6">
-				<input type="file" accept="video/mp4,video/webm,video/ogg,audio/*" id="video_file"/>
-				<video class="video-js vjs-default-skin" id="my_video" width="720" height="480" controls >
+        	</div> -->
+	        <div id="video_div" style="text-align:center;">
+				
+				<video class="video-js vjs-default-skin" id="my_video" style="width:720px;height:480px;" controls >
 				</video>
+				<button class="btn btn-success" id="fullscreen_movie"><span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span> Fullscreen</button>
+				<div class="container">
+					<div class="row">
+						<div class="col-md-3"></div>
+						<div class="col-md-6">
+							<input type="file" accept="video/mp4,video/webm,video/ogg,audio/*" id="video_file"/>
+						</div>
+						<div class="col-md-3"></div>
+					</div>
+					
+				</div>
+				
 				
 			</div>	
-        	<div class="col-md-3">
+        	<!-- <div class="col-md-3">
         		<table class="table table-bordered" id="partner_status_table" style="word-wrap:break-word;">
         			<thead>
         				<th colspan="100%" style="text-align:center;">Partner Status</th>
@@ -529,7 +559,7 @@
         			</tbody>
         		</table>
         	</div>
-		</div>
+		</div> -->
 		<div style="text-align:center;">			
 			<h1>Please note</h1>
 			<div class="container">
@@ -1014,7 +1044,8 @@
 		    document.webkitExitFullscreen();
 		  }
 		}
-
+		var fullscreen = false;
+	    var fullscreen_window = null;
 
 		function video_size() {
 			if(fullscreen){
@@ -1035,9 +1066,33 @@
 			}
 	        
 	        console.log($(window).width());
-
+	    }
+	    function movie_size(){
+	    	if(fullscreen == true){
+	    		$('#my_video').css({
+	            position: 'absolute',
+				top: 0, right:0,
+			    bottom: 0, left:0,
+	            width: $(window).width(),
+	            height: $(window).height()
+		        });
+		        //$('#my_video').attr('width', $(window).width()+'px');
+		        //$('#my_video').attr('height', $(window).height()+'px');
+		        // $('#my_video').attr('width', '30%');
+		        // $('#my_video').attr('height', '30%');
+	    	}
+	    	else{
+				$("#my_video").css({'position': 'relative', 'margin-left':'auto', 'margin-right':'auto', 'width':'50%'});
+				var wid = $("#my_video").width();
+				var hei = Math.floor((wid * 9)/16);
+				$("#my_video").css('height', hei);
+				console.log(wid + " "+ hei);
+				//$('#my_video').attr('width', '50%');
+		       // $('#my_video').attr('height', '50%');
+			}
 	    }
 	    video_size();
+	       // movie_size();  
 	    $(window).resize(function() {
 	       // if(fullscreen){
 	       // 	   video_size();
@@ -1045,10 +1100,11 @@
 	       // else{
 	       // 		$("#their-video").css('position', 'relative');
 	       // }	
-	       video_size();      
+	       video_size();
+	       movie_size();      
 	    });
 	    //var fullscreenchange = 
-	    var fullscreen = false;
+	    
 	    $(document).on('fullscreenchange', function(e){
 	    	full_screen_changed()
 	    });
@@ -1063,7 +1119,23 @@
 	    });
 	    function full_screen_changed(){
 	    	if(document.fullScreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullScreenElement){
-	    		fullscreen = true;
+	    		fullscreen = true; 
+	    		 		
+	    	}
+	    	else{
+	    		fullscreen = false;
+	    		// fullscreen_call();   
+	    	}
+	    	if(fullscreen_window == 'call'){
+	    		fullscreen_call();  
+	    	}
+	    	if(fullscreen_window == 'movie'){
+	    		console.log("MOVIE Fullscreen");
+	    		fullscreen_movie();
+	    	}
+	    }
+	    function fullscreen_call(){
+	    	if(fullscreen == true){
 	    		$("#partner_volume").addClass('volume_bot');
 	    		$("#the_call_controls").addClass('controls_fullscreen');
 	    		video_size();
@@ -1071,13 +1143,26 @@
 	    		$("#fullscreen_call").hide();
 	    	}
 	    	else{
-	    		fullscreen = false;
 	    		$("#partner_volume").removeClass('volume_bot');
 	    		$("#the_call_controls").removeClass('controls_fullscreen');
 	    		console.log('not Fullscreen');
 	    		$("#their-video").css('position', 'relative');
 	    		$("#fullscreen_call").show();
-
+	    		fullscreen = null;
+	    	}
+	    }
+	    function fullscreen_movie(){
+	    	movie_size();
+	    	if(fullscreen){
+	    		$('.temp_video').remove();
+		    		if(call != null && call.open == true && call.metadata == 'video'){
+		    			$("#section3").append('<div class="temp_video"><video class="temp_vid" width="180" height="120" autoplay muted></video></div>');
+		    		$('.temp_vid').prop('src', URL.createObjectURL(window.remoteStream));
+	    		}
+	    		
+	    	}
+	    	else{
+	    		$('.temp_video').remove();
 	    	}
 	    }
 		function is_typing(){
@@ -2114,7 +2199,8 @@
 			    path: "sounds/",
 			    preload: true
 			});
-
+			// video_size();
+	  // 		movie_size();
 			$("#voice").hide();
 			$("#disconnect_div").hide();
 			$("#end_voice_call").hide();
@@ -2268,11 +2354,18 @@
 
 			});
 
-			$("#fullscreen_call").click(function(){
+			$("#fullscreen_call").click(function(e){
+				e.preventDefault();
 				launchIntoFullscreen(document.getElementById("call_section"));
+				fullscreen_window = 'call';
 
 			});
+			$("#fullscreen_movie").click(function(e){
+				e.preventDefault();
+				launchIntoFullscreen(document.getElementById("section3"));
+				fullscreen_window = 'movie';
 
+			});
 			$("#contact").click(function(e){
 				e.preventDefault();
 				if(my_prompt != null){
@@ -2587,7 +2680,7 @@
 			  	connect_click();
 			});
 
-
+			movie_size();
 		});
 		
 		// Called automatically with the response of the YouTube API request.
