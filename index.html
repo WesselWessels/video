@@ -7,6 +7,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 		<meta name="description" content="SimulChat allows you and a friend to watch movies together while talking. It keeps the movie in sync. Perfect for long distance relationships and family that live far.">
 		<meta name="keywords" content="watch movies together,watch videos together,webrtc,video call,voice call,sync video">
+	
 		<link rel="stylesheet" href="css/bootstrap.css">
 		<link href="css/styles.css" rel="stylesheet">
 		<link rel="stylesheet" href="css/jquery-impromptu.css">
@@ -463,7 +464,6 @@
 				        <a href="#" class="btn btn-success" id="video_call"><span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span> video call</a>
 				        <a href="#" class="btn btn-info" id="hang_up_video"><span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span> cancel video call</a>
 				        <a href="#" class="btn btn-warning" id="end_video_call"><span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span> end video call</a>
-				        
 					</div>
 					<div class="col-md-4"></div>
 				</div>
@@ -937,7 +937,7 @@
 	</body>
 </html>
 
-<script type="text/javascript" canvas="canvas">
+<script type="text/javascript" canvas="canvas" charset="utf-8">
 		//$(document).ready(function(){
 		if(!((navigator.userAgent.indexOf("Chrome") != -1) || (navigator.userAgent.indexOf("Firefox") != -1) || (navigator.userAgent.indexOf("Opera") != -1)))
 		{
@@ -1004,6 +1004,7 @@
 
 		var openSubtitles = function(event){
 			var input = event.target;
+			console.log(input.files[0]);
 			var reader = new FileReader();
 			reader.onload = function(){
 		      var subtitles_string = reader.result.trim();
@@ -1016,7 +1017,7 @@
 		      	var temp_b = temp.slice(2,temp.length);
 		      	var time_temp = temp[1].split(' --> ');
 		      	subtitle_text = temp_b.join('<br>');
-		      	console.log(time_temp);
+		      	//console.log(time_temp);
 		      	var startTime = srtTimeToStamp(time_temp[0]);
 		      	var endTime = srtTimeToStamp(time_temp[1]);
 		      	var difference = endTime - startTime;
@@ -1025,9 +1026,9 @@
 		      }
 		      $("#subtitle_toggle_box").show();
 		      $("#subtitle_checkbox").bootstrapToggle('on');
-		      console.log(subtitle_array);
+		      //console.log(subtitle_array);
 		  	}
-		  	reader.readAsText(input.files[0], 'utf-8');
+		  	reader.readAsText(input.files[0], 'US-ASCII');
 		}
 
 		function srtTimeToStamp(srtTime){
