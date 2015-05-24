@@ -328,6 +328,7 @@
 			      		<a href="#section2"><button type="button" id="user_button" class="btn btn-danger navbar-btn tool_tip" title="Connection with partner"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></button></a>
 			      		<a href="#call_section"><button type="button" id="call_button" class="btn btn-danger navbar-btn tool_tip" title="Voice call"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span></button></a>
 			      		<a href="#call_section"><button type="button" id="video_call_button" class="btn btn-danger navbar-btn tool_tip" title="Video call"><span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span></button></a>
+			      		<span id="the_ping"></span>
 			    	</div>
 			    </div><!-- /.navbar-collapse -->
 		  	</div><!-- /.container-fluid -->
@@ -1127,6 +1128,7 @@
 
 		var window_focus;
 		var connect_timeout;
+		var ping_timeout;
 		var previous_sender = "none";
 
 		var typing_timeout;
@@ -1590,6 +1592,7 @@
 		    	$("#connect_notify").html('<span style="color:orange;">Trying to connect</span>');
 		    	conn.on('open',function(){
 		    		clearTimeout(connect_timeout);
+		    		get_ping();
 		    		my_scroll("#section2");
 		    		$("#connected_id").text(conn.peer);
 		    		$("#connect_notify").html('<span style="color:green;">Connected</span>');
@@ -1651,7 +1654,14 @@
 			    		if(message_json.pingback != null){
 			    // 			var d = new Date();
 							// var n = d.getTime(); 
-							console.log((window.performance.now()- message_json.pingback)/2 + "ms");
+							var temp_ping = Math.round((window.performance.now()- message_json.pingback)/2);
+							console.log(temp_ping);
+							$("#the_ping").text(temp_ping + 'ms');
+							clearTimeout(ping_timeout);
+							ping_timeout = setTimeout(function(){
+								get_ping();
+							},2000);
+
 			    		}
 			    		if(message_json.call_status == "hang_up"){
 			    			if(call){
@@ -1849,6 +1859,7 @@
 		   			$("#connect").show();
 		    		$("#disconnect_div").hide();
 		    		player.pauseVideo();
+		    		$("#the_ping").text('');
 		   		});
 		   		conn.on('error', function(err){
 		   			console.log(err);
