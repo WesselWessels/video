@@ -13,6 +13,8 @@
 		<link rel="stylesheet" href="css/jquery-impromptu.css">
 		<link href="//vjs.zencdn.net/4.12/video-js.css" rel="stylesheet">
  		<link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css">
+ 		<link rel="stylesheet" type="text/css" href="css/chessboard.css">
+
 		<!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script> -->
 		<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
 		
@@ -25,6 +27,10 @@
 		<script src="js/bootstrap-toggle.min.js"></script>
  		<script type="text/javascript" src="js/jquery.linkify.min.js"></script>
  		<script type="text/javascript" src="js/ion.sound.min.js"></script>
+ 		<script type="text/javascript" src="js/chessboard.js"></script>
+ 		<script type="text/javascript" src="js/chess.js"></script>
+
+ 		<!--<script type="text/javascript" src="js/responsivevoice.js"></script>-->
  		<!--<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script> -->
  		
  		<script src="js/paper-full.min.js"></script>
@@ -321,6 +327,7 @@
 				        <li ><a href="#section4">Watch YouTube</a></li>
 				        <li ><a href="#draw_heading">Draw</a></li>
 				        <li ><a href="#share_img">Fileshare</a></li>
+				         <li ><a href="#chess_section">Chess</a></li>
 				        <!-- <li ><a href="#section5">IRC Chat<span class="sr-only">(current)</span></a></li> -->
 				    </ul>
 					<div class="nav navbar-nav navbar-right">
@@ -915,6 +922,30 @@
 
 			</div>
 		</section>
+		<section id="chess_section">
+			<div style="text-align:center;">			
+				<h1>Play Chess</h1>
+			</div>
+			<div id="board_div" class="container" align="center">
+				<div class="col-md-3">
+					<!-- Game Status:<br>
+					<span id="chess_status"></span> -->
+				</div>
+				<div id="board" style="width:500px;" class="col-md-6"></div>
+
+				<div class="col-md-3">
+					<div>
+						<button class="btn btn-success btn-xs" id="chess_new_game">New Game</button>
+						<button class="btn btn-warning btn-xs" id="chess_flip_board">Flip Board</button>
+					</div>
+				</div>
+
+			</div>
+			<div style="text-align:center;">
+				<br>
+				<div id="chess_status"></div>
+			</div>
+		</section>
 		<!-- <section class="container-fluid" id="section5">
 		<div style="text-align:center;">			
 			<h1>Find Partner and exchange ID's</h1>
@@ -1144,6 +1175,15 @@
 		updatePartnerStatus();
 		
 		var file;
+
+		var board,
+		  game = new Chess(),
+		  statusEl = $('#chess_status'),
+		  fenEl = $('#fen'),
+		  pgnEl = $('#pgn');
+
+		var my_chess_color = 'w';
+		var chess_moves = 0;
 		navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
 		function launchIntoFullscreen(element) {
@@ -1292,6 +1332,14 @@
 
 	    	}
 	    }
+	    function new_chess_game(){
+			game.reset();
+			board.start();
+			my_chess_color = 'w';
+			chess_moves = 0;
+			board.orientation('white');
+			updateChessStatus();
+		}
 		function is_typing(){
 			clearInterval(typing_timeout);
 
@@ -1391,6 +1439,91 @@
 
 			
 		}
+
+		// ---------------- CHESS ------------------------
+
+		
+
+		// do not pick up pieces if the game is over
+		// only pick up pieces for the side to move
+		var onDragStart = function(source, piece, position, orientation) {
+		  if (game.game_over() === true ||
+		      (game.turn() === 'w' && piece.search(/^b/) !== -1) ||
+		      (game.turn() === 'b' && piece.search(/^w/) !== -1) || (game.turn() != my_chess_color) || (conn.open == false)) {
+		    return false;
+		  }
+		};
+
+		var onDrop = function(source, target) {
+		  // see if the move is legal
+		  var move = game.move({
+		    from: source,
+		    to: target,
+		    promotion: 'q' // NOTE: always promote to a queen for example simplicity
+		  });
+
+		  // illegal move
+		  if (move === null) return 'snapback';
+		  if(chess_moves == 0){
+			my_chess_color = 'w';
+			board.orientation('white');
+		  }
+		  chess_moves++;
+		  my_send('{"chess":"true", "chess_source": "'+source+'", "chess_target": "'+target+'"}');
+		  console.log("source: "+ source +"\ntarget: "+target);
+		  updateChessStatus();
+		};
+
+		// update the board position after the piece snap 
+		// for castling, en passant, pawn promotion
+		var onSnapEnd = function() {
+		  board.position(game.fen());
+		};
+
+		var updateChessStatus = function() {
+		  var status = '';
+
+		  var moveColor = 'White';
+		  if (game.turn() === 'b') {
+		    moveColor = 'Black';
+		  }
+
+		  // checkmate?
+		  if (game.in_checkmate() === true) {
+		    status = 'Game over, ' + moveColor + ' is in checkmate.';
+		  }
+
+		  // draw?
+		  else if (game.in_draw() === true) {
+		    status = 'Game over, drawn position';
+		  }
+
+		  // game still on
+		  else {
+		    status = moveColor + ' to move';
+
+		    // check?
+		    if (game.in_check() === true) {
+		      status += ', ' + moveColor + ' is in check';
+		    }
+		  }
+
+		  statusEl.html(status);
+		  console.log(status);
+		  fenEl.html(game.fen());
+		  pgnEl.html(game.pgn());
+		};
+
+		var cfg = {
+		  draggable: true,
+		  position: 'start',
+		  onDragStart: onDragStart,
+		  onDrop: onDrop,
+		  onSnapEnd: onSnapEnd
+		};
+		board = new ChessBoard('board', cfg);
+
+		updateChessStatus();
 
 		
 
@@ -1607,6 +1740,7 @@
 		    		
 			    	conn.on('data', function(data){
 			    		var message_json = jQuery.parseJSON(data);
+
 			    		if(message_json.typing == "true"){
 			    			is_typing();
 			    		}
@@ -1629,6 +1763,7 @@
 			    			var d= new Date();
 							var msg_time = d.toLocaleTimeString();
 							var new_message;
+							//responsiveVoice.speak(received_message);
 							if(previous_sender!="partner"){
 							 	new_message = '<div class="shout_msg"><time>'+msg_time+'</time><span class="username">Partner</span><span class="message">'+received_message+'</span></div>';
 							 	previous_sender = "partner";
@@ -1655,13 +1790,34 @@
 			    // 			var d = new Date();
 							// var n = d.getTime(); 
 							var temp_ping = Math.round((window.performance.now()- message_json.pingback)/2);
-							console.log(temp_ping);
+							//console.log(temp_ping);
 							$("#the_ping").text(temp_ping + 'ms');
 							clearTimeout(ping_timeout);
 							ping_timeout = setTimeout(function(){
 								get_ping();
 							},2000);
 
+			    		}
+			    		if(message_json.chess == "true"){
+			    			//var chess_source = message_json.source;
+			    			if(message_json.new_game == "true"){
+			    				new_chess_game();
+			    			}
+			    			else{
+			    				var move = game.move({
+								    from: message_json.chess_source,
+								    to: message_json.chess_target,
+								    promotion: 'q' // NOTE: always promote to a queen for example simplicity
+								});
+								if(chess_moves == 0){
+									my_chess_color = 'b';
+									board.orientation('black');
+								}
+								chess_moves++;
+								board.position(game.fen());
+								updateChessStatus();
+			    			}
+			    			
 			    		}
 			    		if(message_json.call_status == "hang_up"){
 			    			if(call){
@@ -2507,6 +2663,15 @@
 
 			});
 
+			$("#chess_new_game").click(function(){
+				new_chess_game();
+				my_send('{"chess":"true", "new_game": "true"}');
+			});
+			$("#chess_flip_board").click(function(){
+				board.flip();
+			});
+			
+
 			$("#fullscreen_call").click(function(e){
 				e.preventDefault();
 				launchIntoFullscreen(document.getElementById("call_section"));
@@ -2835,6 +3000,8 @@
 
 			movie_size();
 		});
+
+		
 		
 		// Called automatically with the response of the YouTube API request.
 		function onSearchResponse(response) {
