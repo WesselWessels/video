@@ -30,7 +30,7 @@
  		<script type="text/javascript" src="js/chessboard.js"></script>
  		<script type="text/javascript" src="js/chess.js"></script>
 
- 		<!--<script type="text/javascript" src="js/responsivevoice.js"></script>-->
+ 		<script type="text/javascript" src="js/responsivevoice.js"></script>
  		<!--<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script> -->
  		
  		<script src="js/paper-full.min.js"></script>
@@ -1341,7 +1341,7 @@
 			updateChessStatus();
 		}
 		function is_typing(){
-			clearInterval(typing_timeout);
+			clearTimeout(typing_timeout);
 
 			$("#typing_msg").show();
 			typing_timeout = setTimeout(function(){
@@ -1349,7 +1349,7 @@
 			}, 10000);
 		}
 		function not_typing(){
-			clearInterval(typing_timeout);
+			clearTimeout(typing_timeout);
 			$("#typing_msg").hide();
 		}
 		function my_send(data){
@@ -1763,7 +1763,8 @@
 			    			var d= new Date();
 							var msg_time = d.toLocaleTimeString();
 							var new_message;
-							//responsiveVoice.speak(received_message);
+							
+							//
 							if(previous_sender!="partner"){
 							 	new_message = '<div class="shout_msg"><time>'+msg_time+'</time><span class="username">Partner</span><span class="message">'+received_message+'</span></div>';
 							 	previous_sender = "partner";
@@ -1782,6 +1783,9 @@
 			    			unread_messages = unread_messages +1;
 			    			not_typing();
 			    			update_badge();
+			    			if(message_json.speak == "true"){
+								responsiveVoice.speak(received_message);
+							}
 			    		}
 			    		if(message_json.ping != null){
 			    			my_send('{"pingback":"'+message_json.ping+'"}');
@@ -2870,12 +2874,20 @@
 				unread_messages = 0;
 				update_badge();
 			});
-			$("#shout_message").keypress(function(evt) {
+			$("#shout_message").keyup(function(evt) {
 				if(evt.which == 13) {
 					var iusername = $('#shout_username').val();
+					
 					var imessage = strip($('#shout_message').val());
 					
-					var to_send = {textMessage:"true", name:encodeURIComponent(iusername), message:encodeURIComponent(imessage)};
+					var to_send; 
+					if(evt.shiftKey == true){
+						to_send = {textMessage:"true", name:encodeURIComponent(iusername), message:encodeURIComponent(imessage),speak:"true"};
+						//console.log("shift");
+					}
+					else{
+						to_send = {textMessage:"true", name:encodeURIComponent(iusername), message:encodeURIComponent(imessage), speak:"false"};
+					}
 					console.log(to_send);
 					var to_send = JSON.stringify(to_send);
 					console.log(to_send);
@@ -2918,7 +2930,7 @@
 					}
 				}
 				else{
-					if((window.performance.now() - last_typed_time) > 5000){
+					if(((window.performance.now() - last_typed_time) > 5000) && (evt.which != 16)){
 						my_send('{"typing":"true"}');
 						last_typed_time = window.performance.now();
 					}
