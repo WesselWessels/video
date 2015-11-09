@@ -1934,13 +1934,13 @@
 			    					time = message_json.youtube_time;
 			    				}
 			    			}
-			    			if(user_event == 'ready'){
-			    				yt_partner_ready = true;
-			    				if(yt_me_ready == true){
-			    					$("#player_only").css('visibility', 'visible');
-			    					$("#loading_info").hide();
-			    				}
-			    			}
+			    			// if(user_event == 'ready'){
+			    			// 	yt_partner_ready = true;
+			    			// 	if(yt_me_ready == true){
+			    			// 		$("#player_only").css('visibility', 'visible');
+			    			// 		$("#loading_info").hide();
+			    			// 	}
+			    			// }
 			    			if(user_event == 'load_playlist'){
 			    				add_to_playlist(message_json.video_id,message_json.video_title,'Partner');
 			    			}
@@ -1948,56 +1948,60 @@
 			    				player.loadVideoById(message_json.new_vid_id);
 			    				remove_from_playlist(message_json.new_vid_id);
 			    				get_related(message_json.new_vid_id);
-			    				clearInterval(title_timeout);
-			    				clearInterval(yt_ready_timeout);
-					          	yt_me_ready = false;
-					          	yt_partner_ready = false;
+			    				player.pauseVideo();
+			    				setTimeout(function(){
+			    					player.playVideo();
+			    				}, 200)
+			    				// clearInterval(title_timeout);
+			    				// clearInterval(yt_ready_timeout);
+					      //     	yt_me_ready = false;
+					      //     	yt_partner_ready = false;
 
-					          	//player.pauseVideo();
-					          	//player.playVideo();
-					          	player.seekTo(0);
-					          	$("#player_only").css('visibility', 'hidden');
-					          	$("#loading_info").show();
-					          	title_timeout =  setInterval(function(){
-					          		console.log("title: "+player.getVideoData().title);
-					          		if(player.getPlayerState() != -1){
-					          			$("#youtube_title").text(player.getVideoData().title);
+					      //     	//player.pauseVideo();
+					      //     	//player.playVideo();
+					      //     	player.seekTo(0);
+					      //     	$("#player_only").css('visibility', 'hidden');
+					      //     	$("#loading_info").show();
+					      //     	title_timeout =  setInterval(function(){
+					      //     		console.log("title: "+player.getVideoData().title);
+					      //     		if(player.getPlayerState() != -1){
+					      //     			$("#youtube_title").text(player.getVideoData().title);
 					          			
-					          			player.pauseVideo();
-					          			player.seekTo(0);
-					          			clearInterval(title_timeout);
-					          		}
-					          		else{
-					          			player.seekTo(0);
-					          			player.playVideo();
-					          		}
-					          	}, 1000);
-					          	yt_ready_timeout = setInterval(function(){
-			          				if(yt_me_ready == true && yt_partner_ready == true){
-			          					clearInterval(yt_ready_timeout);
-			          					$("#youtube_title").text(player.getVideoData().title);
-			          					my_send('{"user_action":"youtube", "user_event":"ready"}');
-			          					console.log('ready');
-			          					player.playVideo();
-			          					$("#player_only").css('visibility', 'visible');
-			          					$("#loading_info").hide();
-			          				}
-			          				else if(yt_me_ready == true && yt_partner_ready == false){
-			          					clearInterval(yt_ready_timeout);
-			          					$("#youtube_title").text(player.getVideoData().title);
-			          					my_send('{"user_action":"youtube", "user_event":"ready"}');
-			          					console.log('ready');
-			          				}
-			          				else{
-			          					if(player.getVideoLoadedFraction()*player.getDuration() > 10){ //amount of seconds loaded
-			          						yt_me_ready = true;
-			          					}
-			          					else{
-				      						player.playVideo();
-				      						player.pauseVideo();
-				      					}
-			          				}
-			          			},1000);
+					      //     			player.pauseVideo();
+					      //     			player.seekTo(0);
+					      //     			clearInterval(title_timeout);
+					      //     		}
+					      //     		else{
+					      //     			player.seekTo(0);
+					      //     			player.playVideo();
+					      //     		}
+					      //     	}, 1000);
+					          // 	yt_ready_timeout = setInterval(function(){
+			          		// 		if(yt_me_ready == true && yt_partner_ready == true){
+			          		// 			clearInterval(yt_ready_timeout);
+			          		// 			$("#youtube_title").text(player.getVideoData().title);
+			          		// 			my_send('{"user_action":"youtube", "user_event":"ready"}');
+			          		// 			console.log('ready');
+			          		// 			player.playVideo();
+			          		// 			$("#player_only").css('visibility', 'visible');
+			          		// 			$("#loading_info").hide();
+			          		// 		}
+			          		// 		else if(yt_me_ready == true && yt_partner_ready == false){
+			          		// 			clearInterval(yt_ready_timeout);
+			          		// 			$("#youtube_title").text(player.getVideoData().title);
+			          		// 			my_send('{"user_action":"youtube", "user_event":"ready"}');
+			          		// 			console.log('ready');
+			          		// 		}
+			          		// 		else{
+			          		// 			if(player.getVideoLoadedFraction()*player.getDuration() > 10){ //amount of seconds loaded
+			          		// 				yt_me_ready = true;
+			          		// 			}
+			          		// 			else{
+				      					// 	player.playVideo();
+				      					// 	player.pauseVideo();
+				      					// }
+			          		// 		}
+			          		// 	},1000);
 
 			    			}	
 			    			partner_previous_state = user_event;
@@ -2272,61 +2276,66 @@
       	function load_video_by_id(vid_id){
       	  	player.loadVideoById(vid_id);
           	player.seekTo(0);
-          	clearInterval(title_timeout);
-		    clearInterval(yt_ready_timeout);
-          	yt_me_ready = false;
-			yt_partner_ready = false;
-			if(conn != null && conn.open == true){
-				$("#player_only").css('visibility', 'hidden');
-				$("#loading_info").show();
-				clearInterval(title_timeout);
-	          	title_timeout =  setInterval(function(){
-	          		console.log("title: "+player.getVideoData().title);
-	          		if(player.getPlayerState() != -1){
-	          			$("#youtube_title").text(player.getVideoData().title);
-	          			clearInterval(title_timeout);
-	          			player.seekTo(0);
-	          			player.pauseVideo();
+          	player.pauseVideo();
+          	get_related(vid_id);
+          	if(conn != null && conn.open == true){
+          		my_send('{"user_action":"youtube", "user_event": "new_video", "new_vid_id": "'+vid_id+'"}');
+          	}
+   //        	clearInterval(title_timeout);
+		 //    clearInterval(yt_ready_timeout);
+   //        	yt_me_ready = false;
+			// yt_partner_ready = false;
+			// if(conn != null && conn.open == true){
+			// 	$("#player_only").css('visibility', 'hidden');
+			// 	$("#loading_info").show();
+			// 	clearInterval(title_timeout);
+	  //         	title_timeout =  setInterval(function(){
+	  //         		console.log("title: "+player.getVideoData().title);
+	  //         		if(player.getPlayerState() != -1){
+	  //         			$("#youtube_title").text(player.getVideoData().title);
+	  //         			clearInterval(title_timeout);
+	  //         			player.seekTo(0);
+	  //         			player.pauseVideo();
 	          			
-	          		}
-	          		else{
-	          			player.seekTo(0);
-	          			player.playVideo();
-	          		}
-	          	}, 1000);
-	          	yt_ready_timeout = setInterval(function(){
-      				if(yt_me_ready == true && yt_partner_ready == true){
-      					clearInterval(yt_ready_timeout);
-      					$("#youtube_title").text(player.getVideoData().title);
-      					my_send('{"user_action":"youtube", "user_event":"ready"}');
-      					console.log('ready');
-      					$("#player_only").css('visibility', 'visible');
-      					$("#loading_info").hide();
-      					player.playVideo();
-      				}
-      				else if(yt_me_ready == true && yt_partner_ready == false){
-      					clearInterval(yt_ready_timeout);
-      					$("#youtube_title").text(player.getVideoData().title);
-      					my_send('{"user_action":"youtube", "user_event":"ready"}');
-      					console.log('ready');
-      				}
-      				else{
-      					if(player.getVideoLoadedFraction()*player.getDuration() > 10){ //amount of seconds loaded
-      						yt_me_ready = true;
-      					}
-      					else{
-      						player.playVideo();
-      						player.pauseVideo();
-      					}
-      				}
-      			},1000);
-	          	get_related(vid_id);
-	          	my_send('{"user_action":"youtube", "user_event": "new_video", "new_vid_id": "'+vid_id+'"}');
-			}
-			else{
-				player.playVideo();
-				get_related(vid_id);
-			}
+	  //         		}
+	  //         		else{
+	  //         			player.seekTo(0);
+	  //         			player.playVideo();
+	  //         		}
+	  //         	}, 1000);
+	  //         	yt_ready_timeout = setInterval(function(){
+   //    				if(yt_me_ready == true && yt_partner_ready == true){
+   //    					clearInterval(yt_ready_timeout);
+   //    					$("#youtube_title").text(player.getVideoData().title);
+   //    					my_send('{"user_action":"youtube", "user_event":"ready"}');
+   //    					console.log('ready');
+   //    					$("#player_only").css('visibility', 'visible');
+   //    					$("#loading_info").hide();
+   //    					player.playVideo();
+   //    				}
+   //    				else if(yt_me_ready == true && yt_partner_ready == false){
+   //    					clearInterval(yt_ready_timeout);
+   //    					$("#youtube_title").text(player.getVideoData().title);
+   //    					my_send('{"user_action":"youtube", "user_event":"ready"}');
+   //    					console.log('ready');
+   //    				}
+   //    				else{
+   //    					if(player.getVideoLoadedFraction()*player.getDuration() > 10){ //amount of seconds loaded
+   //    						yt_me_ready = true;
+   //    					}
+   //    					else{
+   //    						player.playVideo();
+   //    						player.pauseVideo();
+   //    					}
+   //    				}
+   //    			},1000);
+	  //         	get_related(vid_id);
+	  //         	my_send('{"user_action":"youtube", "user_event": "new_video", "new_vid_id": "'+vid_id+'"}');
+			// }
+			// else{
+			// 	player.playVideo();
+			// 	get_related(vid_id);
+			// }
 			
       	}
       	function getQueryVariable(url_string, variable)
@@ -2372,13 +2381,18 @@
 	    //    the player should play for six seconds and then stop.
 	    var done = false;
 	    function onPlayerStateChange(event) {  
-	    	if(yt_me_ready == true){
-	    		//last_received_pause = window.performance.now();
+	    	clearTimeout(yt_ready_timeout)
+	    	yt_ready_timeout = setTimeout(function(){
 	    		if( (window.performance.now() -last_received_pause)>100 || event.data == YT.PlayerState.PLAYING || user_event == YT.PlayerState.PLAYING){
 	    			my_send('{"user_action":"youtube", "user_event": "'+event.data+'", "youtube_time": "'+player.getCurrentTime()+'"}');
 	    		}
+	    	}, 10);
+	    	$("#youtube_title").text(player.getVideoData().title);
+	    	//if(yt_me_ready == true || player.getCurrentTime() > 0){
+	    		//last_received_pause = window.performance.now();
+	    		
 	       		
-	    	}
+	    	//}
 	       	if(event.data == YT.PlayerState.BUFFERING && previous_state == YT.PlayerState.PLAYING){
        		 	clearTimeout(restart_after_buffer);
        		 	restart_after_buffer = setTimeout(function(){ 
